@@ -29,12 +29,10 @@ export const Nav: Component<NavProps> = (props) => {
               <>
                 {item.items ? (
                   <NavigationMenu.Menu>
-                    <NavigationMenu.Trigger 
-                      class={styles.nav__item} 
-                      classList={{ [styles["nav__item--expanded"]]: true }}
+                    <NavigationMenu.Trigger
+                      class={styles.nav__item}
                     >
                       {item.label}
-                      <NavigationMenu.Icon class={styles.nav__icon} />
                     </NavigationMenu.Trigger>
                     <NavigationMenu.Portal>
                       <NavigationMenu.Content class={styles.nav__content}>
@@ -68,10 +66,10 @@ export const Nav: Component<NavProps> = (props) => {
           </For>
         </div>
       </div>
-      
+
       {/* Place the Viewport outside the nav container to avoid overflow issues */}
-      <NavigationMenu.Viewport 
-        class={styles.nav__viewport} 
+      <NavigationMenu.Viewport
+        class={styles.nav__viewport}
         classList={{ [styles["nav__viewport--expanded"]]: true }}
       />
     </NavigationMenu>

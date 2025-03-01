@@ -125,18 +125,18 @@
     width: var(--kb-navigation-menu-viewport-width);
     height: var(--kb-navigation-menu-viewport-height);
     transition:
-        width 250ms ease,
-        height 250ms ease;
+        width 25ms ease,
+        height 25ms ease;
     overflow: visible;
     z-index: 1000;
     transform-origin: var(--kb-menu-content-transform-origin);
-    animation: navViewportHide 250ms ease-in forwards;
+    animation: navViewportHide 25ms ease-in forwards;
     /* Ensure it's not clipped by any parent containers */
     pointer-events: none;
 }
 
 .nav__viewport--expanded {
-    animation: navViewportShow 250ms ease-out;
+    animation: navViewportShow 25ms ease-out;
 }
 
 /* Make sure content inside viewport can receive pointer events */
@@ -168,19 +168,19 @@
 
 /* Content animations */
 .nav__content--motion-from-start {
-    animation: navEnterFromLeft 250ms ease;
+    animation: navEnterFromLeft 25ms ease;
 }
 
 .nav__content--motion-from-end {
-    animation: navEnterFromRight 250ms ease;
+    animation: navEnterFromRight 25ms ease;
 }
 
 .nav__content--motion-to-start {
-    animation: navExitToLeft 250ms ease;
+    animation: navExitToLeft 25ms ease;
 }
 
 .nav__content--motion-to-end {
-    animation: navExitToRight 250ms ease;
+    animation: navExitToRight 25ms ease;
 }
 
 @keyframes navEnterFromRight {

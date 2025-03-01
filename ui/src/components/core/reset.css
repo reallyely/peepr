@@ -58,6 +58,45 @@ a {
 a:hover {
     text-decoration: underline;
 }
+/* Lists */
+ul, ol {
+    list-style-position: inside;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+li {
+    margin-bottom: 0.5rem;
+}
+
+ul {
+    list-style-type: disc;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+/* Reset lists when used for UI components */
+ul.reset,
+ol.reset,
+nav ul,
+.nav ul,
+.menu ul,
+.dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul.reset li,
+ol.reset li,
+nav ul li,
+.nav ul li,
+.menu ul li,
+.dropdown ul li {
+    margin: 0;
+}
 
 /* Cards & Containers */
 .card,
