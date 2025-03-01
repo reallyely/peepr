@@ -1,9 +1,9 @@
-import { createAsync, query, type RouteDefinition } from "@solidjs/router";
-import { getUser, logout } from "~/lib";
-import { GitHubService } from '@peepr/work-tracking'
-import process from "node:process";
 import assert from "node:assert";
+import process from "node:process";
+import { GitHubService } from '@peepr/work-tracking'
+import { type RouteDefinition, createAsync, query } from "@solidjs/router";
 import { For } from "solid-js/web";
+import { getUser, logout } from "~/lib";
 
 const getBranches = query(async () => {
   "use server"
@@ -27,9 +27,8 @@ export default function Home() {
   const user = createAsync(() => getUser(), { deferStream: true });
   const branches = createAsync(() => getBranches(), { deferStream: true });
   return (
-    <main class="w-full p-4 space-y-2">
-      <h2 class="font-bold text-3xl">Hello {user()?.username}</h2>
-      <h3 class="font-bold text-xl"> board</h3>
+    <div class="main-container">
+      <h2 >Hello {user()?.username}</h2>
 
       <For each={branches()}>{(branch) => <li>{branch.name}</li>}</For>
       <form action={logout} method="post">
@@ -37,6 +36,6 @@ export default function Home() {
           Logout
         </button>
       </form>
-    </main>
+    </div>
   );
 }

@@ -1,3 +1,4 @@
+import { User } from "@peepr/core";
 import { action, query, redirect } from "@solidjs/router";
 import { db } from "./db";
 import {
@@ -5,8 +6,6 @@ import {
   login,
   logout as logoutSession,
   register,
-  validatePassword,
-  validateUsername
 } from "./server";
 
 export const getUser = query(async () => {
@@ -29,19 +28,19 @@ export const loginOrRegister = action(async (formData: FormData) => {
   const username = String(formData.get("username"));
   const password = String(formData.get("password"));
   const loginType = String(formData.get("loginType"));
-  let error = validateUsername(username) || validatePassword(password);
-  if (error) return new Error(error);
+
+  User.create({ username, password });
 
   try {
     const user = await (loginType !== "login"
       ? register(username, password)
       : login(username, password));
     const session = await getSession();
-    await session.update(d => {
+    await session.update((d) => {
       d.userId = user.id;
     });
-  } catch (err) {
-    return err as Error;
+  } catch (cause) {
+    return new Error("Problem logging in", { cause });
   }
   return redirect("/");
 });

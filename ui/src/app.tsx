@@ -2,16 +2,30 @@
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
+import Nav from "~/components/nav/nav";
 
-import "./app.css";
+import "~/components/core/app.css";
 
 export default function App() {
   return (
     <Router
-      root={props => (
+      root={(props) => (
         <>
-          <a href="/">Index</a>
-          <a href="/about">About</a>
+          <Nav items={[
+            {
+              label: "Home",
+              href: "/",
+            },
+            {
+              label: "About",
+              href: "/about",
+            },
+            {
+              label: "Styles Test",
+              href: "/sample-ui",
+            }
+          ]
+          } />
           <Suspense>{props.children}</Suspense>
         </>
       )}

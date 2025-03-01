@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "lint": "biome check --write",
     "dev": "pnpm -r --parallel --env-file=.env dev",
     "test": "pnpm -r --parallel test",
     "build": "pnpm -r --parallel build",

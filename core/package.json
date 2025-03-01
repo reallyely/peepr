@@ -1,0 +1,16 @@
+{
+  "name": "@peepr/core",
+  "version": "1.0.0",
+  "main": "main.ts",
+  "type": "module",
+  "scripts": {
+    "test": "node --test ./**/*.test.*"
+  },
+  "imports": {
+    "#/*": "./*"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "packageManager": "pnpm@10.5.1"
+}

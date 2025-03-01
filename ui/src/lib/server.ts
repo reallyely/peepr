@@ -1,17 +1,6 @@
+import { User } from "@peepr/core";
 import { useSession } from "vinxi/http";
 import { db } from "./db";
-
-export function validateUsername(username: unknown) {
-  if (typeof username !== "string" || username.length < 3) {
-    return `Usernames must be at least 3 characters long`;
-  }
-}
-
-export function validatePassword(password: unknown) {
-  if (typeof password !== "string" || password.length < 6) {
-    return `Passwords must be at least 6 characters long`;
-  }
-}
 
 export async function login(username: string, password: string) {
   const user = await db.user.findUnique({ where: { username } });
@@ -27,8 +16,10 @@ export async function logout() {
 }
 
 export async function register(username: string, password: string) {
+  const user = User.create({ username, password });
   const existingUser = await db.user.findUnique({ where: { username } });
   if (existingUser) throw new Error("User already exists");
+
   return db.user.create({
     data: { username: username, password }
   });

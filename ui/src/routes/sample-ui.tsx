@@ -1,6 +1,6 @@
 
 export default function SampleUI() {
-  return <div class="main-container">
+  return <>
 
     <div class="search-container">
       <span class="search-icon">Search</span>
@@ -109,5 +109,5 @@ export default function SampleUI() {
       </div>
       <div class="status-indicator"></div>
     </div>
-  </div>
+  </>
 }
