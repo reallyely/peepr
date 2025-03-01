@@ -3,6 +3,7 @@ import process from "node:process";
 import { GitHubService } from '@peepr/work-tracking';
 import { type RouteDefinition, createAsync, query } from "@solidjs/router";
 import { For } from "solid-js/web";
+import { Card, CardContent, CardHeader, CardItem } from "~/components/card/card";
 import { getUser } from "~/lib";
 import styles from "./pull-requests.module.css";
 
@@ -48,30 +49,35 @@ export default function PullRequests() {
     <div class="main-container">
       <h2>Recent Merged Pull Requests</h2>
 
-      <div class={styles.pull_requests}>
-        <div class={styles.pull_requests__list}>
+      <Card>
+        <CardHeader title="Pull Requests" count={pullRequests()?.length} />
+        <CardContent>
           <For each={pullRequests()}>
             {(pr) => (
-              <div class={styles.pull_requests__item}>
-                <div class={styles.pull_requests__title}>
-                  <a href={pr.html_url} target="_blank" rel="noopener noreferrer">
-                    {pr.title}
-                  </a>
-                </div>
-                <div class={styles.pull_requests__details}>
-                  <div class={styles.pull_requests__number}>#{pr.number}</div>
-                  <div class={styles.pull_requests__author}>
-                    by <span class={styles.pull_requests__author_name}>{pr.user?.login}</span>
+              <CardItem>
+                <div class={styles.pr__icon}>📄</div>
+                <div class={styles.pr__content}>
+                  <div class={styles.pr__title}>
+                    <a href={pr.html_url} target="_blank" rel="noopener noreferrer">
+                      {pr.title}
+                    </a>
                   </div>
-                  <div class={styles.pull_requests__date}>
-                    merged on {new Date(pr.closed_at || pr.updated_at).toLocaleDateString()}
+                  <div class={styles.pr__details}>
+                    <span class={styles.pr__number}>#{pr.number}</span>
+                    <span class={styles.pr__author}>
+                      by <span class={styles.pr__author_name}>{pr.user?.login}</span>
+                    </span>
+                    <span class={styles.pr__date}>
+                      merged on {new Date(pr.closed_at || pr.updated_at).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
-              </div>
+              </CardItem>
             )}
           </For>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
+    
