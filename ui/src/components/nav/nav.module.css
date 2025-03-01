@@ -43,7 +43,7 @@
     border-right: 1px solid var(--border-color);
 }
 
-.nav__logo-image {
+.nav__logo_image {
     height: 2rem;
     width: auto;
 }
@@ -92,10 +92,12 @@
     padding: 0.5rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     min-width: 180px;
-    z-index: 100;
+    z-index: 1000;
+    position: relative;
+    isolation: isolate;
 }
 
-.nav__sub-item {
+.nav__sub_item {
     display: block;
     padding: 0.5rem 1rem;
     color: var(--text-secondary);
@@ -106,35 +108,40 @@
         color 0.2s ease;
 }
 
-.nav__sub-item:hover {
+.nav__sub_item:hover {
     background-color: rgba(255, 255, 255, 0.05);
     color: var(--text-primary);
     text-decoration: none;
 }
 
-.nav__sub-item--highlighted {
+.nav__sub_item--highlighted {
     background-color: var(--accent-color);
     color: white;
 }
 
 /* Viewport styling */
 .nav__viewport {
-    position: absolute;
+    position: fixed;
     width: var(--kb-navigation-menu-viewport-width);
     height: var(--kb-navigation-menu-viewport-height);
     transition:
         width 250ms ease,
         height 250ms ease;
-    top: 100%;
-    left: 0;
-    overflow: hidden;
-    z-index: 100;
+    overflow: visible;
+    z-index: 1000;
     transform-origin: var(--kb-menu-content-transform-origin);
     animation: navViewportHide 250ms ease-in forwards;
+    /* Ensure it's not clipped by any parent containers */
+    pointer-events: none;
 }
 
 .nav__viewport--expanded {
     animation: navViewportShow 250ms ease-out;
+}
+
+/* Make sure content inside viewport can receive pointer events */
+.nav__viewport * {
+    pointer-events: auto;
 }
 
 @keyframes navViewportShow {

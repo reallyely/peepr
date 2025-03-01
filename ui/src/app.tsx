@@ -17,8 +17,13 @@ export default function App() {
               href: "/",
             },
             {
-              label: "About",
-              href: "/about",
+              label: "GitHub",
+              items: [
+                {
+                  label: "Branches",
+                  href: "/branches",
+                }
+              ]
             },
             {
               label: "Styles Test",

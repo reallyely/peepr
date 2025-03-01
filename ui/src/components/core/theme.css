@@ -1,0 +1,19 @@
+/* Theme Variables */
+:root {
+    /* Color Variables */
+    --bg-color-primary: #0c0c24;
+    --bg-color-secondary: #161638;
+    --card-bg: #131336;
+    --text-primary: rgba(255, 255, 255, 0.9);
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --accent-color: #3151d0;
+    --accent-gradient-start: #2a4cc2;
+    --accent-gradient-end: #3d56e0;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-radius-sm: 8px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 16px;
+    --icon-color: rgba(255, 255, 255, 0.7);
+    --border-highlight: rgba(100, 130, 255, 0.5);
+    --card-highlight: rgba(255, 255, 255, 0.03);
+}
