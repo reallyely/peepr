@@ -10,9 +10,9 @@ export function Card(props: CardProps) {
   const [local, others] = splitProps(props, ["children", "class"]);
 
   return (
-    <div class={`${styles.card} ${local.class || ""}`} {...others}>
+    <article class={`${styles.card} ${local.class || ""}`} {...others}>
       {local.children}
-    </div>
+    </article>
   );
 }
 

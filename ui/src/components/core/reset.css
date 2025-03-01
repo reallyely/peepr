@@ -22,7 +22,6 @@ body {
         "Open Sans",
         "Helvetica Neue",
         sans-serif;
-    background-color: var(--bg-color-primary);
     color: var(--text-primary);
     line-height: 1.5;
     font-size: 16px;
@@ -59,7 +58,8 @@ a:hover {
     text-decoration: underline;
 }
 /* Lists */
-ul, ol {
+ul,
+ol {
     list-style-position: inside;
     padding-left: 1rem;
     margin-bottom: 1rem;
@@ -102,7 +102,6 @@ nav ul li,
 .card,
 .container,
 section,
-article,
 aside {
     background-color: var(--card-bg);
     border-radius: var(--border-radius-md);
