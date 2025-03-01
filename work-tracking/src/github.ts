@@ -1,18 +1,26 @@
 
-import { Octokit } from "octokit";
+import { Octokit } from "@octokit/core";
 import type { components } from "@octokit/openapi-types";
+import { paginateRest } from "@octokit/plugin-paginate-rest";
+import { restEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
+
+// Create an extended Octokit with plugins
+const MyOctokit = Octokit.plugin(
+  restEndpointMethods,
+  paginateRest
+);
 
 /**
  * The GitHub service provides access to data from the GitHub API
  * This is not the appropriate place to perform mapping logic, it is purely for retrieval
  */
 export class GitHubService {
-  private octokit: Octokit;
+  private octokit: InstanceType<typeof MyOctokit>;
   private owner = "rivial-data-security";
   private repo = "rivial-information-security-center";
 
   constructor(authToken: string) {
-    this.octokit = new Octokit({
+    this.octokit = new MyOctokit({
       auth: authToken,
     });
   }
@@ -118,4 +126,5 @@ export class GitHubService {
       yield* items;
     }
   }
+
 }

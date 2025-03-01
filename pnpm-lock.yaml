@@ -53,6 +53,22 @@ importers:
       octokit:
         specifier: ^4.1.2
         version: 4.1.2
+    devDependencies:
+      '@octokit/core':
+        specifier: ^6.1.4
+        version: 6.1.4
+      '@octokit/plugin-paginate-rest':
+        specifier: ^11.4.3
+        version: 11.4.3(@octokit/core@6.1.4)
+      '@octokit/plugin-rest-endpoint-methods':
+        specifier: ^13.3.1
+        version: 13.3.1(@octokit/core@6.1.4)
+      '@octokit/types':
+        specifier: ^13.8.0
+        version: 13.8.0
+      types:
+        specifier: link:@octokit/core/types
+        version: link:@octokit/core/types
 
 packages:
 
