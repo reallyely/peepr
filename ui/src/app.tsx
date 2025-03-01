@@ -20,8 +20,8 @@ export default function App() {
               label: "GitHub",
               items: [
                 {
-                  label: "Branches",
-                  href: "/branches",
+                  label: "Pull Requests",
+                  href: "/pull-requests",
                 }
               ]
             },
