@@ -1,0 +1,112 @@
+{
+  "_github-C3TsAzD7.js": {
+    "file": "assets/github-C3TsAzD7.js",
+    "name": "github"
+  },
+  "_index-r5P79hTl.js": {
+    "file": "assets/index-r5P79hTl.js",
+    "name": "index"
+  },
+  "_server-fns-S26yFslq.js": {
+    "file": "assets/server-fns-S26yFslq.js",
+    "name": "server-fns",
+    "imports": [
+      "_index-r5P79hTl.js",
+      "_github-C3TsAzD7.js"
+    ],
+    "dynamicImports": [
+      "src/routes/[...404].tsx?pick=default&pick=$css",
+      "src/routes/[...404].tsx?pick=default&pick=$css",
+      "src/routes/index.tsx?pick=default&pick=$css",
+      "src/routes/index.tsx?pick=default&pick=$css",
+      "src/routes/login.tsx?pick=default&pick=$css",
+      "src/routes/login.tsx?pick=default&pick=$css",
+      "src/routes/sample-ui.tsx?pick=default&pick=$css",
+      "src/routes/sample-ui.tsx?pick=default&pick=$css",
+      "src/routes/index.tsx?pick=route&tsr-directive-use-server=",
+      "src/lib/index.ts?tsr-directive-use-server=",
+      "src/lib/index.ts?tsr-directive-use-server=",
+      "src/lib/index.ts?tsr-directive-use-server=",
+      "src/app.tsx"
+    ]
+  },
+  "src/app.tsx": {
+    "file": "assets/app-CNgKguQR.js",
+    "name": "app",
+    "src": "src/app.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_server-fns-S26yFslq.js",
+      "_index-r5P79hTl.js",
+      "_github-C3TsAzD7.js"
+    ],
+    "css": [
+      "assets/app-By8JuUUf.css"
+    ]
+  },
+  "src/lib/index.ts?tsr-directive-use-server=": {
+    "file": "assets/index-CNI0dcKX.js",
+    "name": "index",
+    "src": "src/lib/index.ts?tsr-directive-use-server=",
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-r5P79hTl.js"
+    ]
+  },
+  "src/routes/[...404].tsx?pick=default&pick=$css": {
+    "file": "_...404_.js",
+    "name": "_...404_",
+    "src": "src/routes/[...404].tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true
+  },
+  "src/routes/index.tsx?pick=default&pick=$css": {
+    "file": "index.js",
+    "name": "index",
+    "src": "src/routes/index.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-r5P79hTl.js",
+      "_github-C3TsAzD7.js"
+    ]
+  },
+  "src/routes/index.tsx?pick=route&tsr-directive-use-server=": {
+    "file": "assets/index-CtGJWfR3.js",
+    "name": "index",
+    "src": "src/routes/index.tsx?pick=route&tsr-directive-use-server=",
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-r5P79hTl.js",
+      "_github-C3TsAzD7.js"
+    ]
+  },
+  "src/routes/login.tsx?pick=default&pick=$css": {
+    "file": "login.js",
+    "name": "login",
+    "src": "src/routes/login.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-r5P79hTl.js"
+    ]
+  },
+  "src/routes/sample-ui.tsx?pick=default&pick=$css": {
+    "file": "sample-ui.js",
+    "name": "sample-ui",
+    "src": "src/routes/sample-ui.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true
+  },
+  "virtual:$vinxi/handler/server-fns": {
+    "file": "server-fns.js",
+    "name": "server-fns",
+    "src": "virtual:$vinxi/handler/server-fns",
+    "isEntry": true,
+    "imports": [
+      "_server-fns-S26yFslq.js",
+      "_index-r5P79hTl.js",
+      "_github-C3TsAzD7.js"
+    ]
+  }
+}

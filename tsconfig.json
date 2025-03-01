@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    // "jsx": "preserve",
+    // "jsxImportSource": "solid-js",
+    "skipLibCheck": false,
+    "noEmit": true,
+    "isolatedModules": true
+  },
+  "include": ["./ui/**/*.ts*", "./work-tracking/**/*.ts*"]
+}
