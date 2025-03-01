@@ -24,16 +24,16 @@ export default function Login(props: RouteSectionProps) {
         </fieldset>
         <div>
           <label for="username-input">Username</label>
-          <input name="username" placeholder="kody" />
+          <input name="username" />
         </div>
         <div>
           <label for="password-input">Password</label>
-          <input name="password" type="password" placeholder="twixrox" />
+          <input name="password" type="password" />
         </div>
         <button type="submit">Login</button>
         <Show when={loggingIn.result}>
-          <p style={{color: "red"}} role="alert" id="error-message">
-            {loggingIn.result!.message}
+          <p style={{ color: "red" }} role="alert" id="error-message">
+            {loggingIn?.result?.message || ""}
           </p>
         </Show>
       </form>

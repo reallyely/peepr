@@ -7,6 +7,7 @@
     "deploy": "fly deploy"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@flydotio/dockerfile": "^0.7.8"
   }
 }

@@ -26,7 +26,6 @@ export const route = {
 export default function Home() {
   const user = createAsync(() => getUser(), { deferStream: true });
   const branches = createAsync(() => getBranches(), { deferStream: true });
-  console.log({ branches: branches() })
   return (
     <main class="w-full p-4 space-y-2">
       <h2 class="font-bold text-3xl">Hello {user()?.username}</h2>

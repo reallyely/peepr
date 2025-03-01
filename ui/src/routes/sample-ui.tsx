@@ -4,7 +4,7 @@ export default function SampleUI() {
 
     <div class="search-container">
       <span class="search-icon">Search</span>
-      <input type="text" class="search-input" placeholder="search for anything, documents, actions, contacts..." ></input>
+      <input type="text" class="search-input" placeholder="search for anything, documents, actions, contacts..." />
       <span class="keyboard-shortcut">⌘ + K</span>
     </div>
 
