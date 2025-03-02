@@ -2,9 +2,9 @@ import assert from "node:assert";
 import process from "node:process";
 import { GitHubService } from '@peepr/work-tracking';
 import { type RouteDefinition, createAsync, query } from "@solidjs/router";
-import { For } from "solid-js/web";
+import { For, Suspense } from "solid-js/web";
 import { Card, CardContent, CardHeader, CardItem } from "~/components/card/card";
-import { getUser } from "~/lib";
+import { ProgressBar, Skeleton } from "~/components/feedback";
 import styles from "./pull-requests.module.css";
 
 const getPullRequests = query(async () => {
@@ -38,46 +38,46 @@ const getPullRequests = query(async () => {
 }, "pullRequests");
 
 export const route = {
-  preload() { getUser(); getPullRequests() }
+  preload() { getPullRequests() }
 } satisfies RouteDefinition;
 
 export default function PullRequests() {
-  const user = createAsync(() => getUser(), { deferStream: true });
-  const pullRequests = createAsync(() => getPullRequests(), { deferStream: true });
+  const pullRequests = createAsync(() => getPullRequests());
 
   return (
     <div class="main-container">
       <h2>Recent Merged Pull Requests</h2>
 
       <Card>
-        <CardHeader title="Pull Requests" count={pullRequests()?.length} />
-        <CardContent>
-          <For each={pullRequests()}>
-            {(pr) => (
-              <CardItem>
-                <div class={styles.pr__icon}>📄</div>
-                <div class={styles.pr__content}>
-                  <div class={styles.pr__title}>
-                    <a href={pr.html_url} target="_blank" rel="noopener noreferrer">
-                      {pr.title}
-                    </a>
+        <Suspense fallback={<ProgressBar indeterminate value={50} />} >
+          <CardHeader title="Pull Requests" count={pullRequests()?.length} />
+          <CardContent>
+            <For each={pullRequests()}>
+              {(pr) => (
+                <CardItem>
+                  <div class={styles.pr__icon}>📄</div>
+                  <div class={styles.pr__content}>
+                    <div class={styles.pr__title}>
+                      <a href={pr.html_url} target="_blank" rel="noopener noreferrer">
+                        {pr.title}
+                      </a>
+                    </div>
+                    <div class={styles.pr__details}>
+                      <span class={styles.pr__number}>#{pr.number}</span>
+                      <span class={styles.pr__author}>
+                        by <span class={styles.pr__author_name}>{pr.user?.login}</span>
+                      </span>
+                      <span class={styles.pr__date}>
+                        merged on {new Date(pr.closed_at || pr.updated_at).toLocaleDateString()}
+                      </span>
+                    </div>
                   </div>
-                  <div class={styles.pr__details}>
-                    <span class={styles.pr__number}>#{pr.number}</span>
-                    <span class={styles.pr__author}>
-                      by <span class={styles.pr__author_name}>{pr.user?.login}</span>
-                    </span>
-                    <span class={styles.pr__date}>
-                      merged on {new Date(pr.closed_at || pr.updated_at).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-              </CardItem>
-            )}
-          </For>
-        </CardContent>
+                </CardItem>
+              )}
+            </For>
+          </CardContent>
+        </Suspense>
       </Card>
-    </div>
+    </div >
   );
 }
-    
