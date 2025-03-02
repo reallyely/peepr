@@ -1,5 +1,6 @@
-/* Import color palette */
+/* Import color palette and typography */
 @import "./color.css";
+@import "./typography.css";
 
 /* Theme Variables */
 :root {

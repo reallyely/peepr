@@ -3,41 +3,86 @@ import {
   useSubmission
 } from "@solidjs/router";
 import { Show } from "solid-js";
+import { Card } from "~/components/card";
+import Alert from "~/components/feedback/Alert";
+import Button from "~/components/form/Button";
+import FormField from "~/components/form/FormField";
+import RadioGroup from "~/components/form/RadioGroup";
+import TextInput from "~/components/form/TextInput";
 import { loginOrRegister } from "~/lib";
+import styles from "./login.module.css";
 
 export default function Login(props: RouteSectionProps) {
   const loggingIn = useSubmission(loginOrRegister);
 
-  console.log({ loggingIn: loggingIn.result })
   return (
-    <main>
-      <h1>Login</h1>
-      <form action={loginOrRegister} method="post">
-        <input type="hidden" name="redirectTo" value={props.params.redirectTo ?? "/"} />
-        <fieldset>
-          <legend>Login or Register?</legend>
-          <label>
-            <input type="radio" name="loginType" value="login" checked={true} /> Login
-          </label>
-          <label>
-            <input type="radio" name="loginType" value="register" /> Register
-          </label>
-        </fieldset>
-        <div>
-          <label for="username-input">Username</label>
-          <input name="username" />
-        </div>
-        <div>
-          <label for="password-input">Password</label>
-          <input name="password" type="password" />
-        </div>
-        <button type="submit">Login</button>
-        <Show when={loggingIn.result}>
-          <p style={{ color: "red" }} role="alert" id="error-message">
-            {loggingIn?.result?.message || ""}
-          </p>
-        </Show>
-      </form>
+    <main class="main-container">
+      <div class={styles.login}>
+        <Card title="Login">
+          <form
+            action={loginOrRegister}
+            method="post"
+            class={styles.login__form}
+            aria-describedby={loggingIn.result?.message ? "error-message" : undefined}
+          >
+            <input type="hidden" name="redirectTo" value={props.params.redirectTo ?? "/"} />
+
+            <RadioGroup
+              name="loginType"
+              legend="Login or Register?"
+              defaultValue="login"
+              options={[
+                { value: "login", label: "Login" },
+                { value: "register", label: "Register" }
+              ]}
+            />
+
+            <FormField
+              label="Username"
+              id="username-input"
+              required
+            >
+              <TextInput
+                id="username-input"
+                name="username"
+                autocomplete="username"
+                required
+              />
+            </FormField>
+
+            <FormField
+              label="Password"
+              id="password-input"
+              required
+            >
+              <TextInput
+                id="password-input"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+              />
+            </FormField>
+
+            <Button
+              type="submit"
+              fullWidth
+              loading={loggingIn.pending}
+            >
+              {loggingIn.pending ? "Processing..." : "Login"}
+            </Button>
+
+            <Show when={loggingIn.result?.message}>
+              <Alert
+                type="error"
+                id="error-message"
+              >
+                {loggingIn.result?.message}
+              </Alert>
+            </Show>
+          </form>
+        </Card>
+      </div>
     </main>
   );
 }
