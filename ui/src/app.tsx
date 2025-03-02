@@ -20,13 +20,8 @@ export default function App() {
                 href: "/",
               },
               {
-                label: "GitHub",
-                items: [
-                  {
-                    label: "Pull Requests",
-                    href: "/pull-requests",
-                  }
-                ]
+                label: "Integration Stats",
+                href: "/integration",
               },
               {
                 label: "Styles Test",
