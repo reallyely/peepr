@@ -8,11 +8,22 @@ export async function login(username: string, password: string) {
   return user;
 }
 
+import { Cache } from "./cache";
+
 export async function logout() {
   const session = await getSession();
+  
+  // Get the user ID before clearing it from session
+  const userId = session.data.userId;
+  
   await session.update(d => {
     d.userId = undefined;
   });
+  
+  // Invalidate user session cache if we had a userId
+  if (userId !== undefined) {
+    await Cache.delete(`user:${userId}`);
+  }
 }
 
 export async function register(username: string, password: string) {

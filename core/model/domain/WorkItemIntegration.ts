@@ -12,7 +12,7 @@ export class WorkItemIntegration {
   readonly pullRequestCheckRuns: number;
   readonly totalDuration: Duration;
 
-  constructor(
+  private constructor(
     id: number,
     prNumber: number,
     title: string,

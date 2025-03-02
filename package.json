@@ -2,7 +2,7 @@
   "scripts": {
     "lint": "biome check --write",
     "dev": "pnpm -r --parallel --env-file=.env dev",
-    "test": "pnpm -r --parallel test",
+    "test": "pnpm -r --parallel --env-file=.env test",
     "build": "pnpm -r --parallel build",
     "start": "pnpm -r --parallel start",
     "deploy": "fly deploy"
