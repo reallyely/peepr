@@ -1,0 +1,23 @@
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-open {
+  background-color: #2ea44f;
+  color: white;
+}
+
+.status-closed {
+  background-color: #cf222e;
+  color: white;
+}
+
+.status-merged {
+  background-color: #8250df;
+  color: white;
+}
