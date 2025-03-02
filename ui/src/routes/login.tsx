@@ -18,7 +18,7 @@ export default function Login(props: RouteSectionProps) {
   return (
     <main class="main-container">
       <div class={styles.login}>
-        <Card title="Login">
+        <Card>
           <form
             action={loginOrRegister}
             method="post"

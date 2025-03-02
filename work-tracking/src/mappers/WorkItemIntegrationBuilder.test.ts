@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { Duration } from "@peepr/core/model/domain/Duration.ts";
-import { WorkItemIntegrationBuilder } from "./WorkItemIntegration.ts";
+import { WorkItemIntegrationBuilder } from "./WorkItemIntegrationBuilder.ts";
 
 // Mock pull request data
 const mockPullRequest = {

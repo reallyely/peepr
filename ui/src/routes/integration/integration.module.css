@@ -1,4 +1,31 @@
 /* Integration stats styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.refresh_button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--gradient-info);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: opacity 0.2s ease;
+}
+
+.refresh_button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.refresh_button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 .error {
   color: var(--color-error);
   padding: 1rem;
