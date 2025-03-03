@@ -20,6 +20,7 @@ import {
 } from "~/components/card";
 import { Alert, ProgressBar } from "~/components/feedback";
 import styles from "./integration.module.css";
+// Import at the component level only for type definitions
 import { generateStatistics } from "./statistics";
 
 import type { WorkItemIntegration } from "@peepr/core";
@@ -53,6 +54,7 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
         endDate.setDate(endDate.getDate() + 6);
 
         const pullRequests = [];
+        const workItemIntegrations = [];
 
         // Get pull requests from the calculated date range for the cycle
         for await (const pr of github.getPullRequestsByDateRange(startDate.toISOString(), endDate.toISOString())) {
@@ -72,6 +74,8 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
           );
 
           const stats = builder.build();
+          workItemIntegrations.push(stats);
+
           const prStats = {
             prNumber: pr.number,
             title: pr.title,
@@ -79,9 +83,9 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
             updatedAt: pr.updated_at,
             mergedAt: pr.closed_at,
             closedAt: pr.closed_at,
-            prTimeOpen: stats.prTimeOpen.toHumanReadable(),
-            pullRequestCheckRuns: stats.pullRequestCheckRuns,
-            totalDuration: stats.totalDuration.toHumanReadable(),
+            prTimeOpen: stats()?.prTimeOpen.toHumanReadable(),
+            pullRequestCheckRuns: stats()?.pullRequestCheckRuns,
+            totalDuration: stats()?.totalDuration.toHumanReadable(),
           };
 
           pullRequests.push(prStats);
@@ -90,9 +94,15 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
           if (pullRequests.length >= 10) break;
         }
 
-        return pullRequests;
+        // Calculate statistics from the collected data
+        const statistics = generateStatistics(workItemIntegrations);
+
+        console.log({ statistics })
+        return {
+          pullRequests,
+          statistics
+        };
       },
-      // Cache for 15 minutes
       920 * 60,
       // Pass the refresh flag to force a cache refresh when needed
       refresh
@@ -114,9 +124,10 @@ export const route = {
     );
     const defaultCycleNumber = Math.max(1, Math.ceil(daysSinceStart / 7));
 
-
-
-    getPRStats({ cycleNumber: defaultCycleNumber });
+    // Preload data
+    getPRStats({
+      cycleNumber: Number(searchParams.get('cycle')) || defaultCycleNumber
+    });
   },
 } satisfies RouteDefinition;
 
@@ -157,15 +168,10 @@ export default function Integration() {
     }
   });
 
-  const prStats = createAsync(() => getPRStats({
+  const prStatsData = createAsync(() => getPRStats({
     cycleNumber: cycleNumber(),
     refresh: refreshing()
   }));
-
-  // Calculate aggregate statistics
-  const statistics = createAsync(async () => {
-    return generateStatistics(prStats() as WorkItemIntegration[]);
-  });
 
   // Function to handle data refresh
   const handleRefresh = () => {
@@ -242,128 +248,130 @@ export default function Integration() {
         </div>
         <Suspense fallback={<ProgressBar indeterminate />}>
           <Show
-            when={!("error" in (prStats() || {}))}
+            when={!("error" in (prStatsData() || {}))}
             fallback={
               <Alert type="error">
-                Error: {(prStats() as { error: string }).error}
+                Error: {(prStatsData() as { error: string }).error}
               </Alert>
             }
           >
-            <Show when={statistics()}>
-              {(stats) => (
-                <>
-                  <div class={styles["stats-grid"]}>
-                    <Card variant="subtle">
-                      <CardContent>
-                        <span class={styles["stats-card__title"]}>Total PRs</span>
-                        <span class={styles["stats-card__value"]}>{stats().totalPRs}</span>
-                      </CardContent>
-                    </Card>
+            <Show when={Object.entries(prStatsData()?.statistics || {}).length > 0 && prStatsData()?.statistics}>
+              {(stats) => {
+                console.log({ stats })
+                return (
+                  <>
+                    <div class={styles["stats-grid"]}>
+                      <Card variant="subtle">
+                        <CardContent>
+                          <span class={styles["stats-card__title"]}>Total PRs</span>
+                          <span class={styles["stats-card__value"]}>{stats()?.totalPRs}</span>
+                        </CardContent>
+                      </Card>
+
+                      <Card variant="subtle">
+                        <CardContent>
+                          <span class={styles["stats-card__title"]}>Total CI Runs</span>
+                          <span class={styles["stats-card__value"]}>{stats()?.totalCIRuns}</span>
+                        </CardContent>
+                      </Card>
+
+                      <Card variant="subtle">
+                        <CardContent>
+                          <span class={styles["stats-card__title"]}>Median CI Duration</span>
+                          <span class={styles["stats-card__value"]}>{stats()?.ciDuration.median}</span>
+                        </CardContent>
+                      </Card>
+
+                      <Card variant="subtle">
+                        <CardContent>
+                          <span class={styles["stats-card__title"]}>Median PR Open Time</span>
+                          <span class={styles["stats-card__value"]}>{stats()?.openTime.median}</span>
+                        </CardContent>
+                      </Card>
+                    </div>
 
                     <Card variant="subtle">
+                      <CardHeader title="Detailed Statistics" />
                       <CardContent>
-                        <span class={styles["stats-card__title"]}>Total CI Runs</span>
-                        <span class={styles["stats-card__value"]}>{stats().totalCIRuns}</span>
+                        <table
+                          aria-label="Detailed PR Statistics"
+                        >
+                          <thead>
+                            <tr>
+                              <th class={styles["stats-table__header"]}>Metric</th>
+                              <th class={styles["stats-table__header"]}>Min</th>
+                              <th class={styles["stats-table__header"]}>Q1</th>
+                              <th class={styles["stats-table__header"]}>Median</th>
+                              <th class={styles["stats-table__header"]}>Q3</th>
+                              <th class={styles["stats-table__header"]}>Max</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr class={styles["stats-table__row"]}>
+                              <th class={styles["stats-table__header"]}>CI Duration</th>
+                              <td class={styles["stats-table__cell"]}>
+                                {stats()?.ciDuration.range.min}
+                              </td>
+                              <td class={styles["stats-table__cell"]}>
+                                {stats()?.ciDuration.quartiles.q1}
+                              </td>
+                              <td class={styles["stats-table__cell"]}>
+                                {stats()?.ciDuration.quartiles.q2}
+                              </td>
+                              <td class={styles["stats-table__cell"]}>
+                                {stats()?.ciDuration.quartiles.q3}
+                              </td>
+                              <td class={styles["stats-table__cell"]}>
+                                {stats()?.ciDuration.range.max}
+                              </td>
+                            </tr>
+                            <tr class={styles["stats-table__row"]}>
+                              <th class={styles["stats-table__header"]}>
+                                PR Open Time
+                              </th>
+                              <td class={styles["stats-table__cell"]}>
+                                {stats()?.openTime.range.min}
+                              </td>
+                              <td class={styles["stats-table__cell"]}>
+                                {stats()?.openTime.quartiles.q1}
+                              </td>
+                              <td class={styles["stats-table__cell"]}>
+                                {stats()?.openTime.quartiles.q2}
+                              </td>
+                              <td class={styles["stats-table__cell"]}>
+                                {stats()?.openTime.quartiles.q3}
+                              </td>
+                              <td class={styles["stats-table__cell"]}>
+                                {stats()?.openTime.range.max}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </CardContent>
                     </Card>
-
-                    <Card variant="subtle">
-                      <CardContent>
-                        <span class={styles["stats-card__title"]}>Median CI Duration</span>
-                        <span class={styles["stats-card__value"]}>{stats().ciDuration.median}</span>
-                      </CardContent>
-                    </Card>
-
-                    <Card variant="subtle">
-                      <CardContent>
-                        <span class={styles["stats-card__title"]}>Median PR Open Time</span>
-                        <span class={styles["stats-card__value"]}>{stats().openTime.median}</span>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  <Card variant="subtle">
-                    <CardHeader title="Detailed Statistics" />
-                    <CardContent>
-                      <table
-                        aria-label="Detailed PR Statistics"
-                      >
-                        <thead>
-                          <tr>
-                            <th class={styles["stats-table__header"]}>Metric</th>
-                            <th class={styles["stats-table__header"]}>Min</th>
-                            <th class={styles["stats-table__header"]}>Q1</th>
-                            <th class={styles["stats-table__header"]}>Median</th>
-                            <th class={styles["stats-table__header"]}>Q3</th>
-                            <th class={styles["stats-table__header"]}>Max</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr class={styles["stats-table__row"]}>
-                            <th class={styles["stats-table__header"]}>CI Duration</th>
-                            <td class={styles["stats-table__cell"]}>
-                              {stats().ciDuration.range.min}
-                            </td>
-                            <td class={styles["stats-table__cell"]}>
-                              {stats().ciDuration.quartiles.q1}
-                            </td>
-                            <td class={styles["stats-table__cell"]}>
-                              {stats().ciDuration.quartiles.q2}
-                            </td>
-                            <td class={styles["stats-table__cell"]}>
-                              {stats().ciDuration.quartiles.q3}
-                            </td>
-                            <td class={styles["stats-table__cell"]}>
-                              {stats().ciDuration.range.max}
-                            </td>
-                          </tr>
-                          <tr class={styles["stats-table__row"]}>
-                            <th class={styles["stats-table__header"]}>
-                              PR Open Time
-                            </th>
-                            <td class={styles["stats-table__cell"]}>
-                              {stats().openTime.range.min}
-                            </td>
-                            <td class={styles["stats-table__cell"]}>
-                              {stats().openTime.quartiles.q1}
-                            </td>
-                            <td class={styles["stats-table__cell"]}>
-                              {stats().openTime.quartiles.q2}
-                            </td>
-                            <td class={styles["stats-table__cell"]}>
-                              {stats().openTime.quartiles.q3}
-                            </td>
-                            <td class={styles["stats-table__cell"]}>
-                              {stats().openTime.range.max}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </CardContent>
-                  </Card>
-                </>
-              )}
+                  </>
+                );
+              }}
             </Show>
-
           </Show>
         </Suspense>
       </Card>
       <Card>
         <Suspense fallback={<ProgressBar indeterminate />}>
           <Show
-            when={!("error" in (prStats() || {}))}
+            when={!("error" in (prStatsData() || {}))}
             fallback={
               <Alert type="error">
-                Error: {(prStats() as { error: string }).error}
+                Error: {(prStatsData() as { error: string }).error}
               </Alert>
             }
           >
             <CardHeader
               title="Pull Request Details"
-              count={Array.isArray(prStats()) ? prStats().length : 0}
+              count={prStatsData()?.pullRequests?.length || 0}
             />
             <CardContent>
-              <For each={Array.isArray(prStats()) ? prStats() : []}>
+              <For each={prStatsData()?.pullRequests || []}>
                 {(pr) => (
                   <CardItem>
                     <>

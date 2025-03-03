@@ -92,14 +92,14 @@ export interface StatisticsResult {
   totalCIRuns: number;
 }
 
-export const generateStatistics = async (
+export const generateStatistics = (
   prs: WorkItemIntegration[]
-): Promise<StatisticsResult | null> => {
+): StatisticsResult | null => {
   if (!Array.isArray(prs)) return null;
 
   // Extract CI durations and PR open times
-  const ciDurations = prs.map((pr) => durationToMinutes(pr.totalDuration));
-  const openTimes = prs.map((pr) => durationToMinutes(pr.prTimeOpen));
+  const ciDurations = prs.map((pr) => pr.totalDuration.inMinutes);
+  const openTimes = prs.map((pr) => pr.prTimeOpen.inMinutes);
 
   return {
     ciDuration: {
