@@ -95,6 +95,7 @@ export const Cache = {
     if (!forceFresh) {
       const cachedData = await Cache.get<T>(key);
 
+      console.log({ cachedData })
       if (cachedData !== null) {
         return cachedData;
       }
