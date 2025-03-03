@@ -9,7 +9,7 @@
     --bg-color-secondary: var(--bg-secondary);
     --card-bg: var(--midnight-medium);
     --card-bg-light: var(--midnight-light);
-    --text-primary: rgba(255, 255, 255, 0.9);
+    --text-primary: rgba(256, 255, 255, 0.9);
     --text-secondary: rgba(255, 255, 255, 0.6);
     --accent-color: var(--accent-primary);
     --accent-gradient-start: var(--royal-blue-dark);
@@ -20,9 +20,9 @@
     --card-highlight: rgba(255, 255, 255, 0.03);
 
     /* Border Radius */
-    --border-radius-sm: 8px;
-    --border-radius-md: 12px;
-    --border-radius-lg: 16px;
+    --border-radius-sm: 16px;
+    --border-radius-md: 22px;
+    --border-radius-lg: 36px;
 
     /* Spacing Variables */
     --spacing-xs: 4px;

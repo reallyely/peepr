@@ -8,7 +8,7 @@ const redis = new Redis(Number(process.env.REDIS_PORT), process.env.REDIS_URL_HO
 });
 
 // Define default TTL values (in seconds)
-const DEFAULT_TTL = 600 * 60;
+const DEFAULT_TTL = 60 * 60 * 24 * 180; // 180 days
 const TTL_CONFIG = {
   pullRequests: DEFAULT_TTL,
   integration: DEFAULT_TTL,

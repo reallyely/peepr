@@ -46,7 +46,7 @@ export default function Button(props: ButtonProps) {
     >
       {local.loading ? (
         <span class={styles["button__loading-text"]}>
-          <span class={styles.button__spinner} aria-hidden="true"></span>
+          <span class={styles.button__spinner} aria-hidden="true" />
           {local.children}
         </span>
       ) : (

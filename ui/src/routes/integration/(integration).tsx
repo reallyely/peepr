@@ -11,6 +11,7 @@ import {
   useSearchParams,
 } from "@solidjs/router";
 import { For, Show, Suspense, createMemo } from "solid-js";
+import { CycleSelector } from "~/components/CycleSelector/CycleSelector";
 import {
   Card,
   CardContent,
@@ -21,6 +22,7 @@ import { Alert, ProgressBar } from "~/components/feedback";
 import styles from "./integration.module.css";
 
 import type { WorkItemIntegration } from "@peepr/core";
+import Button from "~/components/form/Button";
 import { Cache } from "~/lib/cache";
 
 const getPRStats = query(async ({ start, end, refresh = false }) => {
@@ -62,8 +64,19 @@ const getPRStats = query(async ({ start, end, refresh = false }) => {
           );
 
           const stats = builder.build();
+          const prStats = {
+            prNumber: pr.number,
+            title: pr.title,
+            createdAt: pr.created_at,
+            updatedAt: pr.updated_at,
+            mergedAt: pr.closed_at,
+            closedAt: pr.closed_at,
+            prTimeOpen: stats.prTimeOpen.toHumanReadable(),
+            pullRequestCheckRuns: stats.pullRequestCheckRuns,
+            totalDuration: stats.totalDuration.toHumanReadable(),
+          };
 
-          pullRequests.push(stats);
+          pullRequests.push(prStats);
 
           // Limit to 10 PRs
           if (pullRequests.length >= 10) break;
@@ -217,6 +230,19 @@ export default function Integration() {
     setSearchParams({ ...searchParams, refresh: "true" });
   };
 
+  // Handle cycle selection change
+  const handleCycleChange = (cycleData: {
+    cycleNumber: number,
+    startDate: Date,
+    endDate: Date
+  }) => {
+    setSearchParams({
+      start: cycleData.startDate.toISOString(),
+      end: cycleData.endDate.toISOString(),
+      refresh: "false"
+    });
+  };
+
   // Format dates for display
   const formatDate = (dateString: string): string => {
     if (!dateString) return "";
@@ -253,18 +279,26 @@ export default function Integration() {
                 <h2 id="stats-summary" class="visually-hidden">Statistics Summary</h2>
 
 
-                <Alert type="info" class={styles["date-range"]}>
-                  <span class={styles["date-range__value"]}>{dateRangeDisplay()}</span>
-                  <button
-                    type="button"
-                    onClick={handleRefresh}
-                    class={styles["integration-header__refresh-button"]}
-                    disabled={refresh}
-                    aria-label="Refresh data"
-                  >
-                    {refresh ? "Refreshing..." : "Refresh Data"}
-                  </button>
-                </Alert>
+                <div class={styles["date-range-container"]}>
+                  <CycleSelector
+                    onChange={handleCycleChange}
+                    ariaLabel="Select date range for statistics"
+                  />
+
+                  <Alert type="info" class={styles["date-range"]}>
+                    <span class={styles["date-range__value"]}>{dateRangeDisplay()}</span>
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      onClick={handleRefresh}
+
+                      title="Note, querying this data is expensive, only do this when you know there's a change to sync"
+                      disabled={refresh}
+                    >
+                      {refresh ? "Refreshing..." : "Refresh Cache"}
+                    </Button>
+                  </Alert>
+                </div>
 
                 <div class={styles["stats-grid"]}>
                   <Card variant="subtle">
@@ -296,11 +330,10 @@ export default function Integration() {
                   </Card>
                 </div>
 
-                <Card>
+                <Card variant="subtle">
                   <CardHeader title="Detailed Statistics" />
                   <CardContent>
                     <table
-                      class={styles["stats-table"]}
                       aria-label="Detailed PR Statistics"
                     >
                       <thead>
@@ -367,7 +400,7 @@ export default function Integration() {
             />
             <CardContent>
               <For each={Array.isArray(prStats()) ? prStats() : []}>
-                {(pr: WorkItemIntegration) => (
+                {(pr) => (
                   <CardItem>
                     <>
                       <div class={styles["pr-item__icon"]}>📊</div>
