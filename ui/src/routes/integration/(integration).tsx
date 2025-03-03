@@ -10,7 +10,17 @@ import {
   query,
   useSearchParams,
 } from "@solidjs/router";
-import { For, Show, Suspense, SuspenseList, createEffect, createMemo, createResource, createSignal } from "solid-js";
+import {
+  For,
+  Show,
+  Suspense,
+  SuspenseList,
+  createEffect,
+  createMemo,
+  createResource,
+  createSignal,
+  useTransition
+} from "solid-js";
 import { CycleSelector } from "~/components/CycleSelector/CycleSelector";
 import {
   Card,
@@ -83,9 +93,9 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
             updatedAt: pr.updated_at,
             mergedAt: pr.closed_at,
             closedAt: pr.closed_at,
-            prTimeOpen: stats()?.prTimeOpen.toHumanReadable(),
-            pullRequestCheckRuns: stats()?.pullRequestCheckRuns,
-            totalDuration: stats()?.totalDuration.toHumanReadable(),
+            prTimeOpen: stats?.prTimeOpen.toHumanReadable(),
+            pullRequestCheckRuns: stats?.pullRequestCheckRuns,
+            totalDuration: stats?.totalDuration.toHumanReadable(),
           };
 
           pullRequests.push(prStats);
@@ -114,7 +124,7 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
 }, "integration-stats");
 
 export const route = {
-  preload({ params, location }) {
+  preload({ location }) {
     const searchParams = new URLSearchParams(location.search);
     // Default to the current cycle if no cycle number provided
     const currentDate = new Date();
@@ -153,7 +163,10 @@ export default function Integration() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [cycleNumber, setCycleNumber] = createSignal(Number(searchParams.cycle) || defaultCycleNumber);
-  const [refreshing, setRefreshing] = createSignal(searchParams.refresh === "true");
+  const [refresh, setRefresh] = createSignal(false);
+
+  // Add transition state using Solid's useTransition hook
+  const [isPending, startTransition] = useTransition();
 
   // Synchronize URL changes with our local state
   createEffect(() => {
@@ -162,37 +175,37 @@ export default function Integration() {
       setCycleNumber(cycleFromParams);
     }
 
-    const refreshFromParams = searchParams.refresh === "true";
-    if (refreshFromParams !== refreshing()) {
-      setRefreshing(refreshFromParams);
-    }
   });
 
-  const prStatsData = createAsync(() => getPRStats({
-    cycleNumber: cycleNumber(),
-    refresh: refreshing()
-  }));
+  const prStatsData = createAsync(async () => {
+    const stats = await getPRStats({
+      cycleNumber: cycleNumber(), refresh: refresh()
+    })
+    setRefresh(false)
+    return stats
+  }, { name: 'get-integration-stats' });
 
-  // Function to handle data refresh
+  // Function to handle data refresh with transition
   const handleRefresh = () => {
-    setRefreshing(true);
-    setSearchParams({
-      cycle: cycleNumber().toString(),
-      refresh: "true"
+    startTransition(async () => {
+      setSearchParams({
+        cycle: cycleNumber().toString(),
+      });
+      setRefresh(true);
     });
   };
 
-  // Handle cycle selection change
+  // Handle cycle selection change with transition
   const handleCycleChange = (cycleData: {
     cycleNumber: number,
     startDate: Date,
     endDate: Date
   }) => {
-    setCycleNumber(cycleData.cycleNumber);
-    setRefreshing(false);
-    setSearchParams({
-      cycle: cycleData.cycleNumber.toString(),
-      refresh: "false"
+    startTransition(async () => {
+      setCycleNumber(cycleData.cycleNumber);
+      setSearchParams({
+        cycle: cycleData.cycleNumber.toString(),
+      });
     });
   };
 
@@ -222,14 +235,15 @@ export default function Integration() {
     <main class="main-container">
       <h1>Pull Request Statistics</h1>
 
-      <Card aria-labelledby="stats-summary">
+      <Card aria-labelledby="stats-summary" >
         <h2 id="stats-summary" class="visually-hidden">Statistics Summary</h2>
 
         <div class={styles["date-range-container"]}>
           <CycleSelector
             value={cycleNumber()}
             onChange={handleCycleChange}
-            ariaLabel="Select cycle for PR statistics"
+            aria-label="Select cycle for PR statistics"
+            autofocus={true}
           />
 
           <Alert type="info" class={styles["date-range"]}>
@@ -238,14 +252,15 @@ export default function Integration() {
               size="sm"
               variant="danger"
               onClick={handleRefresh}
-
               title="Note, querying this data is expensive, only do this when you know there's a change to sync"
-              disabled={refreshing()}
+              disabled={isPending()}
             >
-              {refreshing() ? "Refreshing..." : "Refresh Cache"}
+              Refresh Cache
             </Button>
           </Alert>
         </div>
+      </Card>
+      <Card classList={{ [styles["card--pending"]]: isPending() }}>
         <Suspense fallback={<ProgressBar indeterminate />}>
           <Show
             when={!("error" in (prStatsData() || {}))}
@@ -257,7 +272,6 @@ export default function Integration() {
           >
             <Show when={Object.entries(prStatsData()?.statistics || {}).length > 0 && prStatsData()?.statistics}>
               {(stats) => {
-                console.log({ stats })
                 return (
                   <>
                     <div class={styles["stats-grid"]}>
@@ -356,7 +370,7 @@ export default function Integration() {
           </Show>
         </Suspense>
       </Card>
-      <Card>
+      <Card classList={{ [styles["card--pending"]]: isPending() }}>
         <Suspense fallback={<ProgressBar indeterminate />}>
           <Show
             when={!("error" in (prStatsData() || {}))}

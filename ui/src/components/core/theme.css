@@ -53,4 +53,46 @@
     --status-warning: var(--accent-warning);
     --status-danger: var(--accent-danger);
     --status-info: var(--accent-info);
+
+    /* Transition and Loading States */
+    --transition-duration-fast: 0.15s;
+    --transition-duration-normal: 0.3s;
+    --transition-duration-slow: 0.5s;
+    --transition-timing: ease;
+    --pending-opacity: 0.7;
+    --pending-overlay-color: rgba(19, 19, 54, 0.2);
+    --pending-blur: 1px;
+}
+
+/* Global pending transition states */
+.pending {
+    opacity: var(--pending-opacity);
+    transition: opacity var(--transition-duration-normal)
+        var(--transition-timing);
+    position: relative;
+}
+
+.pending::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--pending-overlay-color);
+    backdrop-filter: blur(var(--pending-blur));
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.pending-pulse {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 0.7;
+    }
 }

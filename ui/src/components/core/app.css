@@ -3,3 +3,23 @@
 @import './typography.css';
 @import './theme.css';
 @import './reset.css';
+
+/* Global utility classes */
+.transition-all {
+    transition: all var(--transition-duration-normal) var(--transition-timing);
+}
+
+.transition-opacity {
+    transition: opacity var(--transition-duration-normal) var(--transition-timing);
+}
+
+.transition-transform {
+    transition: transform var(--transition-duration-normal) var(--transition-timing);
+}
+
+.transition-colors {
+    transition: 
+        color var(--transition-duration-normal) var(--transition-timing),
+        background-color var(--transition-duration-normal) var(--transition-timing),
+        border-color var(--transition-duration-normal) var(--transition-timing);
+}

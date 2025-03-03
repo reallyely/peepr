@@ -1,17 +1,18 @@
-import { createEffect, createSignal, onMount } from "solid-js";
+import { type JSX, createEffect, createSignal, onMount, splitProps } from "solid-js";
 import styles from "./CycleSelector.module.css";
 
-interface CycleSelectorProps {
+interface CycleSelectorProps extends Omit<JSX.HTMLAttributes<HTMLInputElement>, 'onChange'> {
   value?: number;
   onChange?: (cycleData: {
     cycleNumber: number;
     startDate: Date;
     endDate: Date;
   }) => void;
-  ariaLabel?: string;
 }
 
-export const CycleSelector = (props: CycleSelectorProps) => {
+export const CycleSelector = (allProps: CycleSelectorProps) => {
+
+  const [props, inputProps] = splitProps(allProps, ['value', 'onChange']);
   // Calculate number of cycles in 2025 and determine current cycle
   const startDate = new Date(2025, 0, 1);
   const endDate = new Date(2025, 11, 31);
@@ -26,7 +27,10 @@ export const CycleSelector = (props: CycleSelectorProps) => {
   const daysSinceStart = Math.ceil(
     (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
   );
-  const currentCycle = Math.max(1, Math.min(totalCycles, Math.ceil(daysSinceStart / 7)));
+  const currentCycle = Math.max(
+    1,
+    Math.min(totalCycles, Math.ceil(daysSinceStart / 7)),
+  );
 
   const [internalValue, setInternalValue] = createSignal(props.value || 1);
   const [isDragging, setIsDragging] = createSignal(false);
@@ -69,7 +73,6 @@ export const CycleSelector = (props: CycleSelectorProps) => {
     });
   }
 
-
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("en-US", {
       month: "short",
@@ -99,7 +102,7 @@ export const CycleSelector = (props: CycleSelectorProps) => {
   };
 
   return (
-    <div class={styles.cycleSelector}>
+    <div class={`${styles.cycleSelector}`} >
       <div class={styles.cycleInfoStatic}>
         <div class={styles.cycleNumber}>Cycle {cycleData().cycleNumber}</div>
         <div class={styles.dateRange}>
@@ -122,11 +125,11 @@ export const CycleSelector = (props: CycleSelectorProps) => {
         onTouchEnd={() => setIsDragging(false)}
         onFocus={() => setIsDragging(true)}
         onBlur={() => setIsDragging(false)}
-        aria-label={props.ariaLabel || "Select cycle"}
         aria-valuemin={1}
         aria-valuemax={currentCycle}
         aria-valuenow={internalValue()}
         aria-valuetext={`Cycle ${cycleData().cycleNumber}: ${formatDate(cycleData().startDate)} to ${formatDate(cycleData().endDate)}`}
+        {...inputProps}
       />
 
       {/* <div class={styles.ticks}>
@@ -135,7 +138,7 @@ export const CycleSelector = (props: CycleSelectorProps) => {
           <div
             class={styles.tick}
             style={{
-              left: `${tick.position}%`,
+              left: `${ tick.position }% `,
             }}
             data-cycle={tick.cycle}
           >

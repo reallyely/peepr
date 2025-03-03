@@ -46,6 +46,15 @@ a {
 a:hover {
     text-decoration: underline;
 }
+/* Default transitions for common interactions */
+a, button, .button, .nav-item, .tab, .action, input, select, textarea {
+    transition: 
+        color var(--transition-duration-fast) var(--transition-timing),
+        background-color var(--transition-duration-fast) var(--transition-timing),
+        border-color var(--transition-duration-fast) var(--transition-timing),
+        opacity var(--transition-duration-fast) var(--transition-timing),
+        transform var(--transition-duration-fast) var(--transition-timing);
+}
 /* Lists */
 ul,
 ol {
