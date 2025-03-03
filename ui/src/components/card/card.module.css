@@ -72,6 +72,24 @@
     }
 }
 
+.card--subtle {
+    background-color: color-mix(in srgb, var(--card-bg-light), transparent 80%);
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
+    &::before {
+        opacity: 0.1;
+    }
+
+    &::after {
+        opacity: 0.02;
+    }
+
+    &:hover::after {
+        opacity: 0.05;
+    }
+}
+
 /* Card Header */
 .card__header {
     display: flex;

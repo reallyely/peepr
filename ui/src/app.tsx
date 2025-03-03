@@ -13,24 +13,7 @@ export default function App() {
       <Background />
       <Router
         root={(props) => (
-          <>
-            <Nav items={[
-              {
-                label: "Home",
-                href: "/",
-              },
-              {
-                label: "Integration Stats",
-                href: "/integration",
-              },
-              {
-                label: "Styles Test",
-                href: "/sample-ui",
-              }
-            ]
-            } />
-            <Suspense>{props.children}</Suspense>
-          </>
+          <Suspense>{props.children}</Suspense>
         )}
       >
         <FileRoutes />

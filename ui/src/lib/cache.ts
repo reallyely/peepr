@@ -1,6 +1,5 @@
 import Redis from 'ioredis';
 
-console.log(process.env.REDIS_PORT);
 // Initialize Redis client
 const redis = new Redis(Number(process.env.REDIS_PORT), process.env.REDIS_URL_HOST, {
   username: process.env.REDIS_USERNAME,

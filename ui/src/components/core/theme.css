@@ -8,6 +8,7 @@
     --bg-color-primary: var(--bg-primary);
     --bg-color-secondary: var(--bg-secondary);
     --card-bg: var(--midnight-medium);
+    --card-bg-light: var(--midnight-light);
     --text-primary: rgba(255, 255, 255, 0.9);
     --text-secondary: rgba(255, 255, 255, 0.6);
     --accent-color: var(--accent-primary);

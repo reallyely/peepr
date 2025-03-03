@@ -33,7 +33,7 @@ export default function Login(props: RouteSectionProps) {
               defaultValue="login"
               options={[
                 { value: "login", label: "Login" },
-                { value: "register", label: "Register" }
+                // { value: "register", label: "Register" }
               ]}
             />
 

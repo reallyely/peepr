@@ -1,22 +1,44 @@
-import { type RouteDefinition, createAsync } from "@solidjs/router";
+import {
+  type RouteDefinition,
+  type RouteSectionProps,
+  createAsync,
+} from "@solidjs/router";
+import { Show, Suspense } from "solid-js";
+import { Nav } from "~/components/nav";
 import { getUser, logout } from "~/lib";
 
 export const route = {
-  preload() { getUser(); }
+  preload() {
+    getUser();
+  },
 } satisfies RouteDefinition;
 
-export default function Home() {
+export default function Home(props: RouteSectionProps) {
   const user = createAsync(() => getUser(), { deferStream: true });
-  
+
   return (
-    <div class="main-container">
-      <h2>Hello {user()?.username}</h2>
-      
-      <form action={logout} method="post">
-        <button name="logout" type="submit">
-          Logout
-        </button>
-      </form>
-    </div>
+    <>
+      <Show when={user}>
+        <Nav
+          items={[
+            {
+              label: "Home",
+              href: "/",
+            },
+            {
+              label: "Integration Stats",
+              href: "/integration",
+            },
+            {
+              label: "Styles Test",
+              href: "/sample-ui",
+            },
+          ]}
+        />
+      </Show>
+      <div class="main-container">
+        <Suspense>{props.children}</Suspense>
+      </div>
+    </>
   );
 }
