@@ -1,6 +1,5 @@
 import Redis from 'ioredis';
 
-console.log(process.env.REDIS_PORT);
 // Initialize Redis client
 const redis = new Redis(Number(process.env.REDIS_PORT), process.env.REDIS_URL_HOST, {
   username: process.env.REDIS_USERNAME,
@@ -9,7 +8,7 @@ const redis = new Redis(Number(process.env.REDIS_PORT), process.env.REDIS_URL_HO
 });
 
 // Define default TTL values (in seconds)
-const DEFAULT_TTL = 600 * 60;
+const DEFAULT_TTL = 60 * 60 * 24 * 180; // 180 days
 const TTL_CONFIG = {
   pullRequests: DEFAULT_TTL,
   integration: DEFAULT_TTL,
@@ -95,9 +94,14 @@ export const Cache = {
   ): Promise<T> {
     if (!forceFresh) {
       const cachedData = await Cache.get<T>(key);
+
+      console.log({ cachedData })
       if (cachedData !== null) {
         return cachedData;
       }
+      const freshData = await dataFn();
+      await this.set(key, freshData, ttl);
+      return freshData;
     }
 
     const freshData = await dataFn();

@@ -2,13 +2,13 @@ import { NavigationMenu } from "@kobalte/core/navigation-menu";
 import { type Component, For } from "solid-js";
 import styles from "./nav.module.css";
 
-type NavItem = {
+export type NavItem = {
   label: string;
   href?: string;
   items?: NavItem[];
 };
 
-type NavProps = {
+export type NavProps = {
   items: NavItem[];
   logo?: string;
 };

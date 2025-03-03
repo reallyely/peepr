@@ -1,15 +1,20 @@
 import assert from "node:assert";
 import process from "node:process";
-import { GitHubService } from '@peepr/work-tracking';
+import { GitHubService } from "@peepr/work-tracking";
 import { type RouteDefinition, createAsync, query } from "@solidjs/router";
 import { For, Show, Suspense, createSignal } from "solid-js";
-import { Card, CardContent, CardHeader, CardItem } from "~/components/card/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardItem,
+} from "~/components/card/card";
 import { ProgressBar, Skeleton } from "~/components/feedback";
 import { Cache } from "~/lib/cache";
 import styles from "./pull-requests.module.css";
 
 const getPullRequests = query(async ({ refresh = false }) => {
-  "use server"
+  "use server";
   const cacheKey = "pullRequests:recent";
 
   try {
@@ -28,7 +33,9 @@ const getPullRequests = query(async ({ refresh = false }) => {
         const pullRequests = [];
         let count = 0;
 
-        for await (const pr of githubService.getPullRequestsByDateRange(startDate)) {
+        for await (const pr of githubService.getPullRequestsByDateRange(
+          startDate
+        )) {
           pullRequests.push(pr);
           count++;
 
@@ -50,12 +57,16 @@ const getPullRequests = query(async ({ refresh = false }) => {
 }, "pullRequests");
 
 export const route = {
-  preload() { getPullRequests(false) }
+  preload() {
+    getPullRequests(false);
+  },
 } satisfies RouteDefinition;
 
 export default function PullRequests() {
   const [refreshing, setRefreshing] = createSignal(false);
-  const pullRequests = createAsync(() => getPullRequests({ refresh: refreshing() }));
+  const pullRequests = createAsync(() =>
+    getPullRequests({ refresh: refreshing() })
+  );
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -74,12 +85,12 @@ export default function PullRequests() {
           disabled={refreshing()}
           aria-label="Refresh pull requests"
         >
-          {refreshing() ? 'Refreshing...' : 'Refresh Data'}
+          {refreshing() ? "Refreshing..." : "Refresh Data"}
         </button>
       </div>
 
       <Card>
-        <Suspense fallback={<ProgressBar indeterminate value={50} />} >
+        <Suspense fallback={<ProgressBar indeterminate value={50} />}>
           <CardHeader title="Pull Requests" count={pullRequests()?.length} />
           <CardContent>
             <For each={pullRequests()}>
@@ -88,17 +99,27 @@ export default function PullRequests() {
                   <div class={styles.pr__icon}>📄</div>
                   <div class={styles.pr__content}>
                     <div class={styles.pr__title}>
-                      <a href={pr.html_url} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={pr.html_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {pr.title}
                       </a>
                     </div>
                     <div class={styles.pr__details}>
                       <span class={styles.pr__number}>#{pr.number}</span>
                       <span class={styles.pr__author}>
-                        by <span class={styles.pr__author_name}>{pr.user?.login}</span>
+                        by{" "}
+                        <span class={styles.pr__author_name}>
+                          {pr.user?.login}
+                        </span>
                       </span>
                       <span class={styles.pr__date}>
-                        merged on {new Date(pr.closed_at || pr.updated_at).toLocaleDateString()}
+                        merged on{" "}
+                        {new Date(
+                          pr.closed_at || pr.updated_at
+                        ).toLocaleDateString()}
                       </span>
                     </div>
                   </div>

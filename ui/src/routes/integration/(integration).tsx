@@ -10,24 +10,27 @@ import {
   query,
   useSearchParams,
 } from "@solidjs/router";
-import { For, Show, Suspense } from "solid-js/web";
+import { For, Show, Suspense, SuspenseList, createEffect, createMemo, createResource, createSignal } from "solid-js";
+import { CycleSelector } from "~/components/CycleSelector/CycleSelector";
 import {
   Card,
   CardContent,
   CardHeader,
   CardItem,
-} from "~/components/card/card";
+} from "~/components/card";
 import { Alert, ProgressBar } from "~/components/feedback";
 import styles from "./integration.module.css";
+import { generateStatistics } from "./statistics";
 
 import type { WorkItemIntegration } from "@peepr/core";
+import Button from "~/components/form/Button";
 import { Cache } from "~/lib/cache";
 
-const getPRStats = query(async ({ start, end, refresh = false }) => {
+const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
   "use server";
 
-  // Generate a cache key based on the parameters
-  const cacheKey = `integration:prStats:${start}:${end || "noend"}`;
+  // Generate a cache key based on the cycle number
+  const cacheKey = `integration:prStats:cycle:${cycleNumber}`;
 
   // Try to return from cache unless refresh is true
   try {
@@ -38,14 +41,21 @@ const getPRStats = query(async ({ start, end, refresh = false }) => {
         assert(process.env.GITHUB_TOKEN, "GITHUB_TOKEN is not set");
         const github = new GitHubService(process.env.GITHUB_TOKEN);
 
-        if (!start) {
-          throw new Error("Start date is required");
+        if (!cycleNumber) {
+          throw new Error("Cycle number is required");
         }
+
+        // Calculate start and end dates based on cycle number
+        const startDate = new Date(2025, 0, 1);
+        startDate.setDate(startDate.getDate() + (cycleNumber - 1) * 7);
+
+        const endDate = new Date(startDate);
+        endDate.setDate(endDate.getDate() + 6);
 
         const pullRequests = [];
 
-        // Get pull requests from the specified date range
-        for await (const pr of github.getPullRequestsByDateRange(start, end)) {
+        // Get pull requests from the calculated date range for the cycle
+        for await (const pr of github.getPullRequestsByDateRange(startDate.toISOString(), endDate.toISOString())) {
           const builder = new WorkItemIntegrationBuilder();
           builder.setPullRequest(pr);
 
@@ -62,9 +72,19 @@ const getPRStats = query(async ({ start, end, refresh = false }) => {
           );
 
           const stats = builder.build();
+          const prStats = {
+            prNumber: pr.number,
+            title: pr.title,
+            createdAt: pr.created_at,
+            updatedAt: pr.updated_at,
+            mergedAt: pr.closed_at,
+            closedAt: pr.closed_at,
+            prTimeOpen: stats.prTimeOpen.toHumanReadable(),
+            pullRequestCheckRuns: stats.pullRequestCheckRuns,
+            totalDuration: stats.totalDuration.toHumanReadable(),
+          };
 
-
-          pullRequests.push(stats);
+          pullRequests.push(prStats);
 
           // Limit to 10 PRs
           if (pullRequests.length >= 10) break;
@@ -75,7 +95,7 @@ const getPRStats = query(async ({ start, end, refresh = false }) => {
       // Cache for 15 minutes
       920 * 60,
       // Pass the refresh flag to force a cache refresh when needed
-      refresh === true,
+      refresh
     );
   } catch (error) {
     console.error("Failed to fetch PR stats:", error);
@@ -85,121 +105,314 @@ const getPRStats = query(async ({ start, end, refresh = false }) => {
 
 export const route = {
   preload({ params, location }) {
-    // Default to last 30 days if no start date provided
-    const defaultStart = new Date("2025-02-01");
-    defaultStart.setDate(defaultStart.getDate() - 30);
-
     const searchParams = new URLSearchParams(location.search);
-    const start = searchParams.get("start") || defaultStart.toISOString();
-    const end = searchParams.get("end") || undefined;
+    // Default to the current cycle if no cycle number provided
+    const currentDate = new Date();
+    const startDate = new Date(2025, 0, 1);
+    const daysSinceStart = Math.ceil(
+      (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    const defaultCycleNumber = Math.max(1, Math.ceil(daysSinceStart / 7));
 
-    getPRStats({ start, end });
+
+
+    getPRStats({ cycleNumber: defaultCycleNumber });
   },
 } satisfies RouteDefinition;
 
+// Format dates for display
+const formatDate = (dateString: string): string => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+};
+
 export default function Integration() {
-  // Default to last 30 days if no start date provided
-  const defaultStart = new Date("2025-02-01");
-  defaultStart.setDate(defaultStart.getDate() - 30);
+  // Calculate current cycle as default
+  const currentDate = new Date();
+  const startDate = new Date(2025, 0, 1);
+  const daysSinceStart = Math.ceil(
+    (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  const defaultCycleNumber = Math.max(1, Math.ceil(daysSinceStart / 7));
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const start = searchParams.start || defaultStart.toISOString();
-  const end = searchParams.end || undefined;
+  const [cycleNumber, setCycleNumber] = createSignal(Number(searchParams.cycle) || defaultCycleNumber);
+  const [refreshing, setRefreshing] = createSignal(searchParams.refresh === "true");
 
-  const refresh = searchParams.refresh === "true";
+  // Synchronize URL changes with our local state
+  createEffect(() => {
+    const cycleFromParams = Number(searchParams.cycle) || defaultCycleNumber;
+    if (cycleFromParams !== cycleNumber()) {
+      setCycleNumber(cycleFromParams);
+    }
 
-  const prStats = createAsync(() => getPRStats({ start, end, refresh }));
+    const refreshFromParams = searchParams.refresh === "true";
+    if (refreshFromParams !== refreshing()) {
+      setRefreshing(refreshFromParams);
+    }
+  });
+
+  const prStats = createAsync(() => getPRStats({
+    cycleNumber: cycleNumber(),
+    refresh: refreshing()
+  }));
+
+  // Calculate aggregate statistics
+  const statistics = createAsync(async () => {
+    return generateStatistics(prStats() as WorkItemIntegration[]);
+  });
 
   // Function to handle data refresh
   const handleRefresh = () => {
-    setSearchParams({ ...searchParams, refresh: "true" });
-    // Reset the refresh parameter after fetching
+    setRefreshing(true);
+    setSearchParams({
+      cycle: cycleNumber().toString(),
+      refresh: "true"
+    });
   };
 
-  return (
-    <div class="main-container">
-      <div class="main-container">
-        <div class={styles.header}>
-          <h2>Pull Request Statistics</h2>
-          <button
-            type="button"
-            onClick={handleRefresh}
-            class={styles.refresh_button}
-            disabled={refresh}
-            aria-label="Refresh data"
-          >
-            {refresh ? "Refreshing..." : "Refresh Data"}
-          </button>
-        </div>
+  // Handle cycle selection change
+  const handleCycleChange = (cycleData: {
+    cycleNumber: number,
+    startDate: Date,
+    endDate: Date
+  }) => {
+    setCycleNumber(cycleData.cycleNumber);
+    setRefreshing(false);
+    setSearchParams({
+      cycle: cycleData.cycleNumber.toString(),
+      refresh: "false"
+    });
+  };
 
-        <Card>
-          <Suspense fallback={<ProgressBar indeterminate value={50} />}>
-            <Show
-              when={!("error" in (prStats() || {}))}
-              fallback={
-                <Alert class={styles.error}>
-                  Error: {(prStats() as { error: string }).error}
-                </Alert>
-              }
+  // Format dates for display
+  const formatDate = (dateString: string): string => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const dateRangeDisplay = createMemo(() => {
+    // Calculate the date range from the cycle number
+    const start = new Date(2025, 0, 1);
+    start.setDate(start.getDate() + (cycleNumber() - 1) * 7);
+
+    const end = new Date(start);
+    end.setDate(end.getDate() + 6);
+
+    return `${formatDate(start.toISOString())} - ${formatDate(end.toISOString())}`;
+  });
+
+  return (
+    <main class="main-container">
+      <h1>Pull Request Statistics</h1>
+
+      <Card aria-labelledby="stats-summary">
+        <h2 id="stats-summary" class="visually-hidden">Statistics Summary</h2>
+
+        <div class={styles["date-range-container"]}>
+          <CycleSelector
+            value={cycleNumber()}
+            onChange={handleCycleChange}
+            ariaLabel="Select cycle for PR statistics"
+          />
+
+          <Alert type="info" class={styles["date-range"]}>
+            <span class={styles["date-range__value"]}>{dateRangeDisplay()}</span>
+            <Button
+              size="sm"
+              variant="danger"
+              onClick={handleRefresh}
+
+              title="Note, querying this data is expensive, only do this when you know there's a change to sync"
+              disabled={refreshing()}
             >
-              <CardHeader
-                title="Pull Request Analytics"
-                count={Array.isArray(prStats()) ? prStats().length : 0}
-              />
-              <CardContent>
-                <For each={Array.isArray(prStats()) ? prStats() : []}>
-                  {(pr: WorkItemIntegration) => (
-                    <CardItem>
-                      <div class={styles.integration__icon}>📊</div>
-                      <div class={styles.integration__content}>
-                        <div class={styles.integration__title}>
-                          <span>#{pr.prNumber}</span> {pr.title}
+              {refreshing() ? "Refreshing..." : "Refresh Cache"}
+            </Button>
+          </Alert>
+        </div>
+        <Suspense fallback={<ProgressBar indeterminate />}>
+          <Show
+            when={!("error" in (prStats() || {}))}
+            fallback={
+              <Alert type="error">
+                Error: {(prStats() as { error: string }).error}
+              </Alert>
+            }
+          >
+            <Show when={statistics()}>
+              {(stats) => (
+                <>
+                  <div class={styles["stats-grid"]}>
+                    <Card variant="subtle">
+                      <CardContent>
+                        <span class={styles["stats-card__title"]}>Total PRs</span>
+                        <span class={styles["stats-card__value"]}>{stats().totalPRs}</span>
+                      </CardContent>
+                    </Card>
+
+                    <Card variant="subtle">
+                      <CardContent>
+                        <span class={styles["stats-card__title"]}>Total CI Runs</span>
+                        <span class={styles["stats-card__value"]}>{stats().totalCIRuns}</span>
+                      </CardContent>
+                    </Card>
+
+                    <Card variant="subtle">
+                      <CardContent>
+                        <span class={styles["stats-card__title"]}>Median CI Duration</span>
+                        <span class={styles["stats-card__value"]}>{stats().ciDuration.median}</span>
+                      </CardContent>
+                    </Card>
+
+                    <Card variant="subtle">
+                      <CardContent>
+                        <span class={styles["stats-card__title"]}>Median PR Open Time</span>
+                        <span class={styles["stats-card__value"]}>{stats().openTime.median}</span>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <Card variant="subtle">
+                    <CardHeader title="Detailed Statistics" />
+                    <CardContent>
+                      <table
+                        aria-label="Detailed PR Statistics"
+                      >
+                        <thead>
+                          <tr>
+                            <th class={styles["stats-table__header"]}>Metric</th>
+                            <th class={styles["stats-table__header"]}>Min</th>
+                            <th class={styles["stats-table__header"]}>Q1</th>
+                            <th class={styles["stats-table__header"]}>Median</th>
+                            <th class={styles["stats-table__header"]}>Q3</th>
+                            <th class={styles["stats-table__header"]}>Max</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class={styles["stats-table__row"]}>
+                            <th class={styles["stats-table__header"]}>CI Duration</th>
+                            <td class={styles["stats-table__cell"]}>
+                              {stats().ciDuration.range.min}
+                            </td>
+                            <td class={styles["stats-table__cell"]}>
+                              {stats().ciDuration.quartiles.q1}
+                            </td>
+                            <td class={styles["stats-table__cell"]}>
+                              {stats().ciDuration.quartiles.q2}
+                            </td>
+                            <td class={styles["stats-table__cell"]}>
+                              {stats().ciDuration.quartiles.q3}
+                            </td>
+                            <td class={styles["stats-table__cell"]}>
+                              {stats().ciDuration.range.max}
+                            </td>
+                          </tr>
+                          <tr class={styles["stats-table__row"]}>
+                            <th class={styles["stats-table__header"]}>
+                              PR Open Time
+                            </th>
+                            <td class={styles["stats-table__cell"]}>
+                              {stats().openTime.range.min}
+                            </td>
+                            <td class={styles["stats-table__cell"]}>
+                              {stats().openTime.quartiles.q1}
+                            </td>
+                            <td class={styles["stats-table__cell"]}>
+                              {stats().openTime.quartiles.q2}
+                            </td>
+                            <td class={styles["stats-table__cell"]}>
+                              {stats().openTime.quartiles.q3}
+                            </td>
+                            <td class={styles["stats-table__cell"]}>
+                              {stats().openTime.range.max}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </CardContent>
+                  </Card>
+                </>
+              )}
+            </Show>
+
+          </Show>
+        </Suspense>
+      </Card>
+      <Card>
+        <Suspense fallback={<ProgressBar indeterminate />}>
+          <Show
+            when={!("error" in (prStats() || {}))}
+            fallback={
+              <Alert type="error">
+                Error: {(prStats() as { error: string }).error}
+              </Alert>
+            }
+          >
+            <CardHeader
+              title="Pull Request Details"
+              count={Array.isArray(prStats()) ? prStats().length : 0}
+            />
+            <CardContent>
+              <For each={Array.isArray(prStats()) ? prStats() : []}>
+                {(pr) => (
+                  <CardItem>
+                    <>
+                      <div class={styles["pr-item__icon"]}>📊</div>
+                      <div class={styles["pr-item__content"]}>
+                        <div class={styles["pr-item__title"]}>
+                          <span class={styles["pr-item__title-number"]}>#{pr.prNumber}</span> {pr.title}
                         </div>
-                        <div class={styles.integration__details}>
-                          <div class={styles.integration__timing}>
+                        <div class={styles["pr-item__details"]}>
+                          <div class={styles["pr-item__stat"]}>
+                            <span>Created: </span>
+                            <span class={styles["pr-item__stat-value"]}>
+                              {pr.createdAt ? formatDate(pr.createdAt) : "Unknown"}
+                            </span>
+                          </div>
+                          <div class={styles["pr-item__stat"]}>
+                            <span>Closed: </span>
+                            <span class={styles["pr-item__stat-value"]}>
+                              {pr.closedAt ? formatDate(pr.closedAt) : "Open"}
+                            </span>
+                          </div>
+                          <div class={styles["pr-item__stat"]}>
                             <span>Time Open: </span>
-                            <span class={styles.integration__value}>
+                            <span class={styles["pr-item__stat-value"]}>
                               {pr.prTimeOpen}
                             </span>
                           </div>
-                          <div class={styles.integration__timing}>
+                          <div class={styles["pr-item__stat"]}>
                             <span>Total CI Duration: </span>
-                            <span class={styles.integration__value}>
+                            <span class={styles["pr-item__stat-value"]}>
                               {pr.totalDuration}
                             </span>
                           </div>
-                          <div class={styles.integration__timing}>
+                          <div class={styles["pr-item__stat"]}>
                             <span>CI Runs: </span>
-                            <span class={styles.integration__value}>
+                            <span class={styles["pr-item__stat-value"]}>
                               {pr.pullRequestCheckRuns}
                             </span>
                           </div>
                         </div>
-
-                        {/* <div class={styles.integration__workflows}>
-                        <h4 class={styles.integration__subtitle}>Workflows</h4>
-                        <ul class={styles.integration__workflow_list}>
-                          <For each={pr.workflows}>
-                            {(workflow) => (
-                              <li class={styles.integration__workflow_item}>
-                                <span class={styles.integration__workflow_name}>{workflow.name}</span>
-                                <span class={styles.integration__workflow_stats}>
-                                  Runs: {workflow.runCount} | Duration: {workflow.totalDuration}
-                                </span>
-                              </li>
-                            )}
-                          </For>
-                        </ul>
-                      </div> */}
                       </div>
-                    </CardItem>
-                  )}
-                </For>
-              </CardContent>
-            </Show>
-          </Suspense>
-        </Card>
-      </div>
-    </div>
+                    </>
+                  </CardItem>
+                )}
+              </For>
+            </CardContent>
+          </Show>
+        </Suspense>
+      </Card>
+    </main >
   );
 }

@@ -4,13 +4,23 @@ import styles from "./card.module.css";
 interface CardProps {
   children: JSX.Element;
   class?: string;
+  variant?: 'default' | 'highlight' | 'subtle';
 }
 
 export function Card(props: CardProps) {
-  const [local, others] = splitProps(props, ["children", "class"]);
+  const [local, others] = splitProps(props, ["children", "class", "variant"]);
+  
+  const getVariantClass = () => {
+    if (local.variant === 'highlight') return styles['card--highlight'];
+    if (local.variant === 'subtle') return styles['card--subtle'];
+    return '';
+  };
 
   return (
-    <article class={`${styles.card} ${local.class || ""}`} {...others}>
+    <article 
+      class={`${styles.card} ${getVariantClass()} ${local.class || ""}`} 
+      {...others}
+    >
       {local.children}
     </article>
   );
