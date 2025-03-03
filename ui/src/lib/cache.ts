@@ -94,9 +94,13 @@ export const Cache = {
   ): Promise<T> {
     if (!forceFresh) {
       const cachedData = await Cache.get<T>(key);
+
       if (cachedData !== null) {
         return cachedData;
       }
+      const freshData = await dataFn();
+      await this.set(key, freshData, ttl);
+      return freshData;
     }
 
     const freshData = await dataFn();

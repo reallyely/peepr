@@ -2,6 +2,7 @@ import { createEffect, createSignal, onMount } from "solid-js";
 import styles from "./CycleSelector.module.css";
 
 interface CycleSelectorProps {
+  value?: number;
   onChange?: (cycleData: {
     cycleNumber: number;
     startDate: Date;
@@ -27,7 +28,7 @@ export const CycleSelector = (props: CycleSelectorProps) => {
   );
   const currentCycle = Math.max(1, Math.min(totalCycles, Math.ceil(daysSinceStart / 7)));
 
-  const [value, setValue] = createSignal(1);
+  const [internalValue, setInternalValue] = createSignal(props.value || 1);
   const [isDragging, setIsDragging] = createSignal(false);
   const [cycleData, setCycleData] = createSignal({
     cycleNumber: 1,
@@ -77,7 +78,14 @@ export const CycleSelector = (props: CycleSelectorProps) => {
   };
 
   createEffect(() => {
-    const newData = getCycleData(value());
+    // Update internal value when props.value changes
+    if (props.value) {
+      setInternalValue(props.value);
+    }
+  });
+
+  createEffect(() => {
+    const newData = getCycleData(internalValue());
     setCycleData(newData);
 
     if (props.onChange) {
@@ -87,7 +95,7 @@ export const CycleSelector = (props: CycleSelectorProps) => {
 
   const handleSliderChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
-    setValue(Number.parseInt(target.value, 10));
+    setInternalValue(Number.parseInt(target.value, 10));
   };
 
   return (
@@ -106,7 +114,7 @@ export const CycleSelector = (props: CycleSelectorProps) => {
         min="1"
         max={currentCycle}
         step="1"
-        value={value()}
+        value={internalValue()}
         onInput={handleSliderChange}
         onMouseDown={() => setIsDragging(true)}
         onMouseUp={() => setIsDragging(false)}
@@ -117,7 +125,7 @@ export const CycleSelector = (props: CycleSelectorProps) => {
         aria-label={props.ariaLabel || "Select cycle"}
         aria-valuemin={1}
         aria-valuemax={currentCycle}
-        aria-valuenow={value()}
+        aria-valuenow={internalValue()}
         aria-valuetext={`Cycle ${cycleData().cycleNumber}: ${formatDate(cycleData().startDate)} to ${formatDate(cycleData().endDate)}`}
       />
 
