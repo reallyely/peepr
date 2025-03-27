@@ -1,23 +1,23 @@
 .input {
-  padding: var(--spacing-md);
-  background-color: var(--bg-color-secondary);
-  border: var(--border-width-thin) var(--border-style-solid) var(--border-color);
-  border-radius: var(--border-radius-sm);
-  color: var(--text-primary);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  width: 100%;
+	padding: var(--spacing-md);
+	background-color: var(--bg-color-secondary);
+	border: var(--border-width-thin) var(--border-style-solid) var(--border-color);
+	border-radius: var(--border-radius-sm);
+	color: var(--text-primary);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	width: 100%;
 }
 
 .input:focus {
-  outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px rgba(49, 81, 208, 0.2);
+	outline: none;
+	border-color: var(--accent-color);
+	box-shadow: 0 0 0 2px rgba(49, 81, 208, 0.2);
 }
 
 .input--error {
-  border-color: var(--accent-danger);
+	border-color: var(--accent-danger);
 }
 
 .input--error:focus {
-  box-shadow: 0 0 0 2px rgba(255, 90, 66, 0.2);
+	box-shadow: 0 0 0 2px rgba(255, 90, 66, 0.2);
 }

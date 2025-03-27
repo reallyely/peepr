@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import process from "node:process";
-import { GitHubService } from "@peepr/work-tracking";
+import { GitHubService } from "@peepr/integration";
 import { type RouteDefinition, createAsync, query } from "@solidjs/router";
 import { For, Show, Suspense, createSignal } from "solid-js";
 import {
@@ -34,13 +34,11 @@ const getPullRequests = query(async ({ refresh = false }) => {
         let count = 0;
 
         for await (const pr of githubService.getPullRequestsByDateRange(
-          startDate
+          startDate,
         )) {
           pullRequests.push(pr);
           count++;
 
-          // Limit to 10 PRs
-          if (count >= 10) break;
         }
 
         return pullRequests;
@@ -48,7 +46,7 @@ const getPullRequests = query(async ({ refresh = false }) => {
       // Cache for 15 minutes
       60 * 60,
       // Force refresh if requested
-      refresh === true
+      refresh === true,
     );
   } catch (error) {
     console.error("Failed to fetch pull requests:", error);
@@ -65,7 +63,7 @@ export const route = {
 export default function PullRequests() {
   const [refreshing, setRefreshing] = createSignal(false);
   const pullRequests = createAsync(() =>
-    getPullRequests({ refresh: refreshing() })
+    getPullRequests({ refresh: refreshing() }),
   );
 
   const handleRefresh = async () => {
@@ -118,7 +116,7 @@ export default function PullRequests() {
                       <span class={styles.pr__date}>
                         merged on{" "}
                         {new Date(
-                          pr.closed_at || pr.updated_at
+                          pr.closed_at || pr.updated_at,
                         ).toLocaleDateString()}
                       </span>
                     </div>

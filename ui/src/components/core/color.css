@@ -1,166 +1,166 @@
 /* Base Color Palette with Variations */
 :root {
-    /* 1. Royal Blue - Primary brand color from the screenshot */
-    --royal-blue-light: #5673f0;
-    --royal-blue-medium: #3151d0;
-    --royal-blue-dark: #233aa0;
+	/* 1. Royal Blue - Primary brand color from the screenshot */
+	--royal-blue-light: #5673f0;
+	--royal-blue-medium: #3151d0;
+	--royal-blue-dark: #233aa0;
 
-    /* 2. Deep Purple - Secondary color complementing the dark theme */
-    --deep-purple-light: #7f5fe3;
-    --deep-purple-medium: #6043c0;
-    --deep-purple-dark: #432c91;
+	/* 2. Deep Purple - Secondary color complementing the dark theme */
+	--deep-purple-light: #7f5fe3;
+	--deep-purple-medium: #6043c0;
+	--deep-purple-dark: #432c91;
 
-    /* 3. Teal - For success states and highlights */
-    --teal-light: #40d9ca;
-    --teal-medium: #20b6a8;
-    --teal-dark: #108779;
+	/* 3. Teal - For success states and highlights */
+	--teal-light: #40d9ca;
+	--teal-medium: #20b6a8;
+	--teal-dark: #108779;
 
-    /* 4. Coral - For warnings and attention items */
-    --coral-light: #ff7e6b;
-    --coral-medium: #ff5a42;
-    --coral-dark: #e3412c;
+	/* 4. Coral - For warnings and attention items */
+	--coral-light: #ff7e6b;
+	--coral-medium: #ff5a42;
+	--coral-dark: #e3412c;
 
-    /* 5. Amber - For secondary alerts and highlights */
-    --amber-light: #ffcc66;
-    --amber-medium: #ffb340;
-    --amber-dark: #e69426;
+	/* 5. Amber - For secondary alerts and highlights */
+	--amber-light: #ffcc66;
+	--amber-medium: #ffb340;
+	--amber-dark: #e69426;
 
-    /* 6. Emerald - For positive elements and growth indicators */
-    --emerald-light: #4ce5a7;
-    --emerald-medium: #2cc389;
-    --emerald-dark: #1e8f63;
+	/* 6. Emerald - For positive elements and growth indicators */
+	--emerald-light: #4ce5a7;
+	--emerald-medium: #2cc389;
+	--emerald-dark: #1e8f63;
 
-    /* 7. Fuchsia - For creative elements and special highlights */
-    --fuchsia-light: #fa7de3;
-    --fuchsia-medium: #e852cb;
-    --fuchsia-dark: #c134a2;
+	/* 7. Fuchsia - For creative elements and special highlights */
+	--fuchsia-light: #fa7de3;
+	--fuchsia-medium: #e852cb;
+	--fuchsia-dark: #c134a2;
 
-    /* 8. Midnight - Base background from screenshot with variations */
-    --midnight-light: #232350;
-    --midnight-medium: #131336;
-    --midnight-dark: #0b0b24;
+	/* 8. Midnight - Base background from screenshot with variations */
+	--midnight-light: #232350;
+	--midnight-medium: #131336;
+	--midnight-dark: #0b0b24;
 
-    /* ---- Theme Application Variables ---- */
+	/* ---- Theme Application Variables ---- */
 
-    /* Background Colors */
-    --bg-primary: var(--midnight-dark);
-    --bg-secondary: var(--midnight-medium);
-    --bg-tertiary: var(--midnight-light);
+	/* Background Colors */
+	--bg-primary: var(--midnight-dark);
+	--bg-secondary: var(--midnight-medium);
+	--bg-tertiary: var(--midnight-light);
 
-    /* Text Colors */
-    --text-primary: rgba(255, 255, 255, 0.9);
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --text-tertiary: rgba(255, 255, 255, 0.5);
+	/* Text Colors */
+	--text-primary: rgba(255, 255, 255, 0.9);
+	--text-secondary: rgba(255, 255, 255, 0.7);
+	--text-tertiary: rgba(255, 255, 255, 0.5);
 
-    /* Accent Colors */
-    --accent-primary: var(--royal-blue-medium);
-    --accent-secondary: var(--deep-purple-medium);
-    --accent-success: var(--emerald-medium);
-    --accent-warning: var(--amber-medium);
-    --accent-danger: var(--coral-medium);
-    --accent-info: var(--teal-medium);
-    --accent-special: var(--fuchsia-medium);
+	/* Accent Colors */
+	--accent-primary: var(--royal-blue-medium);
+	--accent-secondary: var(--deep-purple-medium);
+	--accent-success: var(--emerald-medium);
+	--accent-warning: var(--amber-medium);
+	--accent-danger: var(--coral-medium);
+	--accent-info: var(--teal-medium);
+	--accent-special: var(--fuchsia-medium);
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(
-        135deg,
-        var(--royal-blue-light),
-        var(--royal-blue-medium)
-    );
-    --gradient-secondary: linear-gradient(
-        135deg,
-        var(--deep-purple-light),
-        var(--deep-purple-medium)
-    );
-    --gradient-success: linear-gradient(
-        135deg,
-        var(--emerald-light),
-        var(--emerald-medium)
-    );
-    --gradient-warning: linear-gradient(
-        135deg,
-        var(--amber-light),
-        var(--amber-medium)
-    );
-    --gradient-danger: linear-gradient(
-        135deg,
-        var(--coral-light),
-        var(--coral-medium)
-    );
-    --gradient-info: linear-gradient(
-        135deg,
-        var(--teal-light),
-        var(--teal-medium)
-    );
-    --gradient-special: linear-gradient(
-        135deg,
-        var(--fuchsia-light),
-        var(--fuchsia-medium)
-    );
-    --gradient-dark: linear-gradient(
-        135deg,
-        var(--midnight-medium),
-        var(--midnight-dark)
-    );
+	/* Gradients */
+	--gradient-primary: linear-gradient(
+		135deg,
+		var(--royal-blue-light),
+		var(--royal-blue-medium)
+	);
+	--gradient-secondary: linear-gradient(
+		135deg,
+		var(--deep-purple-light),
+		var(--deep-purple-medium)
+	);
+	--gradient-success: linear-gradient(
+		135deg,
+		var(--emerald-light),
+		var(--emerald-medium)
+	);
+	--gradient-warning: linear-gradient(
+		135deg,
+		var(--amber-light),
+		var(--amber-medium)
+	);
+	--gradient-danger: linear-gradient(
+		135deg,
+		var(--coral-light),
+		var(--coral-medium)
+	);
+	--gradient-info: linear-gradient(
+		135deg,
+		var(--teal-light),
+		var(--teal-medium)
+	);
+	--gradient-special: linear-gradient(
+		135deg,
+		var(--fuchsia-light),
+		var(--fuchsia-medium)
+	);
+	--gradient-dark: linear-gradient(
+		135deg,
+		var(--midnight-medium),
+		var(--midnight-dark)
+	);
 
-    /* Border Colors */
-    --border-light: rgba(255, 255, 255, 0.1);
-    --border-medium: rgba(255, 255, 255, 0.15);
-    --border-highlight: rgba(var(--royal-blue-light), 0.5);
+	/* Border Colors */
+	--border-light: rgba(255, 255, 255, 0.1);
+	--border-medium: rgba(255, 255, 255, 0.15);
+	--border-highlight: rgba(var(--royal-blue-light), 0.5);
 
-    /* Status Colors */
-    --status-online: var(--emerald-medium);
-    --status-away: var(--amber-medium);
-    --status-busy: var(--coral-medium);
-    --status-offline: var(--text-tertiary);
+	/* Status Colors */
+	--status-online: var(--emerald-medium);
+	--status-away: var(--amber-medium);
+	--status-busy: var(--coral-medium);
+	--status-offline: var(--text-tertiary);
 }
 
 /* Example Theme Variations */
 
 /* Ocean Theme */
 .theme-ocean {
-    --accent-primary: var(--teal-medium);
-    --accent-secondary: var(--royal-blue-medium);
-    --gradient-primary: linear-gradient(
-        135deg,
-        var(--teal-light),
-        var(--teal-medium)
-    );
-    --gradient-secondary: linear-gradient(
-        135deg,
-        var(--royal-blue-light),
-        var(--royal-blue-medium)
-    );
+	--accent-primary: var(--teal-medium);
+	--accent-secondary: var(--royal-blue-medium);
+	--gradient-primary: linear-gradient(
+		135deg,
+		var(--teal-light),
+		var(--teal-medium)
+	);
+	--gradient-secondary: linear-gradient(
+		135deg,
+		var(--royal-blue-light),
+		var(--royal-blue-medium)
+	);
 }
 
 /* Sunset Theme */
 .theme-sunset {
-    --accent-primary: var(--coral-medium);
-    --accent-secondary: var(--amber-medium);
-    --gradient-primary: linear-gradient(
-        135deg,
-        var(--coral-light),
-        var(--coral-medium)
-    );
-    --gradient-secondary: linear-gradient(
-        135deg,
-        var(--amber-light),
-        var(--amber-medium)
-    );
+	--accent-primary: var(--coral-medium);
+	--accent-secondary: var(--amber-medium);
+	--gradient-primary: linear-gradient(
+		135deg,
+		var(--coral-light),
+		var(--coral-medium)
+	);
+	--gradient-secondary: linear-gradient(
+		135deg,
+		var(--amber-light),
+		var(--amber-medium)
+	);
 }
 
 /* Forest Theme */
 .theme-forest {
-    --accent-primary: var(--emerald-medium);
-    --accent-secondary: var(--deep-purple-medium);
-    --gradient-primary: linear-gradient(
-        135deg,
-        var(--emerald-light),
-        var(--emerald-medium)
-    );
-    --gradient-secondary: linear-gradient(
-        135deg,
-        var(--deep-purple-light),
-        var(--deep-purple-medium)
-    );
+	--accent-primary: var(--emerald-medium);
+	--accent-secondary: var(--deep-purple-medium);
+	--gradient-primary: linear-gradient(
+		135deg,
+		var(--emerald-light),
+		var(--emerald-medium)
+	);
+	--gradient-secondary: linear-gradient(
+		135deg,
+		var(--deep-purple-light),
+		var(--deep-purple-medium)
+	);
 }

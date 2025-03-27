@@ -1,39 +1,29 @@
 import assert from "node:assert";
 import process from "node:process";
-import {
-  GitHubService,
-  WorkItemIntegrationBuilder,
-} from "@peepr/work-tracking";
+import { GitHubService, GithubIntegrationBuilder } from "@peepr/integration";
 import {
   type RouteDefinition,
+  action,
   createAsync,
   query,
+  useAction,
   useSearchParams,
 } from "@solidjs/router";
 import {
   For,
   Show,
   Suspense,
-  SuspenseList,
   createEffect,
   createMemo,
-  createResource,
   createSignal,
-  useTransition
+  useTransition,
 } from "solid-js";
 import { CycleSelector } from "~/components/CycleSelector/CycleSelector";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardItem,
-} from "~/components/card";
+import { Card, CardContent, CardHeader, CardItem } from "~/components/card";
 import { Alert, ProgressBar } from "~/components/feedback";
 import styles from "./integration.module.css";
-// Import at the component level only for type definitions
 import { generateStatistics } from "./statistics";
 
-import type { WorkItemIntegration } from "@peepr/core";
 import Button from "~/components/form/Button";
 import { Cache } from "~/lib/cache";
 
@@ -67,8 +57,11 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
         const workItemIntegrations = [];
 
         // Get pull requests from the calculated date range for the cycle
-        for await (const pr of github.getPullRequestsByDateRange(startDate.toISOString(), endDate.toISOString())) {
-          const builder = new WorkItemIntegrationBuilder();
+        for await (const pr of github.getPullRequestsByDateRange(
+          startDate.toISOString(),
+          endDate.toISOString(),
+        )) {
+          const builder = new GithubIntegrationBuilder();
           builder.setPullRequest(pr);
 
           const runs = await github.getAllWorkflowRunsForPR(pr.number);
@@ -100,28 +93,39 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
 
           pullRequests.push(prStats);
 
-          // Limit to 10 PRs
-          if (pullRequests.length >= 10) break;
         }
 
         // Calculate statistics from the collected data
         const statistics = generateStatistics(workItemIntegrations);
 
-        console.log({ statistics })
         return {
           pullRequests,
-          statistics
+          statistics,
         };
       },
-      920 * 60,
-      // Pass the refresh flag to force a cache refresh when needed
-      refresh
     );
   } catch (error) {
     console.error("Failed to fetch PR stats:", error);
     return { error: error instanceof Error ? error.message : "Unknown error" };
   }
 }, "integration-stats");
+
+// Server action to invalidate cache and refresh data
+const refreshCacheAction = action(async ({ cycleNumber }) => {
+  "use server";
+  try {
+    const cacheKey = `integration:prStats:cycle:${cycleNumber}`;
+    await Cache.delete(cacheKey);
+    console.log(`Cleared cache for key: ${cacheKey}`);
+    return { success: true, message: "Cache refreshed successfully!" };
+  } catch (error) {
+    console.error("Failed to refresh cache:", error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Failed to refresh cache"
+    };
+  }
+}, "refresh-cache-action");
 
 export const route = {
   preload({ location }) {
@@ -130,40 +134,30 @@ export const route = {
     const currentDate = new Date();
     const startDate = new Date(2025, 0, 1);
     const daysSinceStart = Math.ceil(
-      (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+      (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
     );
     const defaultCycleNumber = Math.max(1, Math.ceil(daysSinceStart / 7));
 
     // Preload data
     getPRStats({
-      cycleNumber: Number(searchParams.get('cycle')) || defaultCycleNumber
+      cycleNumber: Number(searchParams.get("cycle")) || defaultCycleNumber,
     });
   },
 } satisfies RouteDefinition;
-
-// Format dates for display
-const formatDate = (dateString: string): string => {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
-};
 
 export default function Integration() {
   // Calculate current cycle as default
   const currentDate = new Date();
   const startDate = new Date(2025, 0, 1);
   const daysSinceStart = Math.ceil(
-    (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+    (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
   );
   const defaultCycleNumber = Math.max(1, Math.ceil(daysSinceStart / 7));
-
+  const refreshCache = useAction(refreshCacheAction)
   const [searchParams, setSearchParams] = useSearchParams();
-  const [cycleNumber, setCycleNumber] = createSignal(Number(searchParams.cycle) || defaultCycleNumber);
-  const [refresh, setRefresh] = createSignal(false);
+  const [cycleNumber, setCycleNumber] = createSignal(
+    Number(searchParams.cycle) || defaultCycleNumber,
+  );
 
   // Add transition state using Solid's useTransition hook
   const [isPending, startTransition] = useTransition();
@@ -174,32 +168,31 @@ export default function Integration() {
     if (cycleFromParams !== cycleNumber()) {
       setCycleNumber(cycleFromParams);
     }
-
   });
 
-  const prStatsData = createAsync(async () => {
-    const stats = await getPRStats({
-      cycleNumber: cycleNumber(), refresh: refresh()
-    })
-    setRefresh(false)
-    return stats
-  }, { name: 'get-integration-stats' });
+  const prStatsData = createAsync(
+    async () => {
+      const stats = await getPRStats({
+        cycleNumber: cycleNumber(),
+      });
+      return stats;
+    },
+    { name: "get-integration-stats" },
+  );
 
   // Function to handle data refresh with transition
   const handleRefresh = () => {
     startTransition(async () => {
-      setSearchParams({
-        cycle: cycleNumber().toString(),
-      });
-      setRefresh(true);
+      refreshCache({ cycleNumber: cycleNumber() });
+
     });
   };
 
   // Handle cycle selection change with transition
   const handleCycleChange = (cycleData: {
-    cycleNumber: number,
-    startDate: Date,
-    endDate: Date
+    cycleNumber: number;
+    startDate: Date;
+    endDate: Date;
   }) => {
     startTransition(async () => {
       setCycleNumber(cycleData.cycleNumber);
@@ -213,10 +206,10 @@ export default function Integration() {
   const formatDate = (dateString: string): string => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -235,8 +228,10 @@ export default function Integration() {
     <main class="main-container">
       <h1>Pull Request Statistics</h1>
 
-      <Card aria-labelledby="stats-summary" >
-        <h2 id="stats-summary" class="visually-hidden">Statistics Summary</h2>
+      <Card aria-labelledby="stats-summary">
+        <h2 id="stats-summary" class="visually-hidden">
+          Statistics Summary
+        </h2>
 
         <div class={styles["date-range-container"]}>
           <CycleSelector
@@ -247,7 +242,9 @@ export default function Integration() {
           />
 
           <Alert type="info" class={styles["date-range"]}>
-            <span class={styles["date-range__value"]}>{dateRangeDisplay()}</span>
+            <span class={styles["date-range__value"]}>
+              {dateRangeDisplay()}
+            </span>
             <Button
               size="sm"
               variant="danger"
@@ -270,36 +267,57 @@ export default function Integration() {
               </Alert>
             }
           >
-            <Show when={Object.entries(prStatsData()?.statistics || {}).length > 0 && prStatsData()?.statistics}>
+            <Show
+              when={
+                Object.entries(prStatsData()?.statistics || {}).length > 0 &&
+                prStatsData()?.statistics
+              }
+            >
               {(stats) => {
                 return (
                   <>
                     <div class={styles["stats-grid"]}>
                       <Card variant="subtle">
                         <CardContent>
-                          <span class={styles["stats-card__title"]}>Total PRs</span>
-                          <span class={styles["stats-card__value"]}>{stats()?.totalPRs}</span>
+                          <span class={styles["stats-card__title"]}>
+                            Total PRs
+                          </span>
+                          <span class={styles["stats-card__value"]}>
+                            {stats()?.totalPRs}
+                          </span>
                         </CardContent>
                       </Card>
 
                       <Card variant="subtle">
                         <CardContent>
-                          <span class={styles["stats-card__title"]}>Total CI Runs</span>
-                          <span class={styles["stats-card__value"]}>{stats()?.totalCIRuns}</span>
+                          <span class={styles["stats-card__title"]}>
+                            Total CI Runs
+                          </span>
+                          <span class={styles["stats-card__value"]}>
+                            {stats()?.totalCIRuns}
+                          </span>
                         </CardContent>
                       </Card>
 
                       <Card variant="subtle">
                         <CardContent>
-                          <span class={styles["stats-card__title"]}>Median CI Duration</span>
-                          <span class={styles["stats-card__value"]}>{stats()?.ciDuration.median}</span>
+                          <span class={styles["stats-card__title"]}>
+                            Median CI Duration
+                          </span>
+                          <span class={styles["stats-card__value"]}>
+                            {stats()?.ciDuration.median}
+                          </span>
                         </CardContent>
                       </Card>
 
                       <Card variant="subtle">
                         <CardContent>
-                          <span class={styles["stats-card__title"]}>Median PR Open Time</span>
-                          <span class={styles["stats-card__value"]}>{stats()?.openTime.median}</span>
+                          <span class={styles["stats-card__title"]}>
+                            Median PR Open Time
+                          </span>
+                          <span class={styles["stats-card__value"]}>
+                            {stats()?.openTime.median}
+                          </span>
                         </CardContent>
                       </Card>
                     </div>
@@ -307,22 +325,26 @@ export default function Integration() {
                     <Card variant="subtle">
                       <CardHeader title="Detailed Statistics" />
                       <CardContent>
-                        <table
-                          aria-label="Detailed PR Statistics"
-                        >
+                        <table aria-label="Detailed PR Statistics">
                           <thead>
                             <tr>
-                              <th class={styles["stats-table__header"]}>Metric</th>
+                              <th class={styles["stats-table__header"]}>
+                                Metric
+                              </th>
                               <th class={styles["stats-table__header"]}>Min</th>
                               <th class={styles["stats-table__header"]}>Q1</th>
-                              <th class={styles["stats-table__header"]}>Median</th>
+                              <th class={styles["stats-table__header"]}>
+                                Median
+                              </th>
                               <th class={styles["stats-table__header"]}>Q3</th>
                               <th class={styles["stats-table__header"]}>Max</th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr class={styles["stats-table__row"]}>
-                              <th class={styles["stats-table__header"]}>CI Duration</th>
+                              <th class={styles["stats-table__header"]}>
+                                CI Duration
+                              </th>
                               <td class={styles["stats-table__cell"]}>
                                 {stats()?.ciDuration.range.min}
                               </td>
@@ -392,13 +414,18 @@ export default function Integration() {
                       <div class={styles["pr-item__icon"]}>📊</div>
                       <div class={styles["pr-item__content"]}>
                         <div class={styles["pr-item__title"]}>
-                          <span class={styles["pr-item__title-number"]}>#{pr.prNumber}</span> {pr.title}
+                          <span class={styles["pr-item__title-number"]}>
+                            #{pr.prNumber}
+                          </span>{" "}
+                          {pr.title}
                         </div>
                         <div class={styles["pr-item__details"]}>
                           <div class={styles["pr-item__stat"]}>
                             <span>Created: </span>
                             <span class={styles["pr-item__stat-value"]}>
-                              {pr.createdAt ? formatDate(pr.createdAt) : "Unknown"}
+                              {pr.createdAt
+                                ? formatDate(pr.createdAt)
+                                : "Unknown"}
                             </span>
                           </div>
                           <div class={styles["pr-item__stat"]}>
@@ -435,6 +462,6 @@ export default function Integration() {
           </Show>
         </Suspense>
       </Card>
-    </main >
+    </main>
   );
 }

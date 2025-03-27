@@ -1,7 +1,6 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { Duration } from "@peepr/core/model/domain/Duration.ts";
-import { WorkItemIntegrationBuilder } from "./WorkItemIntegrationBuilder.ts";
+import { GithubIntegrationBuilder } from "./GithubIntegrationEventBuilder.ts";
 
 // Mock pull request data
 const mockPullRequest = {
@@ -30,7 +29,7 @@ const mockUsage = {
 
 describe("WorkItemIntegrationBuilder", () => {
   it("builds a basic WorkItemIntegration from PR data", () => {
-    const integration = new WorkItemIntegrationBuilder()
+    const integration = new GithubIntegrationBuilder()
       .setPullRequest(mockPullRequest)
       .build();
 
@@ -43,7 +42,7 @@ describe("WorkItemIntegrationBuilder", () => {
   });
 
   it("tracks Pull Request Checks workflow runs", () => {
-    const integration = new WorkItemIntegrationBuilder()
+    const integration = new GithubIntegrationBuilder()
       .setPullRequest(mockPullRequest)
       .setWorkflowRun(mockWorkflowRun)
       .setWorkflowRun({ ...mockWorkflowRun, id: 457 })
@@ -53,7 +52,7 @@ describe("WorkItemIntegrationBuilder", () => {
   });
 
   it("calculates total workflow duration", () => {
-    const integration = new WorkItemIntegrationBuilder()
+    const integration = new GithubIntegrationBuilder()
       .setPullRequest(mockPullRequest)
       .setWorkflowUsage(mockUsage)
       .setWorkflowUsage({ ...mockUsage })
@@ -69,7 +68,7 @@ describe("WorkItemIntegrationBuilder", () => {
       merged_at: "2024-01-03T00:00:00Z"
     };
 
-    const integration = new WorkItemIntegrationBuilder()
+    const integration = new GithubIntegrationBuilder()
       .setPullRequest(closedPR)
       .build();
 
@@ -84,7 +83,7 @@ describe("WorkItemIntegrationBuilder", () => {
       closed_at: "2024-01-03T00:00:00Z"
     };
 
-    const integration = new WorkItemIntegrationBuilder()
+    const integration = new GithubIntegrationBuilder()
       .setPullRequest(abandonedPR)
       .build();
 
@@ -95,14 +94,14 @@ describe("WorkItemIntegrationBuilder", () => {
   it("throws error when missing required data", () => {
     assert.throws(() => {
       // @ts-expect-error - Testing invalid type
-      new WorkItemIntegrationBuilder().setPullRequest({}).build();
+      new GithubIntegrationBuilder().setPullRequest({}).build();
     }, {
       message: "Cannot build WorkItemIntegration: missing pull request information"
     });
   });
 
   it("generates correct summary for in-progress PR", () => {
-    const integration = new WorkItemIntegrationBuilder()
+    const integration = new GithubIntegrationBuilder()
       .setPullRequest(mockPullRequest)
       .build();
 
@@ -116,7 +115,7 @@ describe("WorkItemIntegrationBuilder", () => {
       merged_at: "2024-01-03T00:00:00Z"
     };
 
-    const integration = new WorkItemIntegrationBuilder()
+    const integration = new GithubIntegrationBuilder()
       .setPullRequest(mergedPR)
       .setWorkflowRun(mockWorkflowRun)
       .build();

@@ -2,22 +2,17 @@
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
-import Nav from "~/components/nav/nav";
 
 import "~/components/core/app.css";
 import Background from "./components/Background";
 
 export default function App() {
-  return (
-    <>
-      <Background />
-      <Router
-        root={(props) => (
-          <Suspense>{props.children}</Suspense>
-        )}
-      >
-        <FileRoutes />
-      </Router>
-    </>
-  );
+	return (
+		<>
+			<Background />
+			<Router root={(props) => <Suspense>{props.children}</Suspense>}>
+				<FileRoutes />
+			</Router>
+		</>
+	);
 }

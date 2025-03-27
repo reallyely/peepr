@@ -1,14 +1,13 @@
 import type { components } from "@octokit/openapi-types";
 import type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
-import { Duration } from "@peepr/core/model/domain/Duration.ts";
-import { WorkItemIntegration } from "@peepr/core/model/domain/WorkItemIntegration.ts";
+import { Duration, IntegrationEvent } from "@peepr/core";
 import { differenceInMilliseconds } from "date-fns";
 
 /**
  * WorkItemIntegrationBuilder takes GitHub API data and builds a WorkItemIntegration object
  * that represents a pull request's statistics and metadata
  */
-export class WorkItemIntegrationBuilder {
+export class GithubIntegrationBuilder {
   private prId = 0;
   private prNumber = 0;
   private prTitle = "";
@@ -24,14 +23,9 @@ export class WorkItemIntegrationBuilder {
   setPullRequest(
     pullRequest: Pick<
       RestEndpointMethodTypes["search"]["issuesAndPullRequests"]["response"]["data"]["items"][number],
-      | "closed_at"
-      | "created_at"
-      | "id"
-      | "number"
-      | "title"
-      | "updated_at"
+      "closed_at" | "created_at" | "id" | "number" | "title" | "updated_at"
     >,
-  ): WorkItemIntegrationBuilder {
+  ): GithubIntegrationBuilder {
     this.prId = pullRequest.id;
     this.prNumber = pullRequest.number;
     this.prTitle = pullRequest.title;
@@ -64,7 +58,7 @@ export class WorkItemIntegrationBuilder {
       components["schemas"]["workflow-run"],
       "name" | "id" | "run_started_at" | "conclusion" | "workflow_id"
     >,
-  ): WorkItemIntegrationBuilder {
+  ): GithubIntegrationBuilder {
     if (workflowRun.name === "Pull Request Checks") {
       this.pullRequestCheckRuns++;
     }
@@ -74,7 +68,7 @@ export class WorkItemIntegrationBuilder {
   // Adds workflow usage data to calculate total duration
   setWorkflowUsage(
     usage: Partial<components["schemas"]["workflow-run-usage"]>,
-  ): WorkItemIntegrationBuilder {
+  ): GithubIntegrationBuilder {
     if (usage.run_duration_ms) {
       this.totalDuration = new Duration(usage.run_duration_ms).add(
         this.totalDuration,
@@ -92,7 +86,7 @@ export class WorkItemIntegrationBuilder {
   }
 
   // Builds the final WorkItemIntegration object
-  build(): WorkItemIntegration {
+  build(): IntegrationEvent {
     // Calculate current open duration if PR is still open
     this.calculateCurrentOpenDuration();
 
@@ -103,7 +97,7 @@ export class WorkItemIntegrationBuilder {
       );
     }
 
-    return WorkItemIntegration.create({
+    return IntegrationEvent.create({
       id: this.prId,
       prNumber: this.prNumber,
       title: this.prTitle,

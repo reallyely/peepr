@@ -1,7 +1,7 @@
-import { test } from "node:test";
 import assert from "node:assert";
+import { test } from "node:test";
+import { GITHUB_TOKEN } from "./config/github.ts";
 import { GitHubService } from "./github.ts";
-import { GITHUB_TOKEN } from "../config/github.ts";
 
 const githubService = new GitHubService(GITHUB_TOKEN);
 
@@ -10,7 +10,7 @@ test("GitHubService - getRepository", async () => {
   assert.ok(response.data);
   assert.strictEqual(
     response.data.full_name,
-    "rivial-data-security/rivial-information-security-center"
+    "rivial-data-security/rivial-information-security-center",
   );
 });
 

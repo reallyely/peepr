@@ -1,16 +1,19 @@
 {
   "name": "@peepr/core",
   "version": "1.0.0",
-  "main": "main.ts",
+  "description": "",
   "type": "module",
+  "main": "main.ts",
   "scripts": {
     "test": "node --test ./**/*.test.*"
   },
   "imports": {
-    "#/*": "./*"
+    "#/*": "./src/*"
   },
-  "author": "",
+  "exports": {
+    ".": "./main.ts"
+  },
+  "author": "Stephen Ely",
   "license": "ISC",
-  "description": "",
   "packageManager": "pnpm@10.5.1"
 }

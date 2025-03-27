@@ -1,72 +1,72 @@
 /* Branch component styles using BEM methodology and theme variables */
 
 .branches {
-  --branch-border-color: var(--border-medium);
-  --branch-bg-color: var(--bg-secondary);
+	--branch-border-color: var(--border-medium);
+	--branch-bg-color: var(--bg-secondary);
 }
 
 /* Branch List Module in BEM format */
 .branches {
-  --commit-message-color: var(--text-secondary);
-  --commit-details-color: var(--text-tertiary);
+	--commit-message-color: var(--text-secondary);
+	--commit-details-color: var(--text-tertiary);
 }
 
 .branches__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-md);
+	margin-top: var(--spacing-lg);
 }
 
 .branches__item {
-  display: flex;
-  flex-direction: column;
-  padding: var(--spacing-md);
-  border: var(--border-width-thin) var(--border-style-solid) var(--border-light);
-  border-radius: var(--border-radius-md);
-  background-color: var(--card-bg);
-  transition: box-shadow 0.2s ease-in-out;
+	display: flex;
+	flex-direction: column;
+	padding: var(--spacing-md);
+	border: var(--border-width-thin) var(--border-style-solid) var(--border-light);
+	border-radius: var(--border-radius-md);
+	background-color: var(--card-bg);
+	transition: box-shadow 0.2s ease-in-out;
 }
 
 .branches__item:hover {
-  box-shadow: var(--shadow-md);
-  background-color: var(--card-highlight);
+	box-shadow: var(--shadow-md);
+	background-color: var(--card-highlight);
 }
 
 .branches__name {
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: var(--spacing-sm);
-  color: var(--text-primary);
+	font-weight: 600;
+	font-size: 1.1rem;
+	margin-bottom: var(--spacing-sm);
+	color: var(--text-primary);
 }
 
 .branches__activity {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-xs);
 }
 
 .branches__commit {
-  font-size: 0.9rem;
-  color: var(--commit-message-color);
+	font-size: 0.9rem;
+	color: var(--commit-message-color);
 }
 
 .branches__commit-details {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  color: var(--commit-details-color);
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.8rem;
+	color: var(--commit-details-color);
 }
 
 .branches__no-activity {
-  font-style: italic;
-  color: var(--text-tertiary);
+	font-style: italic;
+	color: var(--text-tertiary);
 }
 
 .branches__commit-message {
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
 }

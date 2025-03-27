@@ -21,7 +21,9 @@ export class GitHubService {
 		});
 	}
 
-	async getRepository(options: Partial<Parameters<typeof this.octokit.rest.repos.get>[0]> = {}) {
+	async getRepository(
+		options: Partial<Parameters<typeof this.octokit.rest.repos.get>[0]> = {},
+	) {
 		return await this.octokit.rest.repos.get({
 			owner: this.owner,
 			repo: this.repo,
@@ -31,7 +33,9 @@ export class GitHubService {
 
 	async getIssues(
 		state: "open" | "closed" | "all" = "open",
-		options: Partial<Parameters<typeof this.octokit.rest.issues.listForRepo>[0]> = {}
+		options: Partial<
+			Parameters<typeof this.octokit.rest.issues.listForRepo>[0]
+		> = {},
 	) {
 		return await this.octokit.rest.issues.listForRepo({
 			owner: this.owner,
@@ -43,7 +47,7 @@ export class GitHubService {
 
 	async getPullRequests(
 		state: "open" | "closed" | "all" = "open",
-		options: Partial<Parameters<typeof this.octokit.rest.pulls.list>[0]> = {}
+		options: Partial<Parameters<typeof this.octokit.rest.pulls.list>[0]> = {},
 	) {
 		return await this.octokit.rest.pulls.list({
 			owner: this.owner,
@@ -53,7 +57,11 @@ export class GitHubService {
 		});
 	}
 
-	async getBranches(options: Partial<Parameters<typeof this.octokit.rest.repos.listBranches>[0]> = {}) {
+	async getBranches(
+		options: Partial<
+			Parameters<typeof this.octokit.rest.repos.listBranches>[0]
+		> = {},
+	) {
 		return await this.octokit.rest.repos.listBranches({
 			owner: this.owner,
 			repo: this.repo,
@@ -62,8 +70,12 @@ export class GitHubService {
 	}
 	async getBranchesWithActivity(
 		limit = 10,
-		options: Partial<Parameters<typeof this.octokit.rest.repos.listBranches>[0]> = {},
-		commitOptions: Partial<Parameters<typeof this.octokit.rest.repos.listCommits>[0]> = {}
+		options: Partial<
+			Parameters<typeof this.octokit.rest.repos.listBranches>[0]
+		> = {},
+		commitOptions: Partial<
+			Parameters<typeof this.octokit.rest.repos.listCommits>[0]
+		> = {},
 	) {
 		// First get all branches
 		const branches = await this.octokit.rest.repos.listBranches({
@@ -75,13 +87,13 @@ export class GitHubService {
 		// Get activity data for each branch (use the latest commit as activity indicator)
 		const branchesWithActivity = await Promise.all(
 			branches.data.map(async (branch) => {
-			const commits = await this.octokit.rest.repos.listCommits({
-				owner: this.owner,
-				repo: this.repo,
-				sha: branch.name,
-				per_page: 1,
-				...commitOptions,
-			});
+				const commits = await this.octokit.rest.repos.listCommits({
+					owner: this.owner,
+					repo: this.repo,
+					sha: branch.name,
+					per_page: 1,
+					...commitOptions,
+				});
 
 				return {
 					...branch,
@@ -107,7 +119,9 @@ export class GitHubService {
 
 	async getCommits(
 		branch = "main",
-		options: Partial<Parameters<typeof this.octokit.rest.repos.listCommits>[0]> = {}
+		options: Partial<
+			Parameters<typeof this.octokit.rest.repos.listCommits>[0]
+		> = {},
 	) {
 		return await this.octokit.rest.repos.listCommits({
 			owner: this.owner,
@@ -119,7 +133,7 @@ export class GitHubService {
 
 	async getPullRequestDetails(
 		prNumber: number,
-		options: Partial<Parameters<typeof this.octokit.rest.pulls.get>[0]> = {}
+		options: Partial<Parameters<typeof this.octokit.rest.pulls.get>[0]> = {},
 	): Promise<components["schemas"]["pull-request"]> {
 		const { data } = await this.octokit.rest.pulls.get({
 			owner: this.owner,
@@ -133,7 +147,9 @@ export class GitHubService {
 	async getWorkflowRuns(
 		branch: string,
 		createdSince: string,
-		options: Partial<Parameters<typeof this.octokit.rest.actions.listWorkflowRunsForRepo>[0]> = {}
+		options: Partial<
+			Parameters<typeof this.octokit.rest.actions.listWorkflowRunsForRepo>[0]
+		> = {},
 	) {
 		const { data } = await this.octokit.rest.actions.listWorkflowRunsForRepo({
 			owner: this.owner,
@@ -147,7 +163,9 @@ export class GitHubService {
 
 	async getWorkflowRunUsage(
 		runId: number,
-		options: Partial<Parameters<typeof this.octokit.rest.actions.getWorkflowRunUsage>[0]> = {}
+		options: Partial<
+			Parameters<typeof this.octokit.rest.actions.getWorkflowRunUsage>[0]
+		> = {},
 	) {
 		const { data } = await this.octokit.rest.actions.getWorkflowRunUsage({
 			owner: this.owner,
@@ -160,7 +178,9 @@ export class GitHubService {
 
 	async getWorkflowJobs(
 		runId: number,
-		options: Partial<Parameters<typeof this.octokit.rest.actions.listJobsForWorkflowRun>[0]> = {}
+		options: Partial<
+			Parameters<typeof this.octokit.rest.actions.listJobsForWorkflowRun>[0]
+		> = {},
 	) {
 		const { data } = await this.octokit.rest.actions.listJobsForWorkflowRun({
 			owner: this.owner,
@@ -174,17 +194,25 @@ export class GitHubService {
 	async getAllWorkflowRunsForPR(
 		prNumber: number,
 		prOptions: Partial<Parameters<typeof this.octokit.rest.pulls.get>[0]> = {},
-		workflowOptions: Partial<Parameters<typeof this.octokit.rest.actions.listWorkflowRunsForRepo>[0]> = {}
+		workflowOptions: Partial<
+			Parameters<typeof this.octokit.rest.actions.listWorkflowRunsForRepo>[0]
+		> = {},
 	) {
 		const pr = await this.getPullRequestDetails(prNumber, prOptions);
 
-		return await this.getWorkflowRuns(pr.head.ref, pr.created_at, workflowOptions);
+		return await this.getWorkflowRuns(
+			pr.head.ref,
+			pr.created_at,
+			workflowOptions,
+		);
 	}
 
 	async *getPullRequestsByDateRange(
 		startDate: string,
 		endDate: string = new Date().toISOString(),
-		options: Partial<Parameters<typeof this.octokit.rest.search.issuesAndPullRequests>[0]> = {}
+		options: Partial<
+			Parameters<typeof this.octokit.rest.search.issuesAndPullRequests>[0]
+		> = {},
 	) {
 		const iterator = this.octokit.paginate.iterator(
 			this.octokit.rest.search.issuesAndPullRequests,

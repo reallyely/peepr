@@ -1,14 +1,18 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
     "allowImportingTsExtensions": true,
-    "skipLibCheck": false,
+    "erasableSyntaxOnly": true,
+    "isolatedModules": true,
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
     "noEmit": true,
-    "isolatedModules": true
+    "resolveJsonModule": true,
+    "resolvePackageJsonImports": true,
+    "skipLibCheck": false,
+    "target": "ESNext",
+    "verbatimModuleSyntax": true
   },
+  "exclude": ["**/node_modules/**"],
   "include": ["./**/*.ts*"]
 }
