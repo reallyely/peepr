@@ -1,10 +1,12 @@
+import { ID } from "./ID.ts";
+
 export type UserCreationError = Error;
 export class User {
-	readonly id: number;
+	readonly id: ID;
 	readonly username: string;
 	readonly password: string;
 
-	constructor(id: number, username: string, password: string) {
+	constructor(id: ID, username: string, password: string) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
@@ -25,7 +27,7 @@ export class User {
 	}
 
 	static create(data: {
-		id?: number;
+		id?: string | number;
 		username: string;
 		password: string;
 	}): User {
@@ -33,15 +35,15 @@ export class User {
 			User.validateUsername(data.username);
 			User.validatePassword(data.password);
 
-			return new User(data.id ?? Math.random(), data.username, data.password);
+			return new User(ID.create(data.id), data.username, data.password);
 		} catch (error) {
 			throw error instanceof Error ? error : new Error(String(error));
 		}
 	}
 
-	public toJSON(): { id: number; username: string; password: string } {
+	public toJSON(): { id: string; username: string; password: string } {
 		return {
-			id: this.id,
+			id: this.id.toString(),
 			username: this.username,
 			password: this.password,
 		};

@@ -8,10 +8,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.2
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -19,6 +15,9 @@ importers:
       '@flydotio/dockerfile':
         specifier: ^0.7.8
         version: 0.7.8(@types/node@20.17.19)
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.2
 
   core: {}
 
