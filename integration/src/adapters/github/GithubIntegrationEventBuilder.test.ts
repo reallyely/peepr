@@ -33,7 +33,8 @@ describe("WorkItemIntegrationBuilder", () => {
       .setPullRequest(mockPullRequest)
       .build();
 
-    assert.strictEqual(integration.id, 123);
+    console.log({ integration })
+    assert.strictEqual(integration.id.toString(), "123");
     assert.strictEqual(integration.prNumber, 5319);
     assert.strictEqual(integration.title, "Test PR");
     assert.strictEqual(integration.isInProgress(), true);

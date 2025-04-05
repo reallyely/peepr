@@ -45,7 +45,7 @@ export class GithubIntegrationEventBuilder {
       this.prTimeOpen = new Duration(durationMs);
     }
 
-    if (pullRequest.updated_at) {
+    if (pullRequest.updated_at && pullRequest.closed_at) {
       this.prMergedAt = new Date(pullRequest.updated_at);
     }
 
