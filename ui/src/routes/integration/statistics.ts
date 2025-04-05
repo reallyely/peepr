@@ -101,7 +101,7 @@ export const generateStatistics = (
 
   // Extract CI durations and PR open times
   const ciDurations = prs.map((pr) => pr.totalDuration.inMinutes);
-  const openTimes = prs.map((pr) => pr.prTimeOpen.inMinutes);
+  const openTimes = prs.map((pr) => pr.timeOpen.inMinutes);
 
   return {
     ciDuration: {
@@ -129,6 +129,6 @@ export const generateStatistics = (
       },
     },
     totalPRs: prs.length,
-    totalCIRuns: prs.reduce((sum, pr) => sum + pr.pullRequestCheckRuns, 0),
+    totalCIRuns: prs.reduce((sum, pr) => sum + pr.checkRuns, 0),
   };
 };

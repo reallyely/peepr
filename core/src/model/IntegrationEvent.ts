@@ -9,8 +9,8 @@ export class IntegrationEvent {
   readonly updatedAt: Date;
   readonly mergedAt: Date | null;
   readonly closedAt: Date | null;
-  readonly prTimeOpen: Duration;
-  readonly pullRequestCheckRuns: number;
+  readonly timeOpen: Duration;
+  readonly checkRuns: number;
   readonly totalDuration: Duration;
 
   private constructor(
@@ -21,8 +21,8 @@ export class IntegrationEvent {
     updatedAt: Date,
     mergedAt: Date | null,
     closedAt: Date | null,
-    prTimeOpen: Duration,
-    pullRequestCheckRuns: number,
+    timeOpen: Duration,
+    checkRuns: number,
     totalDuration: Duration,
   ) {
     this.id = id;
@@ -32,8 +32,8 @@ export class IntegrationEvent {
     this.updatedAt = updatedAt;
     this.mergedAt = mergedAt;
     this.closedAt = closedAt;
-    this.prTimeOpen = prTimeOpen;
-    this.pullRequestCheckRuns = pullRequestCheckRuns;
+    this.timeOpen = timeOpen;
+    this.checkRuns = checkRuns;
     this.totalDuration = totalDuration;
   }
 
@@ -45,8 +45,8 @@ export class IntegrationEvent {
     updatedAt: string | Date;
     mergedAt?: string | Date | null;
     closedAt?: string | Date | null;
-    prTimeOpen: Duration | string;
-    pullRequestCheckRuns: number;
+    timeOpen: Duration | string;
+    checkRuns: number;
     totalDuration: Duration | string;
   }): IntegrationEvent {
     try {
@@ -85,11 +85,11 @@ export class IntegrationEvent {
 
       // Convert string durations to Duration objects if needed
       const prTimeOpen =
-        data.prTimeOpen instanceof Duration
-          ? data.prTimeOpen
+        data.timeOpen instanceof Duration
+          ? data.timeOpen
           : new Duration(
-            typeof data.prTimeOpen === "string"
-              ? Duration.fromHumanReadable(data.prTimeOpen).inMilliseconds
+            typeof data.timeOpen === "string"
+              ? Duration.fromHumanReadable(data.timeOpen).inMilliseconds
               : 0,
           );
 
@@ -111,7 +111,7 @@ export class IntegrationEvent {
         mergedAt,
         closedAt,
         prTimeOpen,
-        data.pullRequestCheckRuns,
+        data.checkRuns,
         totalDuration,
       );
     } catch (error) {
@@ -145,12 +145,12 @@ export class IntegrationEvent {
    */
   getSummary(): string {
     if (this.isComplete()) {
-      return `PR #${this.prNumber} "${this.title}" was merged after ${this.prTimeOpen.toHumanReadable()} with ${this.pullRequestCheckRuns} check runs.`;
+      return `PR #${this.prNumber} "${this.title}" was merged after ${this.timeOpen.toHumanReadable()} with ${this.checkRuns} check runs.`;
     }
     if (this.isAbandoned()) {
-      return `PR #${this.prNumber} "${this.title}" was closed without merging after ${this.prTimeOpen.toHumanReadable()}.`;
+      return `PR #${this.prNumber} "${this.title}" was closed without merging after ${this.timeOpen.toHumanReadable()}.`;
     }
-    return `PR #${this.prNumber} "${this.title}" has been open for ${this.prTimeOpen.toHumanReadable()}.`;
+    return `PR #${this.prNumber} "${this.title}" has been open for ${this.timeOpen.toHumanReadable()}.`;
   }
 
   public toJSON(): {
@@ -161,8 +161,8 @@ export class IntegrationEvent {
     updatedAt: string;
     mergedAt: string | null;
     closedAt: string | null;
-    prTimeOpen: string;
-    pullRequestCheckRuns: number;
+    timeOpen: string;
+    checkRuns: number;
     totalDuration: string;
   } {
     return {
@@ -173,11 +173,11 @@ export class IntegrationEvent {
       updatedAt: this.updatedAt.toISOString(),
       mergedAt: this.mergedAt ? this.mergedAt.toISOString() : null,
       closedAt: this.closedAt ? this.closedAt.toISOString() : null,
-      prTimeOpen: this.prTimeOpen.toHumanReadable(),
-      pullRequestCheckRuns: this.pullRequestCheckRuns,
+      timeOpen: this.timeOpen.toHumanReadable(),
+      checkRuns: this.checkRuns,
       totalDuration: this.totalDuration.toHumanReadable(),
     };
   }
 }
 
-export type WorkItemIntegrationCreationError = Error;
+export type GithubIntegrationEventCreationError = Error;

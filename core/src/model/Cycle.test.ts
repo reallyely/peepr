@@ -124,8 +124,8 @@ test("Cycle - containsIntegration method", () => {
     title: "In Cycle PR",
     createdAt: "2023-01-05T00:00:00Z",
     updatedAt: "2023-01-06T00:00:00Z",
-    prTimeOpen: "1d",
-    pullRequestCheckRuns: 5,
+    timeOpen: "1d",
+    checkRuns: 5,
     totalDuration: "2d",
   });
 
@@ -135,8 +135,8 @@ test("Cycle - containsIntegration method", () => {
     title: "Before Cycle PR",
     createdAt: "2022-12-25T00:00:00Z",
     updatedAt: "2022-12-26T00:00:00Z",
-    prTimeOpen: "1d",
-    pullRequestCheckRuns: 5,
+    timeOpen: "1d",
+    checkRuns: 5,
     totalDuration: "2d",
   });
 
@@ -146,8 +146,8 @@ test("Cycle - containsIntegration method", () => {
     title: "After Cycle PR",
     createdAt: "2023-01-20T00:00:00Z",
     updatedAt: "2023-01-21T00:00:00Z",
-    prTimeOpen: "1d",
-    pullRequestCheckRuns: 5,
+    timeOpen: "1d",
+    checkRuns: 5,
     totalDuration: "2d",
   });
 
@@ -169,8 +169,8 @@ test("Cycle - filterIntegrations method", () => {
       title: "In Cycle PR 1",
       createdAt: "2023-01-05T00:00:00Z",
       updatedAt: "2023-01-06T00:00:00Z",
-      prTimeOpen: "1d",
-      pullRequestCheckRuns: 5,
+      timeOpen: "1d",
+      checkRuns: 5,
       totalDuration: "2d",
     }),
     IntegrationEvent.create({
@@ -178,8 +178,8 @@ test("Cycle - filterIntegrations method", () => {
       title: "Before Cycle PR",
       createdAt: "2022-12-25T00:00:00Z",
       updatedAt: "2022-12-26T00:00:00Z",
-      prTimeOpen: "1d",
-      pullRequestCheckRuns: 5,
+      timeOpen: "1d",
+      checkRuns: 5,
       totalDuration: "2d",
     }),
     IntegrationEvent.create({
@@ -187,8 +187,8 @@ test("Cycle - filterIntegrations method", () => {
       title: "In Cycle PR 2",
       createdAt: "2023-01-10T00:00:00Z",
       updatedAt: "2023-01-11T00:00:00Z",
-      prTimeOpen: "1d",
-      pullRequestCheckRuns: 5,
+      timeOpen: "1d",
+      checkRuns: 5,
       totalDuration: "2d",
     }),
     IntegrationEvent.create({
@@ -196,8 +196,8 @@ test("Cycle - filterIntegrations method", () => {
       title: "After Cycle PR",
       createdAt: "2023-01-20T00:00:00Z",
       updatedAt: "2023-01-21T00:00:00Z",
-      prTimeOpen: "1d",
-      pullRequestCheckRuns: 5,
+      timeOpen: "1d",
+      checkRuns: 5,
       totalDuration: "2d",
     }),
   ];

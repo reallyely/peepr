@@ -10,8 +10,8 @@ test("IntegrationEvent - create with required fields", () => {
     title: "Test PR",
     createdAt: "2023-01-01T00:00:00Z",
     updatedAt: "2023-01-02T00:00:00Z",
-    prTimeOpen: "2h 30m",
-    pullRequestCheckRuns: 5,
+    timeOpen: "2h 30m",
+    checkRuns: 5,
     totalDuration: "3h 45m",
   });
 
@@ -27,9 +27,9 @@ test("IntegrationEvent - create with required fields", () => {
   );
   assert.strictEqual(integration.mergedAt, null);
   assert.strictEqual(integration.closedAt, null);
-  assert.ok(integration.prTimeOpen instanceof Duration);
-  assert.strictEqual(integration.prTimeOpen.toHumanReadable(), "2h 30m");
-  assert.strictEqual(integration.pullRequestCheckRuns, 5);
+  assert.ok(integration.timeOpen instanceof Duration);
+  assert.strictEqual(integration.timeOpen.toHumanReadable(), "2h 30m");
+  assert.strictEqual(integration.checkRuns, 5);
   assert.strictEqual(integration.totalDuration.toHumanReadable(), "3h 45m");
 });
 
@@ -42,8 +42,8 @@ test("IntegrationEvent - create with all fields", () => {
     updatedAt: "2023-01-02T00:00:00Z",
     mergedAt: "2023-01-03T00:00:00Z",
     closedAt: "2023-01-03T00:00:00Z",
-    prTimeOpen: "2h 30m",
-    pullRequestCheckRuns: 5,
+    timeOpen: "2h 30m",
+    checkRuns: 5,
     totalDuration: "3h 45m",
   });
 
@@ -69,8 +69,8 @@ test("IntegrationEvent - create with Date objects", () => {
     createdAt,
     updatedAt,
     mergedAt,
-    prTimeOpen: new Duration(9000000), // 2.5 hours in ms
-    pullRequestCheckRuns: 5,
+    timeOpen: new Duration(9000000), // 2.5 hours in ms
+    checkRuns: 5,
     totalDuration: new Duration(13500000), // 3.75 hours in ms
   });
 
@@ -87,8 +87,8 @@ test("IntegrationEvent - validation errors", () => {
       title: "Test PR",
       createdAt: "2023-01-01T00:00:00Z",
       updatedAt: "2023-01-02T00:00:00Z",
-      prTimeOpen: "2h 30m",
-      pullRequestCheckRuns: 5,
+      timeOpen: "2h 30m",
+      checkRuns: 5,
       totalDuration: "3h 45m",
     });
   }, /PR number is required and must be a number/);
@@ -99,8 +99,8 @@ test("IntegrationEvent - validation errors", () => {
       title: null,
       createdAt: "2023-01-01T00:00:00Z",
       updatedAt: "2023-01-02T00:00:00Z",
-      prTimeOpen: "2h 30m",
-      pullRequestCheckRuns: 5,
+      timeOpen: "2h 30m",
+      checkRuns: 5,
       totalDuration: "3h 45m",
     });
   }, /Title is required and must be a string/);
@@ -113,8 +113,8 @@ test("IntegrationEvent - state methods", () => {
     title: "In Progress PR",
     createdAt: "2023-01-01T00:00:00Z",
     updatedAt: "2023-01-02T00:00:00Z",
-    prTimeOpen: "2h 30m",
-    pullRequestCheckRuns: 5,
+    timeOpen: "2h 30m",
+    checkRuns: 5,
     totalDuration: "3h 45m",
   });
 
@@ -130,8 +130,8 @@ test("IntegrationEvent - state methods", () => {
     updatedAt: "2023-01-02T00:00:00Z",
     mergedAt: "2023-01-03T00:00:00Z",
     closedAt: "2023-01-03T00:00:00Z",
-    prTimeOpen: "2h 30m",
-    pullRequestCheckRuns: 5,
+    timeOpen: "2h 30m",
+    checkRuns: 5,
     totalDuration: "3h 45m",
   });
 
@@ -146,8 +146,8 @@ test("IntegrationEvent - state methods", () => {
     createdAt: "2023-01-01T00:00:00Z",
     updatedAt: "2023-01-02T00:00:00Z",
     closedAt: "2023-01-03T00:00:00Z",
-    prTimeOpen: "2h 30m",
-    pullRequestCheckRuns: 5,
+    timeOpen: "2h 30m",
+    checkRuns: 5,
     totalDuration: "3h 45m",
   });
 
@@ -163,8 +163,8 @@ test("IntegrationEvent - getSummary method", () => {
     title: "In Progress PR",
     createdAt: "2023-01-01T00:00:00Z",
     updatedAt: "2023-01-02T00:00:00Z",
-    prTimeOpen: "2h 30m",
-    pullRequestCheckRuns: 5,
+    timeOpen: "2h 30m",
+    checkRuns: 5,
     totalDuration: "3h 45m",
   });
 
@@ -181,8 +181,8 @@ test("IntegrationEvent - getSummary method", () => {
     updatedAt: "2023-01-02T00:00:00Z",
     mergedAt: "2023-01-03T00:00:00Z",
     closedAt: "2023-01-03T00:00:00Z",
-    prTimeOpen: "2h 30m",
-    pullRequestCheckRuns: 5,
+    timeOpen: "2h 30m",
+    checkRuns: 5,
     totalDuration: "3h 45m",
   });
 
@@ -198,8 +198,8 @@ test("IntegrationEvent - getSummary method", () => {
     createdAt: "2023-01-01T00:00:00Z",
     updatedAt: "2023-01-02T00:00:00Z",
     closedAt: "2023-01-03T00:00:00Z",
-    prTimeOpen: "2h 30m",
-    pullRequestCheckRuns: 5,
+    timeOpen: "2h 30m",
+    checkRuns: 5,
     totalDuration: "3h 45m",
   });
 
@@ -218,8 +218,8 @@ test("IntegrationEvent - toJSON method", () => {
     updatedAt: "2023-01-02T00:00:00Z",
     mergedAt: "2023-01-03T00:00:00Z",
     closedAt: "2023-01-03T00:00:00Z",
-    prTimeOpen: "2h 30m",
-    pullRequestCheckRuns: 5,
+    timeOpen: "2h 30m",
+    checkRuns: 5,
     totalDuration: "3h 45m",
   });
 
@@ -233,8 +233,8 @@ test("IntegrationEvent - toJSON method", () => {
     updatedAt: "2023-01-02T00:00:00.000Z",
     mergedAt: "2023-01-03T00:00:00.000Z",
     closedAt: "2023-01-03T00:00:00.000Z",
-    prTimeOpen: "2h 30m",
-    pullRequestCheckRuns: 5,
+    timeOpen: "2h 30m",
+    checkRuns: 5,
     totalDuration: "3h 45m",
   });
 });

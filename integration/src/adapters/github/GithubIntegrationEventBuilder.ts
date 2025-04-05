@@ -23,7 +23,7 @@ export class GithubIntegrationEventBuilder {
   setPullRequest(
     pullRequest: Pick<
       RestEndpointMethodTypes["search"]["issuesAndPullRequests"]["response"]["data"]["items"][number],
-      "closed_at" | "created_at" | "id" | "number" | "title" | "updated_at"
+      "closed_at" | "created_at" | "id" | "number" | "title" | "updated_at" | "pull_request"
     >,
   ): GithubIntegrationEventBuilder {
     this.prId = pullRequest.id;
@@ -45,8 +45,8 @@ export class GithubIntegrationEventBuilder {
       this.prTimeOpen = new Duration(durationMs);
     }
 
-    if (pullRequest.updated_at && pullRequest.closed_at) {
-      this.prMergedAt = new Date(pullRequest.updated_at);
+    if (pullRequest?.pull_request?.merged_at) {
+      this.prMergedAt = new Date(pullRequest.pull_request.merged_at);
     }
 
     return this;
@@ -93,7 +93,7 @@ export class GithubIntegrationEventBuilder {
     // Validate required fields
     if (!this.prNumber || !this.prTitle) {
       throw new Error(
-        "Cannot build WorkItemIntegration: missing pull request information",
+        "Cannot build IntegrationEvent: missing pull request information",
       );
     }
 
@@ -105,8 +105,8 @@ export class GithubIntegrationEventBuilder {
       updatedAt: this.prUpdatedAt,
       mergedAt: this.prMergedAt,
       closedAt: this.prClosedAt,
-      prTimeOpen: this.prTimeOpen,
-      pullRequestCheckRuns: this.pullRequestCheckRuns,
+      timeOpen: this.prTimeOpen,
+      checkRuns: this.pullRequestCheckRuns,
       totalDuration: this.totalDuration,
     });
   }

@@ -84,10 +84,10 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
             title: pr.title,
             createdAt: pr.created_at,
             updatedAt: pr.updated_at,
-            mergedAt: pr.closed_at,
+            mergedAt: pr.pull_request.merged_at,
             closedAt: pr.closed_at,
-            prTimeOpen: stats?.prTimeOpen.toHumanReadable(),
-            pullRequestCheckRuns: stats?.pullRequestCheckRuns,
+            prTimeOpen: stats?.timeOpen.toHumanReadable(),
+            pullRequestCheckRuns: stats?.checkRuns,
             totalDuration: stats?.totalDuration.toHumanReadable(),
           };
 
@@ -432,6 +432,12 @@ export default function Integration() {
                             <span>Closed: </span>
                             <span class={styles["pr-item__stat-value"]}>
                               {pr.closedAt ? formatDate(pr.closedAt) : "Open"}
+                            </span>
+                          </div>
+                          <div class={styles["pr-item__stat"]}>
+                            <span>Merged: </span>
+                            <span class={styles["pr-item__stat-value"]}>
+                              {pr.mergedAt ? formatDate(pr.mergedAt) : "Open"}
                             </span>
                           </div>
                           <div class={styles["pr-item__stat"]}>

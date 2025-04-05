@@ -3,14 +3,21 @@ import { describe, it } from "node:test";
 import { GithubIntegrationEventBuilder } from "./GithubIntegrationEventBuilder.ts";
 
 // Mock pull request data
-const mockPullRequest = {
+type PullRequestParameter = Parameters<InstanceType<typeof GithubIntegrationEventBuilder>["setPullRequest"]>[0]
+const mockPullRequest: PullRequestParameter = {
   id: 123,
   number: 5319,
   title: "Test PR",
   closed_at: null,
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-02T00:00:00Z",
-  merged_at: null
+  pull_request: {
+    merged_at: null,
+    diff_url: "",
+    html_url: "",
+    patch_url: "",
+    url: ""
+  }
 };
 
 // Mock workflow run data
@@ -27,13 +34,12 @@ const mockUsage = {
   run_duration_ms: 300000,
 };
 
-describe("WorkItemIntegrationBuilder", () => {
-  it("builds a basic WorkItemIntegration from PR data", () => {
+describe("GithubIntegrationEventBuilder", () => {
+  it("builds a basic IntegrationEvent from PR data", () => {
     const integration = new GithubIntegrationEventBuilder()
       .setPullRequest(mockPullRequest)
       .build();
 
-    console.log({ integration })
     assert.strictEqual(integration.id.toString(), "123");
     assert.strictEqual(integration.prNumber, 5319);
     assert.strictEqual(integration.title, "Test PR");
@@ -49,7 +55,7 @@ describe("WorkItemIntegrationBuilder", () => {
       .setWorkflowRun({ ...mockWorkflowRun, id: 457 })
       .build();
 
-    assert.strictEqual(integration.pullRequestCheckRuns, 2);
+    assert.strictEqual(integration.checkRuns, 2);
   });
 
   it("calculates total workflow duration", () => {
@@ -63,10 +69,16 @@ describe("WorkItemIntegrationBuilder", () => {
   });
 
   it("calculates PR open duration for closed PRs", () => {
-    const closedPR = {
+    const closedPR: PullRequestParameter = {
       ...mockPullRequest,
       closed_at: "2024-01-03T00:00:00Z",
-      merged_at: "2024-01-03T00:00:00Z"
+      pull_request: {
+        merged_at: "2024-01-03T00:00:00Z",
+        diff_url: "",
+        html_url: "",
+        patch_url: "",
+        url: ""
+      }
     };
 
     const integration = new GithubIntegrationEventBuilder()
@@ -74,7 +86,7 @@ describe("WorkItemIntegrationBuilder", () => {
       .build();
 
     // Should be 2 days (172800000 ms)
-    assert.strictEqual(integration.prTimeOpen.inMilliseconds, 172800000);
+    assert.strictEqual(integration.timeOpen.inMilliseconds, 172800000);
     assert.strictEqual(integration.isComplete(), true);
   });
 
@@ -88,7 +100,7 @@ describe("WorkItemIntegrationBuilder", () => {
       .setPullRequest(abandonedPR)
       .build();
 
-    assert.strictEqual(integration.prTimeOpen.inMilliseconds, 172800000);
+    assert.strictEqual(integration.timeOpen.inMilliseconds, 172800000);
     assert.strictEqual(integration.isAbandoned(), true);
   });
 
@@ -97,7 +109,7 @@ describe("WorkItemIntegrationBuilder", () => {
       // @ts-expect-error - Testing invalid type
       new GithubIntegrationEventBuilder().setPullRequest({}).build();
     }, {
-      message: "Cannot build WorkItemIntegration: missing pull request information"
+      message: "Cannot build IntegrationEvent: missing pull request information"
     });
   });
 
@@ -113,7 +125,13 @@ describe("WorkItemIntegrationBuilder", () => {
     const mergedPR = {
       ...mockPullRequest,
       closed_at: "2024-01-03T00:00:00Z",
-      merged_at: "2024-01-03T00:00:00Z"
+      pull_request: {
+        merged_at: "2024-01-03T00:00:00Z",
+        diff_url: "",
+        html_url: "",
+        patch_url: "",
+        url: ""
+      }
     };
 
     const integration = new GithubIntegrationEventBuilder()
