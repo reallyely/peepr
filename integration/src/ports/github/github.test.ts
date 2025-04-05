@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { test } from "node:test";
 import { GITHUB_TOKEN } from "./config/github.ts";
-import { GitHubService } from "./github.ts";
+import { GitHubService } from "./github.service.ts";
 
 const githubService = new GitHubService(GITHUB_TOKEN);
 

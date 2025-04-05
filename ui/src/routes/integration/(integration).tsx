@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import process from "node:process";
-import { GitHubService, GithubIntegrationBuilder } from "@peepr/integration";
+import { GitHubService, GithubIntegrationEventBuilder } from "@peepr/integration";
 import {
   type RouteDefinition,
   action,
@@ -61,7 +61,7 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
           startDate.toISOString(),
           endDate.toISOString(),
         )) {
-          const builder = new GithubIntegrationBuilder();
+          const builder = new GithubIntegrationEventBuilder();
           builder.setPullRequest(pr);
 
           const runs = await github.getAllWorkflowRunsForPR(pr.number);
