@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import process from "node:process";
-import { GitHubService, IntegrationService } from "@peepr/integration";
 import { Cycle } from "@peepr/core";
+import { GitHubService, IntegrationService } from "@peepr/integration";
 import {
   type RouteDefinition,
   action,
@@ -27,13 +27,12 @@ import styles from "./integration.module.css";
 import Button from "~/components/form/Button";
 import { Cache } from "~/lib/cache";
 
-const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
+const getPRStats = query(async ({ cycleNumber }) => {
   "use server";
 
   // Generate a cache key based on the cycle number
   const cacheKey = `integration:prStats:cycle:${cycleNumber}`;
 
-  // Try to return from cache unless refresh is true
   try {
     return await Cache.getOrSet(
       cacheKey,
@@ -60,35 +59,14 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
           endDate
         });
 
-        // Collect all integrations using our streaming service
-        const pullRequests = [];
         const integrationEvents = [];
-
-        // Use our streaming integration service to get events for this cycle
         for await (const integration of integrationService.streamIntegrationsForCycle(cycle)) {
           integrationEvents.push(integration);
-          
-          // Extract data for UI display
-          const prStats = {
-            prNumber: integration.prNumber,
-            title: integration.title,
-            createdAt: integration.createdAt.toISOString(),
-            updatedAt: integration.updatedAt.toISOString(),
-            mergedAt: integration.mergedAt?.toISOString() || null,
-            closedAt: integration.closedAt?.toISOString() || null,
-            prTimeOpen: integration.timeOpen.toHumanReadable(),
-            pullRequestCheckRuns: integration.checkRuns,
-            totalDuration: integration.totalDuration.toHumanReadable(),
-          };
-
-          pullRequests.push(prStats);
         }
-
-        // Get cycle statistics using the integration service
-        const statistics = await integrationService.getStatisticsForCycle(cycle);
+        const statistics = await integrationService.getStatisticsForCycle(cycle, integrationEvents);
 
         return {
-          pullRequests,
+          integrationEvents: integrationEvents.map((integration) => integration.toJSON()),
           statistics: statistics.toJSON(),
         };
       },
@@ -159,12 +137,12 @@ export default function Integration() {
     }
   });
 
-  const prStatsData = createAsync(
+  const getIntegrationStats = createAsync(
     async () => {
       const stats = await getPRStats({
         cycleNumber: cycleNumber(),
       });
-      return stats;
+      return (stats);
     },
     { name: "get-integration-stats" },
   );
@@ -172,7 +150,10 @@ export default function Integration() {
   // Function to handle data refresh with transition
   const handleRefresh = () => {
     startTransition(async () => {
-      const res = await refreshCache({ cycleNumber: cycleNumber() });
+      await refreshCache({ cycleNumber: cycleNumber() });
+      await getPRStats({
+        cycleNumber: cycleNumber(),
+      });
     });
   };
 
@@ -214,8 +195,6 @@ export default function Integration() {
 
   return (
     <main class="main-container">
-      <h1>Pull Request Statistics</h1>
-
       <Card aria-labelledby="stats-summary">
         <h2 id="stats-summary" class="visually-hidden">
           Statistics Summary
@@ -248,17 +227,17 @@ export default function Integration() {
       <Card classList={{ [styles["card--pending"]]: isPending() }}>
         <Suspense fallback={<ProgressBar indeterminate />}>
           <Show
-            when={!("error" in (prStatsData() || {}))}
+            when={!("error" in (getIntegrationStats() || {}))}
             fallback={
               <Alert type="error">
-                Error: {(prStatsData() as { error: string }).error}
+                Error: {(getIntegrationStats() as { error: string }).error}
               </Alert>
             }
           >
             <Show
               when={
-                Object.entries(prStatsData()?.statistics || {}).length > 0 &&
-                prStatsData()?.statistics
+                Object.entries(getIntegrationStats()?.statistics || {}).length > 0 &&
+                getIntegrationStats()?.statistics
               }
             >
               {(stats) => {
@@ -383,19 +362,19 @@ export default function Integration() {
       <Card classList={{ [styles["card--pending"]]: isPending() }}>
         <Suspense fallback={<ProgressBar indeterminate />}>
           <Show
-            when={!("error" in (prStatsData() || {}))}
+            when={!("error" in (getIntegrationStats() || {}))}
             fallback={
               <Alert type="error">
-                Error: {(prStatsData() as { error: string }).error}
+                Error: {(getIntegrationStats() as { error: string }).error}
               </Alert>
             }
           >
             <CardHeader
               title="Pull Request Details"
-              count={prStatsData()?.pullRequests?.length || 0}
+              count={getIntegrationStats()?.integrationEvents?.length || 0}
             />
             <CardContent>
-              <For each={prStatsData()?.pullRequests || []}>
+              <For each={getIntegrationStats()?.integrationEvents || []}>
                 {(pr) => (
                   <CardItem>
                     <>
@@ -443,7 +422,7 @@ export default function Integration() {
                           <div class={styles["pr-item__stat"]}>
                             <span>CI Runs: </span>
                             <span class={styles["pr-item__stat-value"]}>
-                              {pr.pullRequestCheckRuns}
+                              {pr.checkRuns}
                             </span>
                           </div>
                         </div>

@@ -78,11 +78,11 @@ export class IntegrationService {
    * Calculates statistics for a cycle using streaming to minimize memory usage
    * @param cycle The cycle to calculate statistics for
    */
-  async getStatisticsForCycle(cycle: Cycle): Promise<IntegrationStatistics> {
+  async getStatisticsForCycle(cycle: Cycle, integrations: IntegrationEvent[]): Promise<IntegrationStatistics> {
     // Create a streaming calculator that processes events incrementally
     const calculator = new StreamingStatisticsCalculator();
 
-    for await (const integration of this.streamIntegrationsForCycle(cycle)) {
+    for await (const integration of integrations) {
       calculator.addIntegration(integration);
     }
 
