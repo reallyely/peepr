@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardItem } from "~/components/card";
 import { Alert, ProgressBar } from "~/components/feedback";
 import styles from "./integration.module.css";
 
+import { DataGrid } from "~/components/data-grid";
 import Button from "~/components/form/Button";
 import { Cache } from "~/lib/cache";
 
@@ -292,64 +293,55 @@ export default function Integration() {
                     <Card variant="subtle">
                       <CardHeader title="Detailed Statistics" />
                       <CardContent>
-                        <table aria-label="Detailed PR Statistics">
-                          <thead>
-                            <tr>
-                              <th class={styles["stats-table__header"]}>
-                                Metric
-                              </th>
-                              <th class={styles["stats-table__header"]}>Min</th>
-                              <th class={styles["stats-table__header"]}>Q1</th>
-                              <th class={styles["stats-table__header"]}>
-                                Median
-                              </th>
-                              <th class={styles["stats-table__header"]}>Q3</th>
-                              <th class={styles["stats-table__header"]}>Max</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr class={styles["stats-table__row"]}>
-                              <th class={styles["stats-table__header"]}>
-                                CI Duration
-                              </th>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.ciDuration.range.min}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.ciDuration.quartiles.q1}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.ciDuration.quartiles.q2}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.ciDuration.quartiles.q3}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.ciDuration.range.max}
-                              </td>
-                            </tr>
-                            <tr class={styles["stats-table__row"]}>
-                              <th class={styles["stats-table__header"]}>
-                                PR Open Time
-                              </th>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.openTime.range.min}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.openTime.quartiles.q1}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.openTime.quartiles.q2}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.openTime.quartiles.q3}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.openTime.range.max}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                        <DataGrid
+                          data={[
+                            {
+                              metric: "CI Duration",
+                              min: stats()?.ciDuration.range.min,
+                              q1: stats()?.ciDuration.quartiles.q1,
+                              median: stats()?.ciDuration.quartiles.q2,
+                              q3: stats()?.ciDuration.quartiles.q3,
+                              max: stats()?.ciDuration.range.max
+                            },
+                            {
+                              metric: "PR Open Time",
+                              min: stats()?.openTime.range.min,
+                              q1: stats()?.openTime.quartiles.q1,
+                              median: stats()?.openTime.quartiles.q2,
+                              q3: stats()?.openTime.quartiles.q3,
+                              max: stats()?.openTime.range.max
+                            }
+                          ]}
+                          columns={[
+                            {
+                              accessorKey: "metric",
+                              header: "Metric",
+                              sortingFn: "alphanumeric"
+                            },
+                            {
+                              accessorKey: "min",
+                              header: "Min",
+                            },
+                            {
+                              accessorKey: "q1",
+                              header: "Q1",
+                            },
+                            {
+                              accessorKey: "median",
+                              header: "Median",
+                            },
+                            {
+                              accessorKey: "q3",
+                              header: "Q3",
+                            },
+                            {
+                              accessorKey: "max",
+                              header: "Max",
+                            }
+                          ]}
+                          caption="Detailed PR Statistics"
+                          emptyMessage="No statistical data available"
+                        />
                       </CardContent>
                     </Card>
                   </>
@@ -374,63 +366,52 @@ export default function Integration() {
               count={getIntegrationStats()?.integrationEvents?.length || 0}
             />
             <CardContent>
-              <For each={getIntegrationStats()?.integrationEvents || []}>
-                {(pr) => (
-                  <CardItem>
-                    <>
-                      <div class={styles["pr-item__icon"]}>📊</div>
-                      <div class={styles["pr-item__content"]}>
-                        <div class={styles["pr-item__title"]}>
-                          <span class={styles["pr-item__title-number"]}>
-                            #{pr.prNumber}
-                          </span>{" "}
-                          {pr.title}
-                        </div>
-                        <div class={styles["pr-item__details"]}>
-                          <div class={styles["pr-item__stat"]}>
-                            <span>Created: </span>
-                            <span class={styles["pr-item__stat-value"]}>
-                              {pr.createdAt
-                                ? formatDate(pr.createdAt)
-                                : "Unknown"}
-                            </span>
-                          </div>
-                          <div class={styles["pr-item__stat"]}>
-                            <span>Closed: </span>
-                            <span class={styles["pr-item__stat-value"]}>
-                              {pr.closedAt ? formatDate(pr.closedAt) : "Open"}
-                            </span>
-                          </div>
-                          <div class={styles["pr-item__stat"]}>
-                            <span>Merged: </span>
-                            <span class={styles["pr-item__stat-value"]}>
-                              {pr.mergedAt ? formatDate(pr.mergedAt) : "Open"}
-                            </span>
-                          </div>
-                          <div class={styles["pr-item__stat"]}>
-                            <span>Time Open: </span>
-                            <span class={styles["pr-item__stat-value"]}>
-                              {pr.prTimeOpen}
-                            </span>
-                          </div>
-                          <div class={styles["pr-item__stat"]}>
-                            <span>Total CI Duration: </span>
-                            <span class={styles["pr-item__stat-value"]}>
-                              {pr.totalDuration}
-                            </span>
-                          </div>
-                          <div class={styles["pr-item__stat"]}>
-                            <span>CI Runs: </span>
-                            <span class={styles["pr-item__stat-value"]}>
-                              {pr.checkRuns}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  </CardItem>
-                )}
-              </For>
+              <DataGrid
+                data={getIntegrationStats()?.integrationEvents || []}
+                columns={[
+                  {
+                    accessorKey: "prNumber",
+                    header: "PR #",
+                    cell: (info) => <span>#{info.getValue()}</span>,
+                    enableSorting: true,
+                  },
+                  {
+                    accessorKey: "title",
+                    header: "Title",
+                    cell: (info) => <span>{info.getValue()}</span>,
+                    enableSorting: true,
+                  },
+                  {
+                    accessorKey: "createdAt",
+                    header: "Created",
+                    cell: (info) => (info.getValue() ? formatDate(String(info.getValue())) : "Unknown"),
+                    enableSorting: true,
+                  },
+                  {
+                    accessorKey: "closedAt",
+                    header: "Closed",
+                    cell: (info) => (info.getValue() ? formatDate(String(info.getValue())) : "Open"),
+                    enableSorting: true,
+                  },
+                  {
+                    accessorKey: "timeOpen",
+                    header: "Time Open",
+                    enableSorting: true,
+                  },
+                  {
+                    accessorKey: "totalDuration",
+                    header: "CI Duration",
+                    enableSorting: true,
+                  },
+                  {
+                    accessorKey: "checkRuns",
+                    header: "CI Runs",
+                    enableSorting: true,
+                  }
+                ]}
+                initialSorting={[{ id: "createdAt", desc: true }]}
+                emptyMessage="No pull requests found for this cycle"
+              />
             </CardContent>
           </Show>
         </Suspense>

@@ -64,23 +64,7 @@
 	color: var(--text-primary);
 }
 
-/* Stats table styling */
-.stats-table__header {
-	text-align: left;
-	padding: var(--spacing-sm) var(--spacing-md);
-	font-weight: var(--font-weight-semibold);
-	font-size: var(--font-size-sm);
-	color: var(--text-secondary);
-}
-
-.stats-table__row {
-	border-bottom: var(--border-width-thin) solid var(--border-color);
-}
-
-.stats-table__cell {
-	padding: var(--spacing-sm) var(--spacing-md);
-	font-size: var(--font-size-sm);
-}
+/* DataGrid styling is now in the component */
 
 /* PR item styling */
 .pr-item__icon {
