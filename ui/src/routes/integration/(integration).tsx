@@ -100,7 +100,7 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
 
         return {
           pullRequests,
-          statistics,
+          statistics: statistics.toJSON(),
         };
       },
     );
@@ -183,8 +183,7 @@ export default function Integration() {
   // Function to handle data refresh with transition
   const handleRefresh = () => {
     startTransition(async () => {
-      refreshCache({ cycleNumber: cycleNumber() });
-
+      const res = await refreshCache({ cycleNumber: cycleNumber() });
     });
   };
 

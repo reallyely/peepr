@@ -51,4 +51,5 @@ test("GitHubService - get workflow jobs", async () => {
   const workflowRuns = await githubService.getAllWorkflowRunsForPR(5319);
   const jobs = await githubService.getWorkflowJobs(workflowRuns[0].id);
   assert.ok(workflowRuns);
+  assert.ok(jobs);
 });
