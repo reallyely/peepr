@@ -108,24 +108,13 @@ export class Cycle {
   }
 
   /**
-   * Determines if an integration event falls within this cycle
+   * Returns the date range for this cycle
    */
-  containsIntegration(integration: IntegrationEvent): boolean {
-    // An integration is in a cycle if its creation date is within the cycle period
-    const integrationDate = integration.createdAt.getTime();
-    return (
-      integrationDate >= this.startDate.getTime() &&
-      integrationDate <= this.endDate.getTime()
-    );
-  }
-
-  /**
-   * Filters a list of integration events to only those that occurred during this cycle
-   */
-  filterIntegrations(integrations: IntegrationEvent[]): IntegrationEvent[] {
-    return integrations.filter((integration) =>
-      this.containsIntegration(integration),
-    );
+  getDateRange(): { startDate: Date; endDate: Date } {
+    return {
+      startDate: this.startDate,
+      endDate: this.endDate
+    };
   }
 
   /**

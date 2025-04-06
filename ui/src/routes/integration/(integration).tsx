@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import process from "node:process";
-import { GitHubService, GithubIntegrationEventBuilder } from "@peepr/integration";
+import { GitHubService, IntegrationService } from "@peepr/integration";
+import { Cycle } from "@peepr/core";
 import {
   type RouteDefinition,
   action,
@@ -22,7 +23,6 @@ import { CycleSelector } from "~/components/CycleSelector/CycleSelector";
 import { Card, CardContent, CardHeader, CardItem } from "~/components/card";
 import { Alert, ProgressBar } from "~/components/feedback";
 import styles from "./integration.module.css";
-import { generateStatistics } from "./statistics";
 
 import Button from "~/components/form/Button";
 import { Cache } from "~/lib/cache";
@@ -40,63 +40,52 @@ const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
       async () => {
         // This function will only execute if cache miss or refresh=true
         assert(process.env.GITHUB_TOKEN, "GITHUB_TOKEN is not set");
-        const github = new GitHubService(process.env.GITHUB_TOKEN);
+        const githubService = new GitHubService(process.env.GITHUB_TOKEN);
+        const integrationService = new IntegrationService(githubService);
 
         if (!cycleNumber) {
           throw new Error("Cycle number is required");
         }
 
-        // Calculate start and end dates based on cycle number
+        // Create a Cycle domain object for the selected cycle
         const startDate = new Date(2025, 0, 1);
         startDate.setDate(startDate.getDate() + (cycleNumber - 1) * 7);
 
         const endDate = new Date(startDate);
         endDate.setDate(endDate.getDate() + 6);
 
+        const cycle = Cycle.create({
+          cycleNumber,
+          startDate,
+          endDate
+        });
+
+        // Collect all integrations using our streaming service
         const pullRequests = [];
-        const workItemIntegrations = [];
+        const integrationEvents = [];
 
-        // Get pull requests from the calculated date range for the cycle
-        for await (const pr of github.getPullRequestsByDateRange(
-          startDate.toISOString(),
-          endDate.toISOString(),
-        )) {
-          const builder = new GithubIntegrationEventBuilder();
-          builder.setPullRequest(pr);
-
-          const runs = await github.getAllWorkflowRunsForPR(pr.number);
-          for (const run of runs) {
-            builder.setWorkflowRun(run);
-          }
-
-          await Promise.all(
-            runs.map(async (run) => {
-              const usage = await github.getWorkflowRunUsage(run.id);
-              builder.setWorkflowUsage({ ...usage });
-            }),
-          );
-
-          const stats = builder.build();
-          workItemIntegrations.push(stats);
-
+        // Use our streaming integration service to get events for this cycle
+        for await (const integration of integrationService.streamIntegrationsForCycle(cycle)) {
+          integrationEvents.push(integration);
+          
+          // Extract data for UI display
           const prStats = {
-            prNumber: pr.number,
-            title: pr.title,
-            createdAt: pr.created_at,
-            updatedAt: pr.updated_at,
-            mergedAt: pr.pull_request.merged_at,
-            closedAt: pr.closed_at,
-            prTimeOpen: stats?.timeOpen.toHumanReadable(),
-            pullRequestCheckRuns: stats?.checkRuns,
-            totalDuration: stats?.totalDuration.toHumanReadable(),
+            prNumber: integration.prNumber,
+            title: integration.title,
+            createdAt: integration.createdAt.toISOString(),
+            updatedAt: integration.updatedAt.toISOString(),
+            mergedAt: integration.mergedAt?.toISOString() || null,
+            closedAt: integration.closedAt?.toISOString() || null,
+            prTimeOpen: integration.timeOpen.toHumanReadable(),
+            pullRequestCheckRuns: integration.checkRuns,
+            totalDuration: integration.totalDuration.toHumanReadable(),
           };
 
           pullRequests.push(prStats);
-
         }
 
-        // Calculate statistics from the collected data
-        const statistics = generateStatistics(workItemIntegrations);
+        // Get cycle statistics using the integration service
+        const statistics = await integrationService.getStatisticsForCycle(cycle);
 
         return {
           pullRequests,
@@ -213,7 +202,7 @@ export default function Integration() {
   };
 
   const dateRangeDisplay = createMemo(() => {
-    // Calculate the date range from the cycle number
+    // Calculate the date range from the cycle number using our domain model
     const start = new Date(2025, 0, 1);
     start.setDate(start.getDate() + (cycleNumber() - 1) * 7);
 

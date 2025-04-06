@@ -111,101 +111,20 @@ test("Cycle - validation errors", () => {
   }, /End date must be after start date/);
 });
 
-test("Cycle - containsIntegration method", () => {
+test("Cycle - getDateRange method", () => {
+  const startDate = new Date("2023-01-01T00:00:00Z");
+  const endDate = new Date("2023-01-15T00:00:00Z");
+  
   const cycle = Cycle.create({
     cycleNumber: 1,
-    startDate: "2023-01-01T00:00:00Z",
-    endDate: "2023-01-15T00:00:00Z",
+    startDate,
+    endDate,
   });
 
-  // Integration event within the cycle
-  const inCycleIntegration = IntegrationEvent.create({
-    prNumber: 123,
-    title: "In Cycle PR",
-    createdAt: "2023-01-05T00:00:00Z",
-    updatedAt: "2023-01-06T00:00:00Z",
-    timeOpen: "1d",
-    checkRuns: 5,
-    totalDuration: "2d",
-  });
-
-  // Integration event before the cycle
-  const beforeCycleIntegration = IntegrationEvent.create({
-    prNumber: 124,
-    title: "Before Cycle PR",
-    createdAt: "2022-12-25T00:00:00Z",
-    updatedAt: "2022-12-26T00:00:00Z",
-    timeOpen: "1d",
-    checkRuns: 5,
-    totalDuration: "2d",
-  });
-
-  // Integration event after the cycle
-  const afterCycleIntegration = IntegrationEvent.create({
-    prNumber: 125,
-    title: "After Cycle PR",
-    createdAt: "2023-01-20T00:00:00Z",
-    updatedAt: "2023-01-21T00:00:00Z",
-    timeOpen: "1d",
-    checkRuns: 5,
-    totalDuration: "2d",
-  });
-
-  assert.strictEqual(cycle.containsIntegration(inCycleIntegration), true);
-  assert.strictEqual(cycle.containsIntegration(beforeCycleIntegration), false);
-  assert.strictEqual(cycle.containsIntegration(afterCycleIntegration), false);
-});
-
-test("Cycle - filterIntegrations method", () => {
-  const cycle = Cycle.create({
-    cycleNumber: 1,
-    startDate: "2023-01-01T00:00:00Z",
-    endDate: "2023-01-15T00:00:00Z",
-  });
-
-  const integrations = [
-    IntegrationEvent.create({
-      prNumber: 123,
-      title: "In Cycle PR 1",
-      createdAt: "2023-01-05T00:00:00Z",
-      updatedAt: "2023-01-06T00:00:00Z",
-      timeOpen: "1d",
-      checkRuns: 5,
-      totalDuration: "2d",
-    }),
-    IntegrationEvent.create({
-      prNumber: 124,
-      title: "Before Cycle PR",
-      createdAt: "2022-12-25T00:00:00Z",
-      updatedAt: "2022-12-26T00:00:00Z",
-      timeOpen: "1d",
-      checkRuns: 5,
-      totalDuration: "2d",
-    }),
-    IntegrationEvent.create({
-      prNumber: 125,
-      title: "In Cycle PR 2",
-      createdAt: "2023-01-10T00:00:00Z",
-      updatedAt: "2023-01-11T00:00:00Z",
-      timeOpen: "1d",
-      checkRuns: 5,
-      totalDuration: "2d",
-    }),
-    IntegrationEvent.create({
-      prNumber: 126,
-      title: "After Cycle PR",
-      createdAt: "2023-01-20T00:00:00Z",
-      updatedAt: "2023-01-21T00:00:00Z",
-      timeOpen: "1d",
-      checkRuns: 5,
-      totalDuration: "2d",
-    }),
-  ];
-
-  const filteredIntegrations = cycle.filterIntegrations(integrations);
-  assert.strictEqual(filteredIntegrations.length, 2);
-  assert.strictEqual(filteredIntegrations[0].prNumber, 123);
-  assert.strictEqual(filteredIntegrations[1].prNumber, 125);
+  const dateRange = cycle.getDateRange();
+  
+  assert.strictEqual(dateRange.startDate, startDate);
+  assert.strictEqual(dateRange.endDate, endDate);
 });
 
 test("Cycle - compareTo method", () => {
