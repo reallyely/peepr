@@ -1,0 +1,56 @@
+/* Metric Card styles */
+.title {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.value {
+    display: block;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+}
+
+.valueContainer {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.trend {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.trend--up {
+    color: var(--emerald-medium);
+    background-color: rgba(44, 195, 137, 0.1);
+}
+
+.trend--down {
+    color: var(--coral-medium);
+    background-color: rgba(255, 90, 66, 0.1);
+}
+
+.trend--neutral {
+    color: var(--text-tertiary);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.hasTooltip {
+    cursor: help;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    text-decoration-color: var(--text-tertiary);
+}
