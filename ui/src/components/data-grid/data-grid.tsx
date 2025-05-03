@@ -6,11 +6,11 @@ import {
   getCoreRowModel,
   getSortedRowModel,
 } from "@tanstack/solid-table";
-import { For, createSignal } from "solid-js";
+import { For, createMemo, createSignal } from "solid-js";
 import styles from "./data-grid.module.css";
 
 export interface DataGridProps<T> {
-  data: T[];
+  data?: T[] | (() => T[] | undefined);
   columns: ColumnDef<T>[];
   onRowClick?: (row: T) => void;
   initialSorting?: SortingState;
@@ -30,9 +30,16 @@ export const DataGrid = <T extends object>({
 }: DataGridProps<T>) => {
   const [sorting, setSorting] = createSignal<SortingState>(initialSorting);
 
+  const resolvedData = createMemo(() => {
+    if (typeof data === 'function') {
+      return data() || [];
+    }
+    return data || [];
+  });
+
   const table = createSolidTable({
     get data() {
-      return data;
+      return resolvedData();
     },
     columns,
     state: {

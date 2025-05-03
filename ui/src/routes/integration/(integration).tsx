@@ -294,7 +294,7 @@ export default function Integration() {
                       <CardHeader title="Detailed Statistics" />
                       <CardContent>
                         <DataGrid
-                          data={[
+                          data={() => [
                             {
                               metric: "CI Duration",
                               min: stats()?.ciDuration.range.min,
@@ -367,7 +367,7 @@ export default function Integration() {
             />
             <CardContent>
               <DataGrid
-                data={getIntegrationStats()?.integrationEvents || []}
+                data={() => getIntegrationStats()?.integrationEvents}
                 columns={[
                   {
                     accessorKey: "prNumber",
