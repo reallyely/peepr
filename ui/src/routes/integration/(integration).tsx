@@ -11,7 +11,6 @@ import {
   useSearchParams,
 } from "@solidjs/router";
 import {
-  For,
   Show,
   Suspense,
   createEffect,
@@ -20,7 +19,7 @@ import {
   useTransition,
 } from "solid-js";
 import { CycleSelector } from "~/components/CycleSelector/CycleSelector";
-import { Card, CardContent, CardHeader, CardItem } from "~/components/card";
+import { Card, CardContent, CardHeader, MetricCard } from "~/components/card";
 import { Alert, ProgressBar } from "~/components/feedback";
 import styles from "./integration.module.css";
 
@@ -245,49 +244,26 @@ export default function Integration() {
                 return (
                   <>
                     <div class={styles["stats-grid"]}>
-                      <Card variant="subtle">
-                        <CardContent>
-                          <span class={styles["stats-card__title"]}>
-                            Total PRs
-                          </span>
-                          <span class={styles["stats-card__value"]}>
-                            {stats()?.totalPRs}
-                          </span>
-                        </CardContent>
-                      </Card>
+                      <MetricCard
+                        title="Total PRs"
+                        value={stats()?.totalPRs}
+                        description="The total number of pull requests in this cycle"
+                      />
 
-                      <Card variant="subtle">
-                        <CardContent>
-                          <span class={styles["stats-card__title"]}>
-                            Total CI Runs
-                          </span>
-                          <span class={styles["stats-card__value"]}>
-                            {stats()?.totalCIRuns}
-                          </span>
-                        </CardContent>
-                      </Card>
+                      <MetricCard
+                        title="Total CI Runs"
+                        value={stats()?.totalCIRuns}
+                      />
 
-                      <Card variant="subtle">
-                        <CardContent>
-                          <span class={styles["stats-card__title"]}>
-                            Median CI Duration
-                          </span>
-                          <span class={styles["stats-card__value"]}>
-                            {stats()?.ciDuration.median}
-                          </span>
-                        </CardContent>
-                      </Card>
+                      <MetricCard
+                        title="Median CI Duration"
+                        value={stats()?.ciDuration.median}
+                      />
 
-                      <Card variant="subtle">
-                        <CardContent>
-                          <span class={styles["stats-card__title"]}>
-                            Median PR Open Time
-                          </span>
-                          <span class={styles["stats-card__value"]}>
-                            {stats()?.openTime.median}
-                          </span>
-                        </CardContent>
-                      </Card>
+                      <MetricCard
+                        title="Median PR Open Time"
+                        value={stats()?.openTime.median}
+                      />
                     </div>
 
                     <Card variant="subtle">

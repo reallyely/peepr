@@ -48,21 +48,7 @@
 	}
 }
 
-/* Stats card styling */
-.stats-card__title {
-	display: block;
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	color: var(--text-secondary);
-	margin-bottom: var(--spacing-sm);
-}
-
-.stats-card__value {
-	display: block;
-	font-size: var(--font-size-xl);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-primary);
-}
+/* Stats grid layout only - card styling is now in MetricCard component */
 
 /* DataGrid styling is now in the component */
 
@@ -111,6 +97,57 @@
 }
 
 /* Utilities */
+/* Comparison section styling */
+.comparison-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: var(--spacing-md);
+	margin: var(--spacing-sm) 0;
+}
+
+@media (min-width: 768px) {
+	.comparison-grid {
+		grid-template-columns: repeat(4, 1fr);
+	}
+}
+
+.comparison-item {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-xs);
+}
+
+.comparison-label {
+	font-size: var(--font-size-sm);
+	color: var(--text-secondary);
+}
+
+.comparison-value {
+	font-size: var(--font-size-base);
+	font-weight: var(--font-weight-medium);
+	color: var(--text-primary);
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-xs);
+}
+
+.trend--up {
+	color: var(--coral-medium);
+	background-color: rgba(255, 90, 66, 0.1);
+	font-weight: var(--font-weight-bold);
+	padding: 0 var(--spacing-xs);
+	border-radius: var(--border-radius-sm);
+	font-size: var(--font-size-sm);
+}
+
+.trend--down {
+	color: var(--emerald-medium);
+	background-color: rgba(44, 195, 137, 0.1);
+	font-weight: var(--font-weight-bold);
+	padding: 0 var(--spacing-xs);
+	border-radius: var(--border-radius-sm);
+	font-size: var(--font-size-sm);
+}
 .visually-hidden {
 	position: absolute;
 	width: 1px;
@@ -189,7 +226,6 @@
 	}
 }
 
-.card--pending .stats-card__value,
 .card--pending .pr-item__title,
 .card--pending .pr-item__stat-value {
 	animation: fadeInOut 1.5s ease-in-out infinite;
