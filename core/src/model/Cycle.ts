@@ -1,7 +1,6 @@
 import { DateVO } from "./DateVO.ts";
 import { Duration } from "./Duration.ts";
 import { ID } from "./ID.ts";
-import type { IntegrationEvent } from "./IntegrationEvent.ts";
 
 export class Cycle {
   readonly id: ID;

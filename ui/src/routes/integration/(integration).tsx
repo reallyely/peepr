@@ -20,7 +20,7 @@ import styles from "./integration.module.css";
 import { DataGrid } from "~/components/data-grid";
 import Button from "~/components/form/Button";
 
-import { Cycle, DateVO } from "@peepr/core";
+import { Cycle, DateVO, Duration } from "@peepr/core";
 import { refreshCacheAction } from "./actions";
 import { getCycleStatistics } from "./queries";
 
@@ -272,17 +272,20 @@ export default function Integration() {
                     accessorKey: "createdAt",
                     header: "Created",
                     cell: (info) => (info.getValue() ? DateVO.create(String(info.getValue())).format() : "Unknown"),
+                    sortingFn: 'datetime',
                     enableSorting: true,
                   },
                   {
                     accessorKey: "closedAt",
                     header: "Closed",
                     cell: (info) => (info.getValue() ? DateVO.create(String(info.getValue())).format() : "Open"),
+                    sortingFn: 'datetime',
                     enableSorting: true,
                   },
                   {
                     accessorKey: "timeOpen",
                     header: "Time Open",
+                    sortingFn: (a, b) => Duration.fromHumanReadable(a.original.timeOpen).compareTo(Duration.fromHumanReadable(b.original.timeOpen)),
                     enableSorting: true,
                   },
                   {

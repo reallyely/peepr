@@ -107,4 +107,14 @@ export class Duration {
     const seconds = String(this.inSeconds % 60).padStart(2, "0");
     return `PT${hours}H${minutes}M${seconds}S`;
   }
+
+  /**
+   * Compares this Duration with another Duration.
+   * @returns A negative number if this Duration is less than other,
+   *          zero if they are equal,
+   *          or a positive number if this Duration is greater than other
+   */
+  compareTo(other: Duration): number {
+    return this.milliseconds - other.milliseconds;
+  }
 }
