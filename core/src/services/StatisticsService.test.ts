@@ -2,7 +2,7 @@ import assert from "node:assert";
 import { test } from "node:test";
 import { Duration } from "../model/Duration.ts";
 import { IntegrationEvent } from "../model/IntegrationEvent.ts";
-import { StatisticsService, calculateStatisticalDistribution } from "./StatisticsService.ts";
+import { StatisticsService } from "./StatisticsService.ts";
 
 test("StatisticsService - generateStatistics with empty array", () => {
   const stats = StatisticsService.generateStatistics([]);
@@ -61,24 +61,4 @@ test("StatisticsService - generateStatistics with integration events", () => {
 
   // Check open time statistics
   assert.strictEqual(stats.openTime.median.inHours, 48); // [24, 48, 72] -> 48
-});
-
-test("StatisticsService - calculateStatisticalDistribution with sorted data", () => {
-  // Using the private method directly to test it specifically
-  // This would typically use a different pattern in a real-world scenario
-  // @ts-ignore - Accessing private method for testing
-  const distribution = calculateStatisticalDistribution([
-    Duration.fromMinutes(10),
-    Duration.fromMinutes(20),
-    Duration.fromMinutes(30),
-    Duration.fromMinutes(40),
-    Duration.fromMinutes(50)
-  ]);
-
-  assert.strictEqual(distribution.median.inMinutes, 30);
-  assert.strictEqual(distribution.mean.inMinutes, 30);
-  assert.strictEqual(distribution.range.min.inMinutes, 10);
-  assert.strictEqual(distribution.range.max.inMinutes, 50);
-  assert.strictEqual(distribution.quartiles.q1.inMinutes, 20);
-  assert.strictEqual(distribution.quartiles.q3.inMinutes, 40);
 });

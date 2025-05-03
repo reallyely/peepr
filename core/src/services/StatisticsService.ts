@@ -29,8 +29,8 @@ export const StatisticsService = {
     const openTimes = integrationEvents.map((event) => event.timeOpen);
 
     // Calculate statistical distributions
-    const ciDurationStats = calculateStatisticalDistribution(ciDurations);
-    const openTimeStats = calculateStatisticalDistribution(openTimes);
+    const ciDurationStats = this.calculateStatisticalDistribution(ciDurations);
+    const openTimeStats = this.calculateStatisticalDistribution(openTimes);
 
     return IntegrationStatistics.create({
       totalPRs,

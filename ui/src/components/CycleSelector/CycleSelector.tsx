@@ -1,3 +1,4 @@
+import { Cycle, DateVO } from "@peepr/core";
 import {
   type JSX,
   createEffect,
@@ -18,27 +19,11 @@ interface CycleSelectorProps
 
 export const CycleSelector = (allProps: CycleSelectorProps) => {
   const [props, inputProps] = splitProps(allProps, ["value", "onChange"]);
-  // Calculate number of cycles in 2025 and determine current cycle
-  const startDate = new Date(2025, 0, 1);
-  const endDate = new Date(2025, 11, 31);
-  const currentDate = new Date();
 
-  const daysDiff = Math.ceil(
-    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-  );
-  const totalCycles = Math.floor(daysDiff / 7);
-
-  // Calculate current cycle based on today's date
-  const daysSinceStart = Math.ceil(
-    (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-  );
-  const currentCycle = Math.max(
-    1,
-    Math.min(totalCycles, Math.ceil(daysSinceStart / 7)),
-  );
+  // Use the Cycle class to determine current cycle
+  const currentCycle = Cycle.getDefaultCycleNumber();
 
   const [internalValue, setInternalValue] = createSignal(props.value || 1);
-  const [isDragging, setIsDragging] = createSignal(false);
   const [cycleData, setCycleData] = createSignal({
     cycleNumber: 1,
     startDate: new Date(2025, 0, 1),
@@ -46,19 +31,15 @@ export const CycleSelector = (allProps: CycleSelectorProps) => {
   });
 
   const getCycleData = (cycleNumber: number) => {
-    const cycleDays = (cycleNumber - 1) * 7;
-    const start = new Date(2025, 0, 1);
-    start.setDate(start.getDate() + cycleDays);
-
-    const end = new Date(start);
-    end.setDate(end.getDate() + 6);
-
+    // Use the Cycle class to get date range
+    const cycle = Cycle.fromCycleNumber(cycleNumber);
     return {
       cycleNumber,
-      startDate: start,
-      endDate: end,
+      startDate: cycle.startDate,
+      endDate: cycle.endDate,
     };
   };
+
   // Generate cycle ticks for display that match the selectable intervals
   const cycleTicks = [];
   for (let cycle = 1; cycle <= currentCycle; cycle++) {
@@ -79,9 +60,9 @@ export const CycleSelector = (allProps: CycleSelectorProps) => {
   }
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
+    return DateVO.create(date).format({
       month: "short",
-      day: "numeric",
+      day: "numeric"
     });
   };
 
@@ -124,12 +105,6 @@ export const CycleSelector = (allProps: CycleSelectorProps) => {
         step="1"
         value={internalValue()}
         onInput={handleSliderChange}
-        onMouseDown={() => setIsDragging(true)}
-        onMouseUp={() => setIsDragging(false)}
-        onTouchStart={() => setIsDragging(true)}
-        onTouchEnd={() => setIsDragging(false)}
-        onFocus={() => setIsDragging(true)}
-        onBlur={() => setIsDragging(false)}
         aria-valuemin={1}
         aria-valuemax={currentCycle}
         aria-valuenow={internalValue()}
@@ -156,10 +131,6 @@ export const CycleSelector = (allProps: CycleSelectorProps) => {
         ))}
       </div>
  */}
-      {/* <div class={styles.keyboardInstructions}>
-        Use left/right arrow keys to navigate cycles, Home/End to jump to
-        first/last cycle
-      </div> */}
     </div>
   );
 };

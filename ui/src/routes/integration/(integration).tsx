@@ -1,12 +1,6 @@
-import assert from "node:assert";
-import process from "node:process";
-import { Cycle } from "@peepr/core";
-import { GitHubService, IntegrationService } from "@peepr/integration";
 import {
   type RouteDefinition,
-  action,
   createAsync,
-  query,
   useAction,
   useSearchParams,
 } from "@solidjs/router";
@@ -25,101 +19,27 @@ import styles from "./integration.module.css";
 
 import { DataGrid } from "~/components/data-grid";
 import Button from "~/components/form/Button";
-import { Cache } from "~/lib/cache";
 
-const getPRStats = query(async ({ cycleNumber }) => {
-  "use server";
-
-  // Generate a cache key based on the cycle number
-  const cacheKey = `integration:prStats:cycle:${cycleNumber}`;
-
-  try {
-    return await Cache.getOrSet(
-      cacheKey,
-      async () => {
-        // This function will only execute if cache miss or refresh=true
-        assert(process.env.GITHUB_TOKEN, "GITHUB_TOKEN is not set");
-        const githubService = new GitHubService(process.env.GITHUB_TOKEN);
-        const integrationService = new IntegrationService(githubService);
-
-        if (!cycleNumber) {
-          throw new Error("Cycle number is required");
-        }
-
-        // Create a Cycle domain object for the selected cycle
-        const startDate = new Date(2025, 0, 1);
-        startDate.setDate(startDate.getDate() + (cycleNumber - 1) * 7);
-
-        const endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + 6);
-
-        const cycle = Cycle.create({
-          cycleNumber,
-          startDate,
-          endDate
-        });
-
-        const integrationEvents = [];
-        for await (const integration of integrationService.streamIntegrationsForCycle(cycle)) {
-          integrationEvents.push(integration);
-        }
-        const statistics = await integrationService.getStatisticsForCycle(cycle, integrationEvents);
-
-        return {
-          integrationEvents: integrationEvents.map((integration) => integration.toJSON()),
-          statistics: statistics.toJSON(),
-        };
-      },
-    );
-  } catch (error) {
-    console.error("Failed to fetch PR stats:", error);
-    return { error: error instanceof Error ? error.message : "Unknown error" };
-  }
-}, "integration-stats");
-
-// Server action to invalidate cache and refresh data
-const refreshCacheAction = action(async ({ cycleNumber }) => {
-  "use server";
-  try {
-    const cacheKey = `integration:prStats:cycle:${cycleNumber}`;
-    await Cache.delete(cacheKey);
-    console.log(`Cleared cache for key: ${cacheKey}`);
-    return { success: true, message: "Cache refreshed successfully!" };
-  } catch (error) {
-    console.error("Failed to refresh cache:", error);
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : "Failed to refresh cache"
-    };
-  }
-}, "refresh-cache-action");
+import { Cycle, DateVO } from "@peepr/core";
+import { refreshCacheAction } from "./actions";
+import { getCycleStatistics } from "./queries";
 
 export const route = {
   preload({ location }) {
     const searchParams = new URLSearchParams(location.search);
     // Default to the current cycle if no cycle number provided
-    const currentDate = new Date();
-    const startDate = new Date(2025, 0, 1);
-    const daysSinceStart = Math.ceil(
-      (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-    );
-    const defaultCycleNumber = Math.max(1, Math.ceil(daysSinceStart / 7));
+    const defaultCycleNumber = Cycle.getDefaultCycleNumber();
 
     // Preload data
-    getPRStats({
+    getCycleStatistics({
       cycleNumber: Number(searchParams.get("cycle")) || defaultCycleNumber,
     });
   },
 } satisfies RouteDefinition;
 
 export default function Integration() {
-  // Calculate current cycle as default
-  const currentDate = new Date();
-  const startDate = new Date(2025, 0, 1);
-  const daysSinceStart = Math.ceil(
-    (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-  );
-  const defaultCycleNumber = Math.max(1, Math.ceil(daysSinceStart / 7));
+  // Get default cycle number using our core Cycle class
+  const defaultCycleNumber = Cycle.getDefaultCycleNumber();
   const refreshCache = useAction(refreshCacheAction)
   const [searchParams, setSearchParams] = useSearchParams();
   const [cycleNumber, setCycleNumber] = createSignal(
@@ -137,9 +57,16 @@ export default function Integration() {
     }
   });
 
+  type ErrorResponse = { error: string };
+
+  // Type guard to check for error response
+  const hasError = (data: unknown): data is ErrorResponse => {
+    return data !== null && typeof data === 'object' && 'error' in (data as object);
+  };
+
   const getIntegrationStats = createAsync(
     async () => {
-      const stats = await getPRStats({
+      const stats = await getCycleStatistics({
         cycleNumber: cycleNumber(),
       });
       return (stats);
@@ -151,7 +78,7 @@ export default function Integration() {
   const handleRefresh = () => {
     startTransition(async () => {
       await refreshCache({ cycleNumber: cycleNumber() });
-      await getPRStats({
+      await getCycleStatistics({
         cycleNumber: cycleNumber(),
       });
     });
@@ -171,26 +98,10 @@ export default function Integration() {
     });
   };
 
-  // Format dates for display
-  const formatDate = (dateString: string): string => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   const dateRangeDisplay = createMemo(() => {
-    // Calculate the date range from the cycle number using our domain model
-    const start = new Date(2025, 0, 1);
-    start.setDate(start.getDate() + (cycleNumber() - 1) * 7);
-
-    const end = new Date(start);
-    end.setDate(end.getDate() + 6);
-
-    return `${formatDate(start.toISOString())} - ${formatDate(end.toISOString())}`;
+    // Calculate the date range from the cycle number using Cycle class
+    const cycle = Cycle.fromCycleNumber(cycleNumber());
+    return `${cycle.formatStartDate()} - ${cycle.formatEndDate()}`;
   });
 
   return (
@@ -205,7 +116,6 @@ export default function Integration() {
             value={cycleNumber()}
             onChange={handleCycleChange}
             aria-label="Select cycle for PR statistics"
-            autofocus={true}
             autofocus
           />
 
@@ -228,10 +138,10 @@ export default function Integration() {
       <Card classList={{ [styles["card--pending"]]: isPending() }}>
         <Suspense fallback={<ProgressBar indeterminate />}>
           <Show
-            when={!("error" in (getIntegrationStats() || {}))}
+            when={!hasError(getIntegrationStats())}
             fallback={
               <Alert type="error">
-                Error: {(getIntegrationStats() as { error: string }).error}
+                Error: {hasError(getIntegrationStats()) && (getIntegrationStats() as ErrorResponse).error}
               </Alert>
             }
           >
@@ -331,10 +241,10 @@ export default function Integration() {
       <Card classList={{ [styles["card--pending"]]: isPending() }}>
         <Suspense fallback={<ProgressBar indeterminate />}>
           <Show
-            when={!("error" in (getIntegrationStats() || {}))}
+            when={!hasError(getIntegrationStats())}
             fallback={
               <Alert type="error">
-                Error: {(getIntegrationStats() as { error: string }).error}
+                Error: {hasError(getIntegrationStats()) && (getIntegrationStats() as ErrorResponse).error}
               </Alert>
             }
           >
@@ -349,25 +259,25 @@ export default function Integration() {
                   {
                     accessorKey: "prNumber",
                     header: "PR #",
-                    cell: (info) => <span>#{info.getValue()}</span>,
+                    cell: (info) => <span>#{info.getValue() as string}</span>,
                     enableSorting: true,
                   },
                   {
                     accessorKey: "title",
                     header: "Title",
-                    cell: (info) => <span>{info.getValue()}</span>,
+                    cell: (info) => <span>{info.getValue() as string}</span>,
                     enableSorting: true,
                   },
                   {
                     accessorKey: "createdAt",
                     header: "Created",
-                    cell: (info) => (info.getValue() ? formatDate(String(info.getValue())) : "Unknown"),
+                    cell: (info) => (info.getValue() ? DateVO.create(String(info.getValue())).format() : "Unknown"),
                     enableSorting: true,
                   },
                   {
                     accessorKey: "closedAt",
                     header: "Closed",
-                    cell: (info) => (info.getValue() ? formatDate(String(info.getValue())) : "Open"),
+                    cell: (info) => (info.getValue() ? DateVO.create(String(info.getValue())).format() : "Open"),
                     enableSorting: true,
                   },
                   {

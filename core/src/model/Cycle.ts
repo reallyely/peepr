@@ -1,3 +1,4 @@
+import { DateVO } from "./DateVO.ts";
 import { Duration } from "./Duration.ts";
 import { ID } from "./ID.ts";
 import type { IntegrationEvent } from "./IntegrationEvent.ts";
@@ -108,6 +109,51 @@ export class Cycle {
   }
 
   /**
+   * Calculate the default cycle number based on the current date
+   * Uses an epoch start date of January 1, 2025
+   */
+  static getDefaultCycleNumber(): number {
+    const currentDate = new Date();
+    const startDate = new Date(2025, 0, 1); // January 1, 2025
+    const daysSinceStart = Math.ceil(
+      (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
+    return Math.max(1, Math.ceil(daysSinceStart / 7));
+  }
+
+  /**
+   * Calculate start and end dates for a given cycle number
+   * Uses an epoch start date of January 1, 2025
+   */
+  static getCycleDateRange(cycleNumber: number): { startDate: Date; endDate: Date } {
+    if (cycleNumber < 1 || !Number.isInteger(cycleNumber)) {
+      throw new Error("Cycle number must be a positive integer");
+    }
+
+    const startDate = new Date(2025, 0, 1); // January 1, 2025
+    startDate.setDate(startDate.getDate() + (cycleNumber - 1) * 7);
+
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 6); // 7-day cycle (0-6)
+
+    return { startDate, endDate };
+  }
+
+  /**
+   * Creates a Cycle instance for a given cycle number
+   * using the standard epoch start date
+   */
+  static fromCycleNumber(cycleNumber: number, id?: string | number): Cycle {
+    const { startDate, endDate } = Cycle.getCycleDateRange(cycleNumber);
+    return Cycle.create({
+      id,
+      cycleNumber,
+      startDate,
+      endDate,
+    });
+  }
+
+  /**
    * Returns the date range for this cycle
    */
   getDateRange(): { startDate: Date; endDate: Date } {
@@ -131,6 +177,20 @@ export class Cycle {
    */
   getName(): string {
     return `${this.year}-${this.cycleNumber}`;
+  }
+
+  /**
+   * Format start date for display
+   */
+  formatStartDate(options?: Intl.DateTimeFormatOptions): string {
+    return DateVO.create(this.startDate).format(options);
+  }
+
+  /**
+   * Format end date for display
+   */
+  formatEndDate(options?: Intl.DateTimeFormatOptions): string {
+    return DateVO.create(this.endDate).format(options);
   }
 
   toString(): string {
