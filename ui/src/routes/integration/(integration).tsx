@@ -206,6 +206,7 @@ export default function Integration() {
             onChange={handleCycleChange}
             aria-label="Select cycle for PR statistics"
             autofocus={true}
+            autofocus
           />
 
           <Alert type="info" class={styles["date-range"]}>
