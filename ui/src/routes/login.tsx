@@ -10,67 +10,50 @@ import { loginOrRegister } from "~/lib";
 import styles from "./login.module.css";
 
 export default function Login(props: RouteSectionProps) {
-	const loggingIn = useSubmission(loginOrRegister);
+  const loggingIn = useSubmission(loginOrRegister);
 
-	return (
-		<main class="main-container">
-			<div class={styles.login}>
-				<Card>
-					<form
-						action={loginOrRegister}
-						method="post"
-						class={styles.login__form}
-						aria-describedby={
-							loggingIn.result?.message ? "error-message" : undefined
-						}
-					>
-						<input
-							type="hidden"
-							name="redirectTo"
-							value={props.params.redirectTo ?? "/"}
-						/>
+  return (
+    <main class="main-container">
+      <div class={styles.login}>
+        <Card>
+          <form
+            action={loginOrRegister}
+            method="post"
+            class={styles.login__form}
+            aria-describedby={loggingIn.result?.message ? "error-message" : undefined}
+          >
+            <input type="hidden" name="redirectTo" value={props.params.redirectTo ?? "/"} />
 
-						<RadioGroup
-							name="loginType"
-							legend="Login or Register?"
-							defaultValue="login"
-							options={[
-								{ value: "login", label: "Login" },
-								// { value: "register", label: "Register" }
-							]}
-						/>
+            <RadioGroup
+              name="loginType"
+              legend="Login or Register?"
+              defaultValue="login"
+              options={[
+                { value: "login", label: "Login" },
+                // { value: "register", label: "Register" }
+              ]}
+            />
 
-						<FormField label="Username" id="username-input" required>
-							<TextInput
-								id="username-input"
-								name="username"
-								autocomplete="username"
-								required
-							/>
-						</FormField>
+            <FormField label="Username" id="username-input" required>
+              <TextInput id="username-input" name="username" autocomplete="username" required />
+            </FormField>
 
-						<FormField label="Password" id="password-input" required>
-							<TextInput
-								id="password-input"
-								name="password"
-								type="password"
-								autocomplete="current-password"
-								required
-							/>
-						</FormField>
+            <FormField label="Password" id="password-input" required>
+              <TextInput id="password-input" name="password" type="password" autocomplete="current-password" required />
+            </FormField>
 
-						<Button type="submit" fullWidth loading={loggingIn.pending}>
-							{loggingIn.pending ? "Processing..." : "Login"}
-						</Button>
+            <Button type="submit" fullWidth loading={loggingIn.pending}>
+              {loggingIn.pending ? "Processing..." : "Login"}
+            </Button>
 
-						<Show when={loggingIn.result?.message}>
-							<Alert type="error" id="error-message">
-								{loggingIn.result?.message}
-							</Alert>
-						</Show>
-					</form>
-				</Card>
-			</div>
-		</main>
-	);
+            <Show when={loggingIn.result?.message}>
+              <Alert type="error" id="error-message">
+                {loggingIn.result?.message}
+              </Alert>
+            </Show>
+          </form>
+        </Card>
+      </div>
+    </main>
+  );
 }

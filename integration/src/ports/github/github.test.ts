@@ -1,17 +1,14 @@
 import assert from "node:assert";
 import { test } from "node:test";
 import { GITHUB_TOKEN } from "./config/github.ts";
-import { GitHubService } from "./github.ts";
+import { GitHubService } from "./github.service.ts";
 
 const githubService = new GitHubService(GITHUB_TOKEN);
 
 test("GitHubService - getRepository", async () => {
   const response = await githubService.getRepository();
   assert.ok(response.data);
-  assert.strictEqual(
-    response.data.full_name,
-    "rivial-data-security/rivial-information-security-center",
-  );
+  assert.strictEqual(response.data.full_name, "rivial-data-security/rivial-information-security-center");
 });
 
 test("GitHubService - getIssues", async () => {
@@ -51,4 +48,5 @@ test("GitHubService - get workflow jobs", async () => {
   const workflowRuns = await githubService.getAllWorkflowRunsForPR(5319);
   const jobs = await githubService.getWorkflowJobs(workflowRuns[0].id);
   assert.ok(workflowRuns);
+  assert.ok(jobs);
 });

@@ -10,15 +10,15 @@
   "languages": {
     "TypeScript": {
       "prettier": { "allowed": false },
-      "language_servers": ["typescript-language-server", "!vtsls", "..."]
+      "language_servers": ["typescript-language-server", "biome", "!vtsls", "..."]
     },
     "TSX": {
       "prettier": { "allowed": false },
-      "language_servers": ["typescript-language-server", "!vtsls", "..."]
+      "language_servers": ["typescript-language-server", "biome", "!vtsls", "..."]
     },
     "JavaScript": {
       "prettier": { "allowed": false },
-      "language_servers": ["typescript-language-server", "!vtsls", "..."]
+      "language_servers": ["typescript-language-server", "biome", "!vtsls", "..."]
     }
   }
 }

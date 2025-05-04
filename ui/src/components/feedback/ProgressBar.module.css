@@ -2,145 +2,140 @@
 @import "../core/theme.css";
 
 .progress {
-	--progress-height: 8px;
-	--progress-radius: var(--border-radius-sm);
+  --progress-height: 8px;
+  --progress-radius: var(--border-radius-sm);
 
-	appearance: none;
-	-webkit-appearance: none;
-	width: 100%;
-	height: var(--progress-height);
-	border-radius: var(--progress-radius);
-	overflow: hidden;
-	background-color: color-mix(in srgb, var(--midnight-light), transparent 60%);
-	border: 1px solid var(--border-color);
-	position: relative;
-	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: var(--progress-height);
+  border-radius: var(--progress-radius);
+  overflow: hidden;
+  background-color: color-mix(in srgb, var(--midnight-light), transparent 60%);
+  border: 1px solid var(--border-color);
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 /* For Firefox */
 .progress::-moz-progress-bar {
-	background: var(--gradient-primary);
-	border-radius: var(--progress-radius);
-	transition: width 0.3s ease;
+  background: var(--gradient-primary);
+  border-radius: var(--progress-radius);
+  transition: width 0.3s ease;
 }
 
 /* For Chrome/Safari */
 .progress::-webkit-progress-value {
-	background: var(--gradient-primary);
-	border-radius: var(--progress-radius);
-	transition: width 0.3s ease;
+  background: var(--gradient-primary);
+  border-radius: var(--progress-radius);
+  transition: width 0.3s ease;
 }
 
 .progress::-webkit-progress-bar {
-	background-color: transparent;
-	border-radius: var(--progress-radius);
+  background-color: transparent;
+  border-radius: var(--progress-radius);
 }
 
 /* Progress bar variants */
 .progress--secondary::-webkit-progress-value {
-	background: var(--gradient-secondary);
+  background: var(--gradient-secondary);
 }
 
 .progress--secondary::-moz-progress-bar {
-	background: var(--gradient-secondary);
+  background: var(--gradient-secondary);
 }
 
 .progress--success::-webkit-progress-value {
-	background: var(--gradient-success);
+  background: var(--gradient-success);
 }
 
 .progress--success::-moz-progress-bar {
-	background: var(--gradient-success);
+  background: var(--gradient-success);
 }
 
 .progress--danger::-webkit-progress-value {
-	background: var(--gradient-danger);
+  background: var(--gradient-danger);
 }
 
 .progress--danger::-moz-progress-bar {
-	background: var(--gradient-danger);
+  background: var(--gradient-danger);
 }
 
 .progress--info::-webkit-progress-value {
-	background: var(--gradient-info);
+  background: var(--gradient-info);
 }
 
 .progress--info::-moz-progress-bar {
-	background: var(--gradient-info);
+  background: var(--gradient-info);
 }
 
 .progress--warning::-webkit-progress-value {
-	background: var(--gradient-warning);
+  background: var(--gradient-warning);
 }
 
 .progress--warning::-moz-progress-bar {
-	background: var(--gradient-warning);
+  background: var(--gradient-warning);
 }
 
 /* Size variants */
 .progress--sm {
-	--progress-height: 4px;
+  --progress-height: 4px;
 }
 
 .progress--md {
-	--progress-height: 8px;
+  --progress-height: 8px;
 }
 
 .progress--lg {
-	--progress-height: 12px;
+  --progress-height: 12px;
 }
 
 /* Glow effect for indeterminate state */
 .progress--indeterminate {
-	position: relative;
-	overflow: hidden;
+  position: relative;
+  overflow: hidden;
 }
 
 .progress--indeterminate::after {
-	content: "";
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 30%;
-	height: 100%;
-	background: linear-gradient(
-		90deg,
-		transparent,
-		rgba(255, 255, 255, 0.8),
-		transparent
-	);
-	animation: shimmer 1.5s infinite;
-	border-radius: var(--progress-radius);
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--progress-radius);
 }
 
 @keyframes shimmer {
-	0% {
-		transform: translateX(-100%);
-	}
-	100% {
-		transform: translateX(400%);
-	}
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
 }
 
 /* Container for labels and progress */
 .progress-container {
-	display: flex;
-	flex-direction: column;
-	gap: var(--spacing-xs);
-	width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: 100%;
 }
 
 .progress-labels {
-	display: flex;
-	justify-content: space-between;
-	font-size: var(--font-size-sm);
-	color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
 }
 
 .progress-text {
-	font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-medium);
 }
 
 .progress-value {
-	font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums;
 }

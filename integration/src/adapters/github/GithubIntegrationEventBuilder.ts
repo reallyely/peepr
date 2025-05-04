@@ -7,7 +7,7 @@ import { differenceInMilliseconds } from "date-fns";
  * WorkItemIntegrationBuilder takes GitHub API data and builds a WorkItemIntegration object
  * that represents a pull request's statistics and metadata
  */
-export class GithubIntegrationBuilder {
+export class GithubIntegrationEventBuilder {
   private prId = 0;
   private prNumber = 0;
   private prTitle = "";
@@ -23,30 +23,25 @@ export class GithubIntegrationBuilder {
   setPullRequest(
     pullRequest: Pick<
       RestEndpointMethodTypes["search"]["issuesAndPullRequests"]["response"]["data"]["items"][number],
-      "closed_at" | "created_at" | "id" | "number" | "title" | "updated_at"
+      "closed_at" | "created_at" | "id" | "number" | "title" | "updated_at" | "pull_request"
     >,
-  ): GithubIntegrationBuilder {
+  ): GithubIntegrationEventBuilder {
     this.prId = pullRequest.id;
     this.prNumber = pullRequest.number;
     this.prTitle = pullRequest.title;
     this.prCreatedAt = new Date(pullRequest.created_at);
-    this.prUpdatedAt = new Date(
-      pullRequest.updated_at || pullRequest.created_at,
-    );
+    this.prUpdatedAt = new Date(pullRequest.updated_at || pullRequest.created_at);
 
     if (pullRequest.closed_at) {
       this.prClosedAt = new Date(pullRequest.closed_at);
 
       // Calculate duration the PR was open
-      const durationMs = differenceInMilliseconds(
-        this.prClosedAt,
-        this.prCreatedAt,
-      );
+      const durationMs = differenceInMilliseconds(this.prClosedAt, this.prCreatedAt);
       this.prTimeOpen = new Duration(durationMs);
     }
 
-    if (pullRequest.updated_at) {
-      this.prMergedAt = new Date(pullRequest.updated_at);
+    if (pullRequest?.pull_request?.merged_at) {
+      this.prMergedAt = new Date(pullRequest.pull_request.merged_at);
     }
 
     return this;
@@ -58,7 +53,7 @@ export class GithubIntegrationBuilder {
       components["schemas"]["workflow-run"],
       "name" | "id" | "run_started_at" | "conclusion" | "workflow_id"
     >,
-  ): GithubIntegrationBuilder {
+  ): GithubIntegrationEventBuilder {
     if (workflowRun.name === "Pull Request Checks") {
       this.pullRequestCheckRuns++;
     }
@@ -66,13 +61,9 @@ export class GithubIntegrationBuilder {
   }
 
   // Adds workflow usage data to calculate total duration
-  setWorkflowUsage(
-    usage: Partial<components["schemas"]["workflow-run-usage"]>,
-  ): GithubIntegrationBuilder {
+  setWorkflowUsage(usage: Partial<components["schemas"]["workflow-run-usage"]>): GithubIntegrationEventBuilder {
     if (usage.run_duration_ms) {
-      this.totalDuration = new Duration(usage.run_duration_ms).add(
-        this.totalDuration,
-      );
+      this.totalDuration = new Duration(usage.run_duration_ms).add(this.totalDuration);
     }
     return this;
   }
@@ -92,9 +83,7 @@ export class GithubIntegrationBuilder {
 
     // Validate required fields
     if (!this.prNumber || !this.prTitle) {
-      throw new Error(
-        "Cannot build WorkItemIntegration: missing pull request information",
-      );
+      throw new Error("Cannot build IntegrationEvent: missing pull request information");
     }
 
     return IntegrationEvent.create({
@@ -105,8 +94,8 @@ export class GithubIntegrationBuilder {
       updatedAt: this.prUpdatedAt,
       mergedAt: this.prMergedAt,
       closedAt: this.prClosedAt,
-      prTimeOpen: this.prTimeOpen,
-      pullRequestCheckRuns: this.pullRequestCheckRuns,
+      timeOpen: this.prTimeOpen,
+      checkRuns: this.pullRequestCheckRuns,
       totalDuration: this.totalDuration,
     });
   }

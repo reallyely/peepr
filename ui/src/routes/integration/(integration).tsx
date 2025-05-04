@@ -1,163 +1,36 @@
-import assert from "node:assert";
-import process from "node:process";
-import { GitHubService, GithubIntegrationBuilder } from "@peepr/integration";
-import {
-  type RouteDefinition,
-  action,
-  createAsync,
-  query,
-  useAction,
-  useSearchParams,
-} from "@solidjs/router";
-import {
-  For,
-  Show,
-  Suspense,
-  createEffect,
-  createMemo,
-  createSignal,
-  useTransition,
-} from "solid-js";
+import { type RouteDefinition, createAsync, useAction, useSearchParams } from "@solidjs/router";
+import { ErrorBoundary, Show, Suspense, createEffect, createMemo, createSignal, useTransition } from "solid-js";
 import { CycleSelector } from "~/components/CycleSelector/CycleSelector";
-import { Card, CardContent, CardHeader, CardItem } from "~/components/card";
+import { Card, CardContent, CardHeader, MetricCard } from "~/components/card";
 import { Alert, ProgressBar } from "~/components/feedback";
 import styles from "./integration.module.css";
-import { generateStatistics } from "./statistics";
 
+import { DataGrid } from "~/components/data-grid";
 import Button from "~/components/form/Button";
-import { Cache } from "~/lib/cache";
 
-const getPRStats = query(async ({ cycleNumber, refresh = false }) => {
-  "use server";
-
-  // Generate a cache key based on the cycle number
-  const cacheKey = `integration:prStats:cycle:${cycleNumber}`;
-
-  // Try to return from cache unless refresh is true
-  try {
-    return await Cache.getOrSet(
-      cacheKey,
-      async () => {
-        // This function will only execute if cache miss or refresh=true
-        assert(process.env.GITHUB_TOKEN, "GITHUB_TOKEN is not set");
-        const github = new GitHubService(process.env.GITHUB_TOKEN);
-
-        if (!cycleNumber) {
-          throw new Error("Cycle number is required");
-        }
-
-        // Calculate start and end dates based on cycle number
-        const startDate = new Date(2025, 0, 1);
-        startDate.setDate(startDate.getDate() + (cycleNumber - 1) * 7);
-
-        const endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + 6);
-
-        const pullRequests = [];
-        const workItemIntegrations = [];
-
-        // Get pull requests from the calculated date range for the cycle
-        for await (const pr of github.getPullRequestsByDateRange(
-          startDate.toISOString(),
-          endDate.toISOString(),
-        )) {
-          const builder = new GithubIntegrationBuilder();
-          builder.setPullRequest(pr);
-
-          const runs = await github.getAllWorkflowRunsForPR(pr.number);
-          for (const run of runs) {
-            builder.setWorkflowRun(run);
-          }
-
-          await Promise.all(
-            runs.map(async (run) => {
-              const usage = await github.getWorkflowRunUsage(run.id);
-              builder.setWorkflowUsage({ ...usage });
-            }),
-          );
-
-          const stats = builder.build();
-          workItemIntegrations.push(stats);
-
-          const prStats = {
-            prNumber: pr.number,
-            title: pr.title,
-            createdAt: pr.created_at,
-            updatedAt: pr.updated_at,
-            mergedAt: pr.closed_at,
-            closedAt: pr.closed_at,
-            prTimeOpen: stats?.prTimeOpen.toHumanReadable(),
-            pullRequestCheckRuns: stats?.pullRequestCheckRuns,
-            totalDuration: stats?.totalDuration.toHumanReadable(),
-          };
-
-          pullRequests.push(prStats);
-
-        }
-
-        // Calculate statistics from the collected data
-        const statistics = generateStatistics(workItemIntegrations);
-
-        return {
-          pullRequests,
-          statistics,
-        };
-      },
-    );
-  } catch (error) {
-    console.error("Failed to fetch PR stats:", error);
-    return { error: error instanceof Error ? error.message : "Unknown error" };
-  }
-}, "integration-stats");
-
-// Server action to invalidate cache and refresh data
-const refreshCacheAction = action(async ({ cycleNumber }) => {
-  "use server";
-  try {
-    const cacheKey = `integration:prStats:cycle:${cycleNumber}`;
-    await Cache.delete(cacheKey);
-    console.log(`Cleared cache for key: ${cacheKey}`);
-    return { success: true, message: "Cache refreshed successfully!" };
-  } catch (error) {
-    console.error("Failed to refresh cache:", error);
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : "Failed to refresh cache"
-    };
-  }
-}, "refresh-cache-action");
+import { Cycle, DateVO, Duration } from "@peepr/core";
+import { refreshCacheAction } from "./actions";
+import { getCycleStatistics } from "./queries";
 
 export const route = {
   preload({ location }) {
     const searchParams = new URLSearchParams(location.search);
     // Default to the current cycle if no cycle number provided
-    const currentDate = new Date();
-    const startDate = new Date(2025, 0, 1);
-    const daysSinceStart = Math.ceil(
-      (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-    );
-    const defaultCycleNumber = Math.max(1, Math.ceil(daysSinceStart / 7));
+    const defaultCycleNumber = Cycle.getDefaultCycleNumber();
 
     // Preload data
-    getPRStats({
+    getCycleStatistics({
       cycleNumber: Number(searchParams.get("cycle")) || defaultCycleNumber,
     });
   },
 } satisfies RouteDefinition;
 
 export default function Integration() {
-  // Calculate current cycle as default
-  const currentDate = new Date();
-  const startDate = new Date(2025, 0, 1);
-  const daysSinceStart = Math.ceil(
-    (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-  );
-  const defaultCycleNumber = Math.max(1, Math.ceil(daysSinceStart / 7));
-  const refreshCache = useAction(refreshCacheAction)
+  // Get default cycle number using our core Cycle class
+  const defaultCycleNumber = Cycle.getDefaultCycleNumber();
+  const refreshCache = useAction(refreshCacheAction);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [cycleNumber, setCycleNumber] = createSignal(
-    Number(searchParams.cycle) || defaultCycleNumber,
-  );
+  const [cycleNumber, setCycleNumber] = createSignal(Number(searchParams.cycle) || defaultCycleNumber);
 
   // Add transition state using Solid's useTransition hook
   const [isPending, startTransition] = useTransition();
@@ -170,10 +43,20 @@ export default function Integration() {
     }
   });
 
-  const prStatsData = createAsync(
+  const getIntegrationStats = createAsync(
     async () => {
-      const stats = await getPRStats({
+      const stats = await getCycleStatistics({
         cycleNumber: cycleNumber(),
+      });
+      return stats;
+    },
+    { name: "get-integration-stats" },
+  );
+
+  const getPreviousStats = createAsync(
+    async () => {
+      const stats = await getCycleStatistics({
+        cycleNumber: cycleNumber() - 1,
       });
       return stats;
     },
@@ -183,8 +66,10 @@ export default function Integration() {
   // Function to handle data refresh with transition
   const handleRefresh = () => {
     startTransition(async () => {
-      refreshCache({ cycleNumber: cycleNumber() });
-
+      await refreshCache({ cycleNumber: cycleNumber() });
+      await getCycleStatistics({
+        cycleNumber: cycleNumber(),
+      });
     });
   };
 
@@ -202,32 +87,14 @@ export default function Integration() {
     });
   };
 
-  // Format dates for display
-  const formatDate = (dateString: string): string => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   const dateRangeDisplay = createMemo(() => {
-    // Calculate the date range from the cycle number
-    const start = new Date(2025, 0, 1);
-    start.setDate(start.getDate() + (cycleNumber() - 1) * 7);
-
-    const end = new Date(start);
-    end.setDate(end.getDate() + 6);
-
-    return `${formatDate(start.toISOString())} - ${formatDate(end.toISOString())}`;
+    // Calculate the date range from the cycle number using Cycle class
+    const cycle = Cycle.fromCycleNumber(cycleNumber());
+    return `${cycle.formatStartDate()} - ${cycle.formatEndDate()}`;
   });
 
   return (
     <main class="main-container">
-      <h1>Pull Request Statistics</h1>
-
       <Card aria-labelledby="stats-summary">
         <h2 id="stats-summary" class="visually-hidden">
           Statistics Summary
@@ -238,13 +105,11 @@ export default function Integration() {
             value={cycleNumber()}
             onChange={handleCycleChange}
             aria-label="Select cycle for PR statistics"
-            autofocus={true}
+            autofocus
           />
 
           <Alert type="info" class={styles["date-range"]}>
-            <span class={styles["date-range__value"]}>
-              {dateRangeDisplay()}
-            </span>
+            <span class={styles["date-range__value"]}>{dateRangeDisplay()}</span>
             <Button
               size="sm"
               variant="danger"
@@ -259,207 +124,177 @@ export default function Integration() {
       </Card>
       <Card classList={{ [styles["card--pending"]]: isPending() }}>
         <Suspense fallback={<ProgressBar indeterminate />}>
-          <Show
-            when={!("error" in (prStatsData() || {}))}
-            fallback={
-              <Alert type="error">
-                Error: {(prStatsData() as { error: string }).error}
-              </Alert>
-            }
-          >
+          <ErrorBoundary fallback={<Alert type="error">There was a problem fetching the data</Alert>}>
             <Show
               when={
-                Object.entries(prStatsData()?.statistics || {}).length > 0 &&
-                prStatsData()?.statistics
+                Object.entries(getIntegrationStats()?.statistics || {}).length > 0 && getIntegrationStats()?.statistics
               }
             >
               {(stats) => {
                 return (
                   <>
                     <div class={styles["stats-grid"]}>
-                      <Card variant="subtle">
-                        <CardContent>
-                          <span class={styles["stats-card__title"]}>
-                            Total PRs
-                          </span>
-                          <span class={styles["stats-card__value"]}>
-                            {stats()?.totalPRs}
-                          </span>
-                        </CardContent>
-                      </Card>
+                      <MetricCard
+                        title="Total PRs"
+                        value={stats()?.totalPRs}
+                        trend={() => (getPreviousStats()?.statistics?.totalPRs < stats()?.totalPRs ? "up" : "down")}
+                        description="The total number of pull requests in this cycle"
+                      />
 
-                      <Card variant="subtle">
-                        <CardContent>
-                          <span class={styles["stats-card__title"]}>
-                            Total CI Runs
-                          </span>
-                          <span class={styles["stats-card__value"]}>
-                            {stats()?.totalCIRuns}
-                          </span>
-                        </CardContent>
-                      </Card>
+                      <MetricCard
+                        title="Total CI Runs"
+                        value={stats()?.totalCIRuns}
+                        trend={() =>
+                          getPreviousStats()?.statistics?.totalCIRuns < stats()?.totalCIRuns ? "up" : "down"
+                        }
+                      />
 
-                      <Card variant="subtle">
-                        <CardContent>
-                          <span class={styles["stats-card__title"]}>
-                            Median CI Duration
-                          </span>
-                          <span class={styles["stats-card__value"]}>
-                            {stats()?.ciDuration.median}
-                          </span>
-                        </CardContent>
-                      </Card>
+                      <MetricCard
+                        title="Mean CI Duration"
+                        value={stats()?.ciDuration.mean}
+                        trend={() =>
+                          Duration.fromHumanReadable(getPreviousStats()?.statistics?.ciDuration.mean).compareTo(
+                            Duration.fromHumanReadable(stats()?.ciDuration.mean),
+                          ) < 0
+                            ? "up"
+                            : "down"
+                        }
+                        goodQualifier="down"
+                      />
 
-                      <Card variant="subtle">
-                        <CardContent>
-                          <span class={styles["stats-card__title"]}>
-                            Median PR Open Time
-                          </span>
-                          <span class={styles["stats-card__value"]}>
-                            {stats()?.openTime.median}
-                          </span>
-                        </CardContent>
-                      </Card>
+                      <MetricCard
+                        title="Mean PR Open Time"
+                        value={stats()?.openTime.mean}
+                        trend={() =>
+                          Duration.fromHumanReadable(getPreviousStats()?.statistics?.openTime.mean).compareTo(
+                            Duration.fromHumanReadable(stats()?.openTime.mean),
+                          ) < 0
+                            ? "up"
+                            : "down"
+                        }
+                        goodQualifier="down"
+                      />
                     </div>
 
                     <Card variant="subtle">
-                      <CardHeader title="Detailed Statistics" />
+                      <CardHeader>Detailed Statistics</CardHeader>
                       <CardContent>
-                        <table aria-label="Detailed PR Statistics">
-                          <thead>
-                            <tr>
-                              <th class={styles["stats-table__header"]}>
-                                Metric
-                              </th>
-                              <th class={styles["stats-table__header"]}>Min</th>
-                              <th class={styles["stats-table__header"]}>Q1</th>
-                              <th class={styles["stats-table__header"]}>
-                                Median
-                              </th>
-                              <th class={styles["stats-table__header"]}>Q3</th>
-                              <th class={styles["stats-table__header"]}>Max</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr class={styles["stats-table__row"]}>
-                              <th class={styles["stats-table__header"]}>
-                                CI Duration
-                              </th>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.ciDuration.range.min}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.ciDuration.quartiles.q1}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.ciDuration.quartiles.q2}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.ciDuration.quartiles.q3}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.ciDuration.range.max}
-                              </td>
-                            </tr>
-                            <tr class={styles["stats-table__row"]}>
-                              <th class={styles["stats-table__header"]}>
-                                PR Open Time
-                              </th>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.openTime.range.min}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.openTime.quartiles.q1}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.openTime.quartiles.q2}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.openTime.quartiles.q3}
-                              </td>
-                              <td class={styles["stats-table__cell"]}>
-                                {stats()?.openTime.range.max}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                        <DataGrid
+                          data={() => [
+                            {
+                              metric: "CI Duration",
+                              min: stats()?.ciDuration.range.min,
+                              q1: stats()?.ciDuration.quartiles.q1,
+                              median: stats()?.ciDuration.quartiles.q2,
+                              q3: stats()?.ciDuration.quartiles.q3,
+                              max: stats()?.ciDuration.range.max,
+                            },
+                            {
+                              metric: "PR Open Time",
+                              min: stats()?.openTime.range.min,
+                              q1: stats()?.openTime.quartiles.q1,
+                              median: stats()?.openTime.quartiles.q2,
+                              q3: stats()?.openTime.quartiles.q3,
+                              max: stats()?.openTime.range.max,
+                            },
+                          ]}
+                          columns={[
+                            {
+                              accessorKey: "metric",
+                              header: "Metric",
+                              sortingFn: "alphanumeric",
+                            },
+                            {
+                              accessorKey: "min",
+                              header: "Min",
+                            },
+                            {
+                              accessorKey: "q1",
+                              header: "Q1",
+                            },
+                            {
+                              accessorKey: "median",
+                              header: "Median",
+                            },
+                            {
+                              accessorKey: "q3",
+                              header: "Q3",
+                            },
+                            {
+                              accessorKey: "max",
+                              header: "Max",
+                            },
+                          ]}
+                          emptyMessage="No statistical data available"
+                        />
                       </CardContent>
                     </Card>
                   </>
                 );
               }}
             </Show>
-          </Show>
+          </ErrorBoundary>
         </Suspense>
       </Card>
       <Card classList={{ [styles["card--pending"]]: isPending() }}>
         <Suspense fallback={<ProgressBar indeterminate />}>
-          <Show
-            when={!("error" in (prStatsData() || {}))}
-            fallback={
-              <Alert type="error">
-                Error: {(prStatsData() as { error: string }).error}
-              </Alert>
-            }
-          >
-            <CardHeader
-              title="Pull Request Details"
-              count={prStatsData()?.pullRequests?.length || 0}
-            />
+          <ErrorBoundary fallback={<Alert type="error">There was a problem fetching the data</Alert>}>
+            <CardHeader count={getIntegrationStats()?.integrationEvents?.length || 0}>Pull Request Details</CardHeader>
             <CardContent>
-              <For each={prStatsData()?.pullRequests || []}>
-                {(pr) => (
-                  <CardItem>
-                    <>
-                      <div class={styles["pr-item__icon"]}>📊</div>
-                      <div class={styles["pr-item__content"]}>
-                        <div class={styles["pr-item__title"]}>
-                          <span class={styles["pr-item__title-number"]}>
-                            #{pr.prNumber}
-                          </span>{" "}
-                          {pr.title}
-                        </div>
-                        <div class={styles["pr-item__details"]}>
-                          <div class={styles["pr-item__stat"]}>
-                            <span>Created: </span>
-                            <span class={styles["pr-item__stat-value"]}>
-                              {pr.createdAt
-                                ? formatDate(pr.createdAt)
-                                : "Unknown"}
-                            </span>
-                          </div>
-                          <div class={styles["pr-item__stat"]}>
-                            <span>Closed: </span>
-                            <span class={styles["pr-item__stat-value"]}>
-                              {pr.closedAt ? formatDate(pr.closedAt) : "Open"}
-                            </span>
-                          </div>
-                          <div class={styles["pr-item__stat"]}>
-                            <span>Time Open: </span>
-                            <span class={styles["pr-item__stat-value"]}>
-                              {pr.prTimeOpen}
-                            </span>
-                          </div>
-                          <div class={styles["pr-item__stat"]}>
-                            <span>Total CI Duration: </span>
-                            <span class={styles["pr-item__stat-value"]}>
-                              {pr.totalDuration}
-                            </span>
-                          </div>
-                          <div class={styles["pr-item__stat"]}>
-                            <span>CI Runs: </span>
-                            <span class={styles["pr-item__stat-value"]}>
-                              {pr.pullRequestCheckRuns}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  </CardItem>
-                )}
-              </For>
+              <DataGrid
+                data={() => getIntegrationStats()?.integrationEvents}
+                columns={[
+                  {
+                    accessorKey: "prNumber",
+                    header: "PR #",
+                    cell: (info) => <span>#{info.getValue() as string}</span>,
+                    enableSorting: true,
+                  },
+                  {
+                    accessorKey: "title",
+                    header: "Title",
+                    cell: (info) => <span>{info.getValue() as string}</span>,
+                    enableSorting: true,
+                  },
+                  {
+                    accessorKey: "createdAt",
+                    header: "Created",
+                    cell: (info) => (info.getValue() ? DateVO.create(String(info.getValue())).format() : "Unknown"),
+                    sortingFn: "datetime",
+                    enableSorting: true,
+                  },
+                  {
+                    accessorKey: "closedAt",
+                    header: "Closed",
+                    cell: (info) => (info.getValue() ? DateVO.create(String(info.getValue())).format() : "Open"),
+                    sortingFn: "datetime",
+                    enableSorting: true,
+                  },
+                  {
+                    accessorKey: "timeOpen",
+                    header: "Time Open",
+                    sortingFn: (a, b) =>
+                      Duration.fromHumanReadable(a.original.timeOpen).compareTo(
+                        Duration.fromHumanReadable(b.original.timeOpen),
+                      ),
+                    enableSorting: true,
+                  },
+                  {
+                    accessorKey: "totalDuration",
+                    header: "CI Duration",
+                    enableSorting: true,
+                  },
+                  {
+                    accessorKey: "checkRuns",
+                    header: "CI Runs",
+                    enableSorting: true,
+                  },
+                ]}
+                initialSorting={[{ id: "createdAt", desc: true }]}
+                emptyMessage="No pull requests found for this cycle"
+              />
             </CardContent>
-          </Show>
+          </ErrorBoundary>
         </Suspense>
       </Card>
     </main>
