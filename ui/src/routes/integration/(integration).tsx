@@ -5,6 +5,7 @@ import {
   useSearchParams,
 } from "@solidjs/router";
 import {
+  ErrorBoundary,
   Show,
   Suspense,
   createEffect,
@@ -57,19 +58,12 @@ export default function Integration() {
     }
   });
 
-  type ErrorResponse = { error: string };
-
-  // Type guard to check for error response
-  const hasError = (data: unknown): data is ErrorResponse => {
-    return data !== null && typeof data === 'object' && 'error' in (data as object);
-  };
-
   const getIntegrationStats = createAsync(
     async () => {
       const stats = await getCycleStatistics({
         cycleNumber: cycleNumber(),
       });
-      return (stats);
+      return stats;
     },
     { name: "get-integration-stats" },
   );
@@ -137,14 +131,7 @@ export default function Integration() {
       </Card>
       <Card classList={{ [styles["card--pending"]]: isPending() }}>
         <Suspense fallback={<ProgressBar indeterminate />}>
-          <Show
-            when={!hasError(getIntegrationStats())}
-            fallback={
-              <Alert type="error">
-                Error: {hasError(getIntegrationStats()) && (getIntegrationStats() as ErrorResponse).error}
-              </Alert>
-            }
-          >
+          <ErrorBoundary fallback={<Alert type="error">There was a problem fetching the data</Alert>}>
             <Show
               when={
                 Object.entries(getIntegrationStats()?.statistics || {}).length > 0 &&
@@ -235,19 +222,14 @@ export default function Integration() {
                 );
               }}
             </Show>
-          </Show>
+
+          </ErrorBoundary>
         </Suspense>
       </Card>
       <Card classList={{ [styles["card--pending"]]: isPending() }}>
         <Suspense fallback={<ProgressBar indeterminate />}>
-          <Show
-            when={!hasError(getIntegrationStats())}
-            fallback={
-              <Alert type="error">
-                Error: {hasError(getIntegrationStats()) && (getIntegrationStats() as ErrorResponse).error}
-              </Alert>
-            }
-          >
+          <ErrorBoundary fallback={<Alert type="error">There was a problem fetching the data</Alert>}>
+
             <CardHeader
               title="Pull Request Details"
               count={getIntegrationStats()?.integrationEvents?.length || 0}
@@ -303,9 +285,9 @@ export default function Integration() {
                 emptyMessage="No pull requests found for this cycle"
               />
             </CardContent>
-          </Show>
+          </ErrorBoundary>
         </Suspense>
       </Card>
-    </main>
+    </main >
   );
 }

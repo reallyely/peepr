@@ -1,5 +1,6 @@
 import { action } from "@solidjs/router";
 import { Cache } from "~/lib/cache";
+import { cacheKey } from "./queries";
 
 /**
  * Server action to invalidate cache and refresh data
@@ -7,9 +8,8 @@ import { Cache } from "~/lib/cache";
 export const refreshCacheAction = action(async ({ cycleNumber }) => {
   "use server";
   try {
-    const cacheKey = `integration:prStats:cycle:${cycleNumber}`;
-    await Cache.delete(cacheKey);
-    console.log(`Cleared cache for key: ${cacheKey}`);
+    await Cache.delete(cacheKey(cycleNumber));
+    console.log(`Cleared cache for key: ${cacheKey(cycleNumber)}`);
     return { success: true, message: "Cache refreshed successfully!" };
   } catch (error) {
     console.error("Failed to refresh cache:", error);
