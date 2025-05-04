@@ -5,6 +5,7 @@
   width: 100%;
   overflow-x: auto;
   margin: var(--spacing-md) 0;
+  border-radius: var(--border-radius-sm);
 }
 
 .dataGrid table {
@@ -100,7 +101,7 @@
   .dataGrid {
     margin: var(--spacing-sm) 0;
   }
-  
+
   .dataGrid th,
   .dataGrid td {
     padding: var(--spacing-xs) var(--spacing-sm);

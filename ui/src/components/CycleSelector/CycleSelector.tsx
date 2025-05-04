@@ -1,14 +1,8 @@
 import { Cycle, DateVO } from "@peepr/core";
-import {
-  type JSX,
-  createEffect,
-  createSignal,
-  splitProps,
-} from "solid-js";
+import { type JSX, createEffect, createSignal, splitProps } from "solid-js";
 import styles from "./CycleSelector.module.css";
 
-interface CycleSelectorProps
-  extends Omit<JSX.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
+interface CycleSelectorProps extends Omit<JSX.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
   value?: number;
   onChange?: (cycleData: {
     cycleNumber: number;
@@ -62,7 +56,7 @@ export const CycleSelector = (allProps: CycleSelectorProps) => {
   const formatDate = (date: Date) => {
     return DateVO.create(date).format({
       month: "short",
-      day: "numeric"
+      day: "numeric",
     });
   };
 
@@ -92,8 +86,7 @@ export const CycleSelector = (allProps: CycleSelectorProps) => {
       <div class={styles.cycleInfoStatic}>
         <div class={styles.cycleNumber}>Cycle {cycleData().cycleNumber}</div>
         <div class={styles.dateRange}>
-          {formatDate(cycleData().startDate)} -{" "}
-          {formatDate(cycleData().endDate)}
+          {formatDate(cycleData().startDate)} - {formatDate(cycleData().endDate)}
         </div>
       </div>
 

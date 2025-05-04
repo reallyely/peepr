@@ -48,7 +48,7 @@ export class DateVO {
       month: "short",
       day: "numeric",
     };
-    
+
     return this.date.toLocaleDateString("en-US", options || defaultOptions);
   }
 

@@ -1,97 +1,84 @@
 .skeleton {
-	--skeleton-base-color: color-mix(
-		in srgb,
-		var(--midnight-light),
-		transparent 50%
-	);
-	--skeleton-highlight-color: color-mix(
-		in srgb,
-		var(--midnight-light),
-		transparent 25%
-	);
+  --skeleton-base-color: color-mix(in srgb, var(--midnight-light), transparent 50%);
+  --skeleton-highlight-color: color-mix(in srgb, var(--midnight-light), transparent 25%);
 
-	background-color: var(--skeleton-base-color);
-	border-radius: var(--border-radius-sm);
-	position: relative;
-	overflow: hidden;
-	width: 100%;
+  background-color: var(--skeleton-base-color);
+  border-radius: var(--border-radius-sm);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
 }
 
 .skeleton--circle {
-	border-radius: 50%;
-	aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  aspect-ratio: 1 / 1;
 }
 
 .skeleton--animate {
-	position: relative;
+  position: relative;
 }
 
 .skeleton--animate::after {
-	content: "";
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	transform: translateX(-100%);
-	background-image: linear-gradient(
-		90deg,
-		transparent,
-		var(--skeleton-highlight-color),
-		transparent
-	);
-	animation: shimmer 1.5s infinite;
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg, transparent, var(--skeleton-highlight-color), transparent);
+  animation: shimmer 1.5s infinite;
 }
 
 @keyframes shimmer {
-	100% {
-		transform: translateX(100%);
-	}
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* Common sizing presets */
 .skeleton--text {
-	height: 1em;
-	margin-bottom: 0.5em;
+  height: 1em;
+  margin-bottom: 0.5em;
 }
 
 .skeleton--title {
-	height: 1.5em;
-	margin-bottom: 1em;
-	width: 70%;
+  height: 1.5em;
+  margin-bottom: 1em;
+  width: 70%;
 }
 
 .skeleton--avatar {
-	border-radius: 50%;
-	height: 40px;
-	width: 40px;
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
 }
 
 .skeleton--avatar-sm {
-	border-radius: 50%;
-	height: 24px;
-	width: 24px;
+  border-radius: 50%;
+  height: 24px;
+  width: 24px;
 }
 
 .skeleton--avatar-lg {
-	border-radius: 50%;
-	height: 64px;
-	width: 64px;
+  border-radius: 50%;
+  height: 64px;
+  width: 64px;
 }
 
 .skeleton--button {
-	height: 2.5rem;
-	width: 120px;
-	border-radius: var(--border-radius-sm);
+  height: 2.5rem;
+  width: 120px;
+  border-radius: var(--border-radius-sm);
 }
 
 .skeleton--card {
-	height: 200px;
-	border-radius: var(--border-radius-md);
+  height: 200px;
+  border-radius: var(--border-radius-md);
 }
 
 .skeleton--image {
-	height: 0;
-	padding-bottom: 56.25%; /* 16:9 aspect ratio */
-	border-radius: var(--border-radius-sm);
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  border-radius: var(--border-radius-sm);
 }

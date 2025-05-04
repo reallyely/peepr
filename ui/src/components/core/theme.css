@@ -4,94 +4,94 @@
 
 /* Theme Variables */
 :root {
-	/* Color Variables (mapped to color palette) */
-	--bg-color-primary: var(--bg-primary);
-	--bg-color-secondary: var(--bg-secondary);
-	--card-bg: var(--midnight-medium);
-	--card-bg-light: var(--midnight-light);
-	--text-primary: rgba(256, 255, 255, 0.9);
-	--text-secondary: rgba(255, 255, 255, 0.6);
-	--accent-color: var(--accent-primary);
-	--accent-gradient-start: var(--royal-blue-dark);
-	--accent-gradient-end: var(--royal-blue-light);
-	--border-color: var(--border-light);
-	--icon-color: var(--text-secondary);
-	--border-highlight: var(--border-highlight);
-	--card-highlight: rgba(255, 255, 255, 0.03);
+  /* Color Variables (mapped to color palette) */
+  --bg-color-primary: var(--bg-primary);
+  --bg-color-secondary: var(--bg-secondary);
+  --card-bg: var(--midnight-medium);
+  --card-bg-light: var(--midnight-light);
+  --text-primary: rgba(256, 255, 255, 0.9);
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --accent-color: var(--accent-primary);
+  --accent-gradient-start: var(--royal-blue-dark);
+  --accent-gradient-end: var(--royal-blue-light);
+  --border-color: var(--border-light);
+  --icon-color: var(--text-secondary);
+  --border-highlight: var(--border-highlight);
+  --card-highlight: rgba(255, 255, 255, 0.03);
 
-	/* Border Radius */
-	--border-radius-sm: 16px;
-	--border-radius-md: 22px;
-	--border-radius-lg: 36px;
+  /* Border Radius */
+  --border-radius-sm: 16px;
+  --border-radius-md: 22px;
+  --border-radius-lg: 36px;
 
-	/* Spacing Variables */
-	--spacing-xs: 4px;
-	--spacing-sm: 8px;
-	--spacing-md: 16px;
-	--spacing-lg: 24px;
-	--spacing-xl: 32px;
-	--spacing-xxl: 48px;
+  /* Spacing Variables */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
 
-	/* Border Variables */
-	--border-width-thin: 1px;
-	--border-width-medium: 2px;
-	--border-width-thick: 4px;
-	--border-style-solid: solid;
-	--border-style-dashed: dashed;
-	--border-style-dotted: dotted;
+  /* Border Variables */
+  --border-width-thin: 1px;
+  --border-width-medium: 2px;
+  --border-width-thick: 4px;
+  --border-style-solid: solid;
+  --border-style-dashed: dashed;
+  --border-style-dotted: dotted;
 
-	/* Shadow Variables */
-	--shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-	--shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
-	--shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.14);
-	--shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.16);
-	--shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-	--shadow-glow: 0 0 8px var(--accent-primary);
+  /* Shadow Variables */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.14);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.16);
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 8px var(--accent-primary);
 
-	/* Status Colors */
-	--status-success: var(--accent-success);
-	--status-warning: var(--accent-warning);
-	--status-danger: var(--accent-danger);
-	--status-info: var(--accent-info);
+  /* Status Colors */
+  --status-success: var(--accent-success);
+  --status-warning: var(--accent-warning);
+  --status-danger: var(--accent-danger);
+  --status-info: var(--accent-info);
 
-	/* Transition and Loading States */
-	--transition-duration-fast: 0.15s;
-	--transition-duration-normal: 0.3s;
-	--transition-duration-slow: 0.5s;
-	--transition-timing: ease;
-	--pending-opacity: 0.7;
-	--pending-overlay-color: rgba(19, 19, 54, 0.2);
-	--pending-blur: 1px;
+  /* Transition and Loading States */
+  --transition-duration-fast: 0.15s;
+  --transition-duration-normal: 0.3s;
+  --transition-duration-slow: 0.5s;
+  --transition-timing: ease;
+  --pending-opacity: 0.7;
+  --pending-overlay-color: rgba(19, 19, 54, 0.2);
+  --pending-blur: 1px;
 }
 
 /* Global pending transition states */
 .pending {
-	opacity: var(--pending-opacity);
-	transition: opacity var(--transition-duration-normal) var(--transition-timing);
-	position: relative;
+  opacity: var(--pending-opacity);
+  transition: opacity var(--transition-duration-normal) var(--transition-timing);
+  position: relative;
 }
 
 .pending::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background: var(--pending-overlay-color);
-	backdrop-filter: blur(var(--pending-blur));
-	border-radius: inherit;
-	pointer-events: none;
-	z-index: 1;
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--pending-overlay-color);
+  backdrop-filter: blur(var(--pending-blur));
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .pending-pulse {
-	animation: pulse 1.5s ease-in-out infinite;
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes pulse {
-	0%,
-	100% {
-		opacity: 0.4;
-	}
-	50% {
-		opacity: 0.7;
-	}
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }

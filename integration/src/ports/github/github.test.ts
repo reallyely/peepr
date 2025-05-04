@@ -8,10 +8,7 @@ const githubService = new GitHubService(GITHUB_TOKEN);
 test("GitHubService - getRepository", async () => {
   const response = await githubService.getRepository();
   assert.ok(response.data);
-  assert.strictEqual(
-    response.data.full_name,
-    "rivial-data-security/rivial-information-security-center",
-  );
+  assert.strictEqual(response.data.full_name, "rivial-data-security/rivial-information-security-center");
 });
 
 test("GitHubService - getIssues", async () => {

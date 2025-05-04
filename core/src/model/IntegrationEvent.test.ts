@@ -17,14 +17,8 @@ test("IntegrationEvent - create with required fields", () => {
 
   assert.strictEqual(integration.prNumber, 123);
   assert.strictEqual(integration.title, "Test PR");
-  assert.strictEqual(
-    integration.createdAt.toISOString(),
-    "2023-01-01T00:00:00.000Z",
-  );
-  assert.strictEqual(
-    integration.updatedAt.toISOString(),
-    "2023-01-02T00:00:00.000Z",
-  );
+  assert.strictEqual(integration.createdAt.toISOString(), "2023-01-01T00:00:00.000Z");
+  assert.strictEqual(integration.updatedAt.toISOString(), "2023-01-02T00:00:00.000Z");
   assert.strictEqual(integration.mergedAt, null);
   assert.strictEqual(integration.closedAt, null);
   assert.ok(integration.timeOpen instanceof Duration);
@@ -48,14 +42,8 @@ test("IntegrationEvent - create with all fields", () => {
   });
 
   assert.strictEqual(integration.id.toString(), "456");
-  assert.strictEqual(
-    integration.mergedAt?.toISOString(),
-    "2023-01-03T00:00:00.000Z",
-  );
-  assert.strictEqual(
-    integration.closedAt?.toISOString(),
-    "2023-01-03T00:00:00.000Z",
-  );
+  assert.strictEqual(integration.mergedAt?.toISOString(), "2023-01-03T00:00:00.000Z");
+  assert.strictEqual(integration.closedAt?.toISOString(), "2023-01-03T00:00:00.000Z");
 });
 
 test("IntegrationEvent - create with Date objects", () => {
@@ -168,10 +156,7 @@ test("IntegrationEvent - getSummary method", () => {
     totalDuration: "3h 45m",
   });
 
-  assert.strictEqual(
-    inProgressIntegration.getSummary(),
-    'PR #123 "In Progress PR" has been open for 2h 30m.',
-  );
+  assert.strictEqual(inProgressIntegration.getSummary(), 'PR #123 "In Progress PR" has been open for 2h 30m.');
 
   // Completed
   const completedIntegration = IntegrationEvent.create({

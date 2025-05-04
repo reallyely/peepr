@@ -15,7 +15,7 @@ test("StatisticalDistribution - create with required fields", () => {
     median,
     mean,
     range: { min, max },
-    quartiles: { q1, q2: median, q3 }
+    quartiles: { q1, q2: median, q3 },
   });
 
   assert.strictEqual(distribution.median, median);
@@ -45,13 +45,13 @@ test("StatisticalDistribution - toJSON representation", () => {
     mean: Duration.fromMinutes(6),
     range: {
       min: Duration.fromMinutes(1),
-      max: Duration.fromMinutes(10)
+      max: Duration.fromMinutes(10),
     },
     quartiles: {
       q1: Duration.fromMinutes(3),
       q2: Duration.fromMinutes(5),
-      q3: Duration.fromMinutes(8)
-    }
+      q3: Duration.fromMinutes(8),
+    },
   });
 
   const json = distribution.toJSON();

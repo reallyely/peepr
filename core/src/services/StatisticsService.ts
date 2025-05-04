@@ -4,25 +4,20 @@ import { IntegrationStatistics } from "../model/statistics/IntegrationStatistics
 import { StatisticalDistribution } from "../model/statistics/StatisticalDistribution.ts";
 
 /**
-  * Functions for generating statistics from integration events
-  */
+ * Functions for generating statistics from integration events
+ */
 export const StatisticsService = {
   /**
    * Calculates statistics for a collection of integration events
    */
-  generateStatistics(
-    integrationEvents: IntegrationEvent[],
-  ): IntegrationStatistics {
+  generateStatistics(integrationEvents: IntegrationEvent[]): IntegrationStatistics {
     if (!integrationEvents.length) {
       return IntegrationStatistics.empty();
     }
 
     // Calculate total PRs and CI runs
     const totalPRs = integrationEvents.length;
-    const totalCIRuns = integrationEvents.reduce(
-      (total, event) => total + event.checkRuns,
-      0,
-    );
+    const totalCIRuns = integrationEvents.reduce((total, event) => total + event.checkRuns, 0);
 
     // Extract durations
     const ciDurations = integrationEvents.map((event) => event.totalDuration);
@@ -40,27 +35,19 @@ export const StatisticsService = {
     });
   },
 
-
   /**
    * Calculates statistical distribution for a collection of durations
    */
-  calculateStatisticalDistribution(
-    durations: Duration[],
-  ): StatisticalDistribution {
+  calculateStatisticalDistribution(durations: Duration[]): StatisticalDistribution {
     if (!durations.length) {
       return StatisticalDistribution.empty();
     }
 
     // Sort durations by milliseconds
-    const sortedDurations = [...durations].sort(
-      (a, b) => a.inMilliseconds - b.inMilliseconds,
-    );
+    const sortedDurations = [...durations].sort((a, b) => a.inMilliseconds - b.inMilliseconds);
 
     // Calculate mean
-    const totalMs = sortedDurations.reduce(
-      (sum, d) => sum + d.inMilliseconds,
-      0,
-    );
+    const totalMs = sortedDurations.reduce((sum, d) => sum + d.inMilliseconds, 0);
     const meanMs = totalMs / sortedDurations.length;
 
     // Get index values for quartiles
@@ -74,10 +61,8 @@ export const StatisticsService = {
     const median =
       sortedDurations.length % 2 === 0
         ? new Duration(
-          (sortedDurations[middleIndex - 1].inMilliseconds +
-            sortedDurations[middleIndex].inMilliseconds) /
-          2,
-        )
+            (sortedDurations[middleIndex - 1].inMilliseconds + sortedDurations[middleIndex].inMilliseconds) / 2,
+          )
         : sortedDurations[middleIndex];
     const q3 = sortedDurations[upperIndex];
     const max = sortedDurations[sortedDurations.length - 1];
@@ -95,5 +80,5 @@ export const StatisticsService = {
         q3,
       },
     });
-  }
+  },
 };

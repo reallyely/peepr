@@ -1,18 +1,5 @@
-import {
-  type RouteDefinition,
-  createAsync,
-  useAction,
-  useSearchParams,
-} from "@solidjs/router";
-import {
-  ErrorBoundary,
-  Show,
-  Suspense,
-  createEffect,
-  createMemo,
-  createSignal,
-  useTransition,
-} from "solid-js";
+import { type RouteDefinition, createAsync, useAction, useSearchParams } from "@solidjs/router";
+import { ErrorBoundary, Show, Suspense, createEffect, createMemo, createSignal, useTransition } from "solid-js";
 import { CycleSelector } from "~/components/CycleSelector/CycleSelector";
 import { Card, CardContent, CardHeader, MetricCard } from "~/components/card";
 import { Alert, ProgressBar } from "~/components/feedback";
@@ -41,11 +28,9 @@ export const route = {
 export default function Integration() {
   // Get default cycle number using our core Cycle class
   const defaultCycleNumber = Cycle.getDefaultCycleNumber();
-  const refreshCache = useAction(refreshCacheAction)
+  const refreshCache = useAction(refreshCacheAction);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [cycleNumber, setCycleNumber] = createSignal(
-    Number(searchParams.cycle) || defaultCycleNumber,
-  );
+  const [cycleNumber, setCycleNumber] = createSignal(Number(searchParams.cycle) || defaultCycleNumber);
 
   // Add transition state using Solid's useTransition hook
   const [isPending, startTransition] = useTransition();
@@ -62,6 +47,16 @@ export default function Integration() {
     async () => {
       const stats = await getCycleStatistics({
         cycleNumber: cycleNumber(),
+      });
+      return stats;
+    },
+    { name: "get-integration-stats" },
+  );
+
+  const getPreviousStats = createAsync(
+    async () => {
+      const stats = await getCycleStatistics({
+        cycleNumber: cycleNumber() - 1,
       });
       return stats;
     },
@@ -114,9 +109,7 @@ export default function Integration() {
           />
 
           <Alert type="info" class={styles["date-range"]}>
-            <span class={styles["date-range__value"]}>
-              {dateRangeDisplay()}
-            </span>
+            <span class={styles["date-range__value"]}>{dateRangeDisplay()}</span>
             <Button
               size="sm"
               variant="danger"
@@ -134,8 +127,7 @@ export default function Integration() {
           <ErrorBoundary fallback={<Alert type="error">There was a problem fetching the data</Alert>}>
             <Show
               when={
-                Object.entries(getIntegrationStats()?.statistics || {}).length > 0 &&
-                getIntegrationStats()?.statistics
+                Object.entries(getIntegrationStats()?.statistics || {}).length > 0 && getIntegrationStats()?.statistics
               }
             >
               {(stats) => {
@@ -145,27 +137,47 @@ export default function Integration() {
                       <MetricCard
                         title="Total PRs"
                         value={stats()?.totalPRs}
+                        trend={() => (getPreviousStats()?.statistics?.totalPRs < stats()?.totalPRs ? "up" : "down")}
                         description="The total number of pull requests in this cycle"
                       />
 
                       <MetricCard
                         title="Total CI Runs"
                         value={stats()?.totalCIRuns}
+                        trend={() =>
+                          getPreviousStats()?.statistics?.totalCIRuns < stats()?.totalCIRuns ? "up" : "down"
+                        }
                       />
 
                       <MetricCard
-                        title="Median CI Duration"
-                        value={stats()?.ciDuration.median}
+                        title="Mean CI Duration"
+                        value={stats()?.ciDuration.mean}
+                        trend={() =>
+                          Duration.fromHumanReadable(getPreviousStats()?.statistics?.ciDuration.mean).compareTo(
+                            Duration.fromHumanReadable(stats()?.ciDuration.mean),
+                          ) < 0
+                            ? "up"
+                            : "down"
+                        }
+                        goodQualifier="down"
                       />
 
                       <MetricCard
-                        title="Median PR Open Time"
-                        value={stats()?.openTime.median}
+                        title="Mean PR Open Time"
+                        value={stats()?.openTime.mean}
+                        trend={() =>
+                          Duration.fromHumanReadable(getPreviousStats()?.statistics?.openTime.mean).compareTo(
+                            Duration.fromHumanReadable(stats()?.openTime.mean),
+                          ) < 0
+                            ? "up"
+                            : "down"
+                        }
+                        goodQualifier="down"
                       />
                     </div>
 
                     <Card variant="subtle">
-                      <CardHeader title="Detailed Statistics" />
+                      <CardHeader>Detailed Statistics</CardHeader>
                       <CardContent>
                         <DataGrid
                           data={() => [
@@ -175,7 +187,7 @@ export default function Integration() {
                               q1: stats()?.ciDuration.quartiles.q1,
                               median: stats()?.ciDuration.quartiles.q2,
                               q3: stats()?.ciDuration.quartiles.q3,
-                              max: stats()?.ciDuration.range.max
+                              max: stats()?.ciDuration.range.max,
                             },
                             {
                               metric: "PR Open Time",
@@ -183,14 +195,14 @@ export default function Integration() {
                               q1: stats()?.openTime.quartiles.q1,
                               median: stats()?.openTime.quartiles.q2,
                               q3: stats()?.openTime.quartiles.q3,
-                              max: stats()?.openTime.range.max
-                            }
+                              max: stats()?.openTime.range.max,
+                            },
                           ]}
                           columns={[
                             {
                               accessorKey: "metric",
                               header: "Metric",
-                              sortingFn: "alphanumeric"
+                              sortingFn: "alphanumeric",
                             },
                             {
                               accessorKey: "min",
@@ -211,9 +223,8 @@ export default function Integration() {
                             {
                               accessorKey: "max",
                               header: "Max",
-                            }
+                            },
                           ]}
-                          caption="Detailed PR Statistics"
                           emptyMessage="No statistical data available"
                         />
                       </CardContent>
@@ -222,18 +233,13 @@ export default function Integration() {
                 );
               }}
             </Show>
-
           </ErrorBoundary>
         </Suspense>
       </Card>
       <Card classList={{ [styles["card--pending"]]: isPending() }}>
         <Suspense fallback={<ProgressBar indeterminate />}>
           <ErrorBoundary fallback={<Alert type="error">There was a problem fetching the data</Alert>}>
-
-            <CardHeader
-              title="Pull Request Details"
-              count={getIntegrationStats()?.integrationEvents?.length || 0}
-            />
+            <CardHeader count={getIntegrationStats()?.integrationEvents?.length || 0}>Pull Request Details</CardHeader>
             <CardContent>
               <DataGrid
                 data={() => getIntegrationStats()?.integrationEvents}
@@ -254,20 +260,23 @@ export default function Integration() {
                     accessorKey: "createdAt",
                     header: "Created",
                     cell: (info) => (info.getValue() ? DateVO.create(String(info.getValue())).format() : "Unknown"),
-                    sortingFn: 'datetime',
+                    sortingFn: "datetime",
                     enableSorting: true,
                   },
                   {
                     accessorKey: "closedAt",
                     header: "Closed",
                     cell: (info) => (info.getValue() ? DateVO.create(String(info.getValue())).format() : "Open"),
-                    sortingFn: 'datetime',
+                    sortingFn: "datetime",
                     enableSorting: true,
                   },
                   {
                     accessorKey: "timeOpen",
                     header: "Time Open",
-                    sortingFn: (a, b) => Duration.fromHumanReadable(a.original.timeOpen).compareTo(Duration.fromHumanReadable(b.original.timeOpen)),
+                    sortingFn: (a, b) =>
+                      Duration.fromHumanReadable(a.original.timeOpen).compareTo(
+                        Duration.fromHumanReadable(b.original.timeOpen),
+                      ),
                     enableSorting: true,
                   },
                   {
@@ -279,7 +288,7 @@ export default function Integration() {
                     accessorKey: "checkRuns",
                     header: "CI Runs",
                     enableSorting: true,
-                  }
+                  },
                 ]}
                 initialSorting={[{ id: "createdAt", desc: true }]}
                 emptyMessage="No pull requests found for this cycle"
@@ -288,6 +297,6 @@ export default function Integration() {
           </ErrorBoundary>
         </Suspense>
       </Card>
-    </main >
+    </main>
   );
 }

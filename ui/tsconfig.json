@@ -2,6 +2,7 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "moduleResolution": "bundler",
+    "module": "Preserve",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "types": ["vinxi/types/client"],

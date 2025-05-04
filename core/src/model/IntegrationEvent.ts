@@ -60,47 +60,31 @@ export class IntegrationEvent {
       }
 
       // Convert date strings to Date objects if needed
-      const createdAt =
-        data.createdAt instanceof Date
-          ? data.createdAt
-          : new Date(data.createdAt);
+      const createdAt = data.createdAt instanceof Date ? data.createdAt : new Date(data.createdAt);
 
-      const updatedAt =
-        data.updatedAt instanceof Date
-          ? data.updatedAt
-          : new Date(data.updatedAt);
+      const updatedAt = data.updatedAt instanceof Date ? data.updatedAt : new Date(data.updatedAt);
 
       // Optional dates may be null
-      const mergedAt = data.mergedAt
-        ? data.mergedAt instanceof Date
-          ? data.mergedAt
-          : new Date(data.mergedAt)
-        : null;
+      const mergedAt = data.mergedAt ? (data.mergedAt instanceof Date ? data.mergedAt : new Date(data.mergedAt)) : null;
 
-      const closedAt = data.closedAt
-        ? data.closedAt instanceof Date
-          ? data.closedAt
-          : new Date(data.closedAt)
-        : null;
+      const closedAt = data.closedAt ? (data.closedAt instanceof Date ? data.closedAt : new Date(data.closedAt)) : null;
 
       // Convert string durations to Duration objects if needed
       const prTimeOpen =
         data.timeOpen instanceof Duration
           ? data.timeOpen
           : new Duration(
-            typeof data.timeOpen === "string"
-              ? Duration.fromHumanReadable(data.timeOpen).inMilliseconds
-              : 0,
-          );
+              typeof data.timeOpen === "string" ? Duration.fromHumanReadable(data.timeOpen).inMilliseconds : 0,
+            );
 
       const totalDuration =
         data.totalDuration instanceof Duration
           ? data.totalDuration
           : new Duration(
-            typeof data.totalDuration === "string"
-              ? Duration.fromHumanReadable(data.totalDuration).inMilliseconds
-              : 0,
-          );
+              typeof data.totalDuration === "string"
+                ? Duration.fromHumanReadable(data.totalDuration).inMilliseconds
+                : 0,
+            );
 
       return new IntegrationEvent(
         ID.create(data.id),

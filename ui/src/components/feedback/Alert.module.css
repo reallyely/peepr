@@ -1,67 +1,67 @@
 .alert {
-	padding: var(--spacing-md);
-	border-radius: var(--border-radius-sm);
-	margin-top: var(--spacing-md);
-	font-size: var(--font-size-sm);
-	position: relative;
-	padding-left: var(--spacing-xl);
-	animation: fadeIn 0.3s ease-in-out;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  position: relative;
+  padding-left: var(--spacing-xl);
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 .alert::before {
-	content: "";
-	position: absolute;
-	left: 3px;
-	top: 0;
-	bottom: 0;
-	width: 6px;
-	border-top-left-radius: var(--border-radius-sm);
-	border-bottom-left-radius: var(--border-radius-sm);
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  border-top-left-radius: var(--border-radius-sm);
+  border-bottom-left-radius: var(--border-radius-sm);
 }
 
 .alert--error {
-	background-color: rgba(255, 90, 66, 0.1);
-	color: var(--coral-light);
+  background-color: rgba(255, 90, 66, 0.1);
+  color: var(--coral-light);
 }
 
 .alert--error::before {
-	background-color: var(--accent-danger);
+  background-color: var(--accent-danger);
 }
 
 .alert--success {
-	background-color: rgba(44, 195, 137, 0.1);
-	color: var(--emerald-light);
+  background-color: rgba(44, 195, 137, 0.1);
+  color: var(--emerald-light);
 }
 
 .alert--success::before {
-	background-color: var(--accent-success);
+  background-color: var(--accent-success);
 }
 
 .alert--warning {
-	background-color: rgba(255, 179, 64, 0.1);
-	color: var(--amber-light);
+  background-color: rgba(255, 179, 64, 0.1);
+  color: var(--amber-light);
 }
 
 .alert--warning::before {
-	background-color: var(--accent-warning);
+  background-color: var(--accent-warning);
 }
 
 .alert--info {
-	background-color: rgba(32, 182, 168, 0.1);
-	color: var(--teal-light);
+  background-color: rgba(32, 182, 168, 0.1);
+  color: var(--teal-light);
 }
 
 .alert--info::before {
-	background-color: var(--accent-info);
+  background-color: var(--accent-info);
 }
 
 @keyframes fadeIn {
-	from {
-		opacity: 0;
-		transform: translateY(-5px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -6,6 +6,7 @@ import { StatisticalDistribution } from "./StatisticalDistribution.ts";
 export class IntegrationStatistics {
   readonly totalPRs: number;
   readonly totalCIRuns: number;
+  readonly meanCIRuns: number;
   readonly ciDuration: StatisticalDistribution;
   readonly openTime: StatisticalDistribution;
 
@@ -13,10 +14,11 @@ export class IntegrationStatistics {
     totalPRs: number,
     totalCIRuns: number,
     ciDuration: StatisticalDistribution,
-    openTime: StatisticalDistribution
+    openTime: StatisticalDistribution,
   ) {
     this.totalPRs = totalPRs;
     this.totalCIRuns = totalCIRuns;
+    this.meanCIRuns = totalCIRuns / totalPRs;
     this.ciDuration = ciDuration;
     this.openTime = openTime;
   }
@@ -30,24 +32,14 @@ export class IntegrationStatistics {
     ciDuration: StatisticalDistribution;
     openTime: StatisticalDistribution;
   }): IntegrationStatistics {
-    return new IntegrationStatistics(
-      data.totalPRs,
-      data.totalCIRuns,
-      data.ciDuration,
-      data.openTime
-    );
+    return new IntegrationStatistics(data.totalPRs, data.totalCIRuns, data.ciDuration, data.openTime);
   }
 
   /**
    * Creates an empty statistics object with zero values
    */
   static empty(): IntegrationStatistics {
-    return new IntegrationStatistics(
-      0,
-      0,
-      StatisticalDistribution.empty(),
-      StatisticalDistribution.empty()
-    );
+    return new IntegrationStatistics(0, 0, StatisticalDistribution.empty(), StatisticalDistribution.empty());
   }
 
   toJSON() {
@@ -55,7 +47,7 @@ export class IntegrationStatistics {
       totalPRs: this.totalPRs,
       totalCIRuns: this.totalCIRuns,
       ciDuration: this.ciDuration.toJSON(),
-      openTime: this.openTime.toJSON()
+      openTime: this.openTime.toJSON(),
     };
   }
 }

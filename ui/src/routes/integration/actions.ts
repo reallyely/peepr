@@ -15,7 +15,7 @@ export const refreshCacheAction = action(async ({ cycleNumber }) => {
     console.error("Failed to refresh cache:", error);
     return {
       success: false,
-      message: error instanceof Error ? error.message : "Failed to refresh cache"
+      message: error instanceof Error ? error.message : "Failed to refresh cache",
     };
   }
 }, "refresh-cache-action");

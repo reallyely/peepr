@@ -24,7 +24,7 @@ test("StatisticsService - generateStatistics with integration events", () => {
       closedAt: "2023-01-03T00:00:00Z",
       timeOpen: Duration.fromHours(48),
       checkRuns: 3,
-      totalDuration: Duration.fromMinutes(30)
+      totalDuration: Duration.fromMinutes(30),
     }),
     IntegrationEvent.create({
       prNumber: 124,
@@ -35,7 +35,7 @@ test("StatisticsService - generateStatistics with integration events", () => {
       closedAt: "2023-01-06T00:00:00Z",
       timeOpen: Duration.fromHours(24),
       checkRuns: 2,
-      totalDuration: Duration.fromMinutes(15)
+      totalDuration: Duration.fromMinutes(15),
     }),
     IntegrationEvent.create({
       prNumber: 125,
@@ -46,8 +46,8 @@ test("StatisticsService - generateStatistics with integration events", () => {
       closedAt: "2023-01-10T00:00:00Z",
       timeOpen: Duration.fromHours(72),
       checkRuns: 5,
-      totalDuration: Duration.fromMinutes(45)
-    })
+      totalDuration: Duration.fromMinutes(45),
+    }),
   ];
 
   const stats = StatisticsService.generateStatistics(events);

@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { GithubIntegrationEventBuilder } from "./GithubIntegrationEventBuilder.ts";
 
 // Mock pull request data
-type PullRequestParameter = Parameters<InstanceType<typeof GithubIntegrationEventBuilder>["setPullRequest"]>[0]
+type PullRequestParameter = Parameters<InstanceType<typeof GithubIntegrationEventBuilder>["setPullRequest"]>[0];
 const mockPullRequest: PullRequestParameter = {
   id: 123,
   number: 5319,
@@ -16,8 +16,8 @@ const mockPullRequest: PullRequestParameter = {
     diff_url: "",
     html_url: "",
     patch_url: "",
-    url: ""
-  }
+    url: "",
+  },
 };
 
 // Mock workflow run data
@@ -36,9 +36,7 @@ const mockUsage = {
 
 describe("GithubIntegrationEventBuilder", () => {
   it("builds a basic IntegrationEvent from PR data", () => {
-    const integration = new GithubIntegrationEventBuilder()
-      .setPullRequest(mockPullRequest)
-      .build();
+    const integration = new GithubIntegrationEventBuilder().setPullRequest(mockPullRequest).build();
 
     assert.strictEqual(integration.id.toString(), "123");
     assert.strictEqual(integration.prNumber, 5319);
@@ -77,13 +75,11 @@ describe("GithubIntegrationEventBuilder", () => {
         diff_url: "",
         html_url: "",
         patch_url: "",
-        url: ""
-      }
+        url: "",
+      },
     };
 
-    const integration = new GithubIntegrationEventBuilder()
-      .setPullRequest(closedPR)
-      .build();
+    const integration = new GithubIntegrationEventBuilder().setPullRequest(closedPR).build();
 
     // Should be 2 days (172800000 ms)
     assert.strictEqual(integration.timeOpen.inMilliseconds, 172800000);
@@ -93,30 +89,29 @@ describe("GithubIntegrationEventBuilder", () => {
   it("calculates PR open duration for abandoned PRs", () => {
     const abandonedPR = {
       ...mockPullRequest,
-      closed_at: "2024-01-03T00:00:00Z"
+      closed_at: "2024-01-03T00:00:00Z",
     };
 
-    const integration = new GithubIntegrationEventBuilder()
-      .setPullRequest(abandonedPR)
-      .build();
+    const integration = new GithubIntegrationEventBuilder().setPullRequest(abandonedPR).build();
 
     assert.strictEqual(integration.timeOpen.inMilliseconds, 172800000);
     assert.strictEqual(integration.isAbandoned(), true);
   });
 
   it("throws error when missing required data", () => {
-    assert.throws(() => {
-      // @ts-expect-error - Testing invalid type
-      new GithubIntegrationEventBuilder().setPullRequest({}).build();
-    }, {
-      message: "Cannot build IntegrationEvent: missing pull request information"
-    });
+    assert.throws(
+      () => {
+        // @ts-expect-error - Testing invalid type
+        new GithubIntegrationEventBuilder().setPullRequest({}).build();
+      },
+      {
+        message: "Cannot build IntegrationEvent: missing pull request information",
+      },
+    );
   });
 
   it("generates correct summary for in-progress PR", () => {
-    const integration = new GithubIntegrationEventBuilder()
-      .setPullRequest(mockPullRequest)
-      .build();
+    const integration = new GithubIntegrationEventBuilder().setPullRequest(mockPullRequest).build();
 
     assert.ok(integration.getSummary().includes("has been open for"));
   });
@@ -130,8 +125,8 @@ describe("GithubIntegrationEventBuilder", () => {
         diff_url: "",
         html_url: "",
         patch_url: "",
-        url: ""
-      }
+        url: "",
+      },
     };
 
     const integration = new GithubIntegrationEventBuilder()

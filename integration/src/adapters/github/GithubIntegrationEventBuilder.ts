@@ -30,18 +30,13 @@ export class GithubIntegrationEventBuilder {
     this.prNumber = pullRequest.number;
     this.prTitle = pullRequest.title;
     this.prCreatedAt = new Date(pullRequest.created_at);
-    this.prUpdatedAt = new Date(
-      pullRequest.updated_at || pullRequest.created_at,
-    );
+    this.prUpdatedAt = new Date(pullRequest.updated_at || pullRequest.created_at);
 
     if (pullRequest.closed_at) {
       this.prClosedAt = new Date(pullRequest.closed_at);
 
       // Calculate duration the PR was open
-      const durationMs = differenceInMilliseconds(
-        this.prClosedAt,
-        this.prCreatedAt,
-      );
+      const durationMs = differenceInMilliseconds(this.prClosedAt, this.prCreatedAt);
       this.prTimeOpen = new Duration(durationMs);
     }
 
@@ -66,13 +61,9 @@ export class GithubIntegrationEventBuilder {
   }
 
   // Adds workflow usage data to calculate total duration
-  setWorkflowUsage(
-    usage: Partial<components["schemas"]["workflow-run-usage"]>,
-  ): GithubIntegrationEventBuilder {
+  setWorkflowUsage(usage: Partial<components["schemas"]["workflow-run-usage"]>): GithubIntegrationEventBuilder {
     if (usage.run_duration_ms) {
-      this.totalDuration = new Duration(usage.run_duration_ms).add(
-        this.totalDuration,
-      );
+      this.totalDuration = new Duration(usage.run_duration_ms).add(this.totalDuration);
     }
     return this;
   }
@@ -92,9 +83,7 @@ export class GithubIntegrationEventBuilder {
 
     // Validate required fields
     if (!this.prNumber || !this.prTitle) {
-      throw new Error(
-        "Cannot build IntegrationEvent: missing pull request information",
-      );
+      throw new Error("Cannot build IntegrationEvent: missing pull request information");
     }
 
     return IntegrationEvent.create({

@@ -13,36 +13,27 @@ import type { GitHubService } from "../ports/github/github.service.ts";
  * Uses streaming for memory efficiency and better performance
  */
 export class IntegrationService {
-  private readonly githubService: GitHubService
+  private readonly githubService: GitHubService;
 
-  constructor(
-    githubService: GitHubService,
-  ) {
-    this.githubService = githubService
+  constructor(githubService: GitHubService) {
+    this.githubService = githubService;
   }
   /**
    * Streams integration events for a given cycle
    * @param cycle The cycle to retrieve integration events for
    */
-  async *streamIntegrationsForCycle(
-    cycle: Cycle,
-  ): AsyncGenerator<IntegrationEvent> {
+  async *streamIntegrationsForCycle(cycle: Cycle): AsyncGenerator<IntegrationEvent> {
     const startDateISO = cycle.startDate.toISOString();
     const endDateISO = cycle.endDate.toISOString();
 
     // Stream pull requests from GitHub using their date range
-    for await (const pr of this.githubService.getPullRequestsByDateRange(
-      startDateISO,
-      endDateISO,
-    )) {
+    for await (const pr of this.githubService.getPullRequestsByDateRange(startDateISO, endDateISO)) {
       try {
         // Start building the integration event
         const builder = new GithubIntegrationEventBuilder().setPullRequest(pr);
 
         // Get workflow runs with controlled concurrency
-        const workflowRuns = await this.githubService.getAllWorkflowRunsForPR(
-          pr.number,
-        );
+        const workflowRuns = await this.githubService.getAllWorkflowRunsForPR(pr.number);
 
         // Process up to 5 workflow runs at a time to balance speed vs. rate limits
         const runBatches = this.batchArray(workflowRuns, 5);
@@ -52,14 +43,10 @@ export class IntegrationService {
             batch.map(async (run) => {
               builder.setWorkflowRun(run);
               try {
-                const usage = await this.githubService.getWorkflowRunUsage(
-                  run.id,
-                );
+                const usage = await this.githubService.getWorkflowRunUsage(run.id);
                 builder.setWorkflowUsage(usage);
               } catch (error) {
-                console.warn(
-                  `Failed to get workflow usage for run ${run.id}: ${error}`,
-                );
+                console.warn(`Failed to get workflow usage for run ${run.id}: ${error}`);
               }
             }),
           );
@@ -132,12 +119,8 @@ class StreamingStatisticsCalculator {
     return IntegrationStatistics.create({
       totalPRs: this.totalPRs,
       totalCIRuns: this.totalCIRuns,
-      ciDuration: StatisticsService.calculateStatisticalDistribution(
-        this.ciDurations,
-      ),
-      openTime: StatisticsService.calculateStatisticalDistribution(
-        this.openTimes,
-      ),
+      ciDuration: StatisticsService.calculateStatisticalDistribution(this.ciDurations),
+      openTime: StatisticsService.calculateStatisticalDistribution(this.openTimes),
     });
   }
 }

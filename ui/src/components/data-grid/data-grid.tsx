@@ -31,7 +31,7 @@ export const DataGrid = <T extends object>({
   const [sorting, setSorting] = createSignal<SortingState>(initialSorting);
 
   const resolvedData = createMemo(() => {
-    if (typeof data === 'function') {
+    if (typeof data === "function") {
       return data() || [];
     }
     return data || [];
@@ -64,22 +64,19 @@ export const DataGrid = <T extends object>({
                   {(header) => (
                     <th
                       colSpan={header.colSpan}
-                      class={header.column.getCanSort() ? styles.sortable : ''}
+                      class={header.column.getCanSort() ? styles.sortable : ""}
                       onClick={header.column.getToggleSortingHandler()}
                       onKeyPress={header.column.getToggleSortingHandler()}
                     >
                       {header.isPlaceholder ? null : (
                         <div class={styles.headerContent}>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          {flexRender(header.column.columnDef.header, header.getContext())}
                           {header.column.getCanSort() && (
                             <span class={styles.sortIcon}>
                               {{
-                                asc: '↑',
-                                desc: '↓',
-                              }[header.column.getIsSorted() as string] || '⇅'}
+                                asc: "↑",
+                                desc: "↓",
+                              }[header.column.getIsSorted() as string] || "⇅"}
                             </span>
                           )}
                         </div>
@@ -92,15 +89,18 @@ export const DataGrid = <T extends object>({
           </For>
         </thead>
         <tbody>
-          <For each={table.getRowModel().rows} fallback={
-            emptyMessage && (
-              <tr>
-                <td colSpan={columns.length} class={styles.emptyMessage}>
-                  {emptyMessage}
-                </td>
-              </tr>
-            )
-          }>
+          <For
+            each={table.getRowModel().rows}
+            fallback={
+              emptyMessage && (
+                <tr>
+                  <td colSpan={columns.length} class={styles.emptyMessage}>
+                    {emptyMessage}
+                  </td>
+                </tr>
+              )
+            }
+          >
             {(row) => (
               <tr
                 onClick={() => onRowClick?.(row.original)}
@@ -110,17 +110,10 @@ export const DataGrid = <T extends object>({
                   }
                 }}
                 tabIndex={onRowClick ? 0 : undefined}
-                class={onRowClick ? styles.clickable : ''}
+                class={onRowClick ? styles.clickable : ""}
               >
                 <For each={row.getVisibleCells()}>
-                  {(cell) => (
-                    <td>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  )}
+                  {(cell) => <td>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>}
                 </For>
               </tr>
             )}

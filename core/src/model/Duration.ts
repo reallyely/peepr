@@ -3,6 +3,7 @@ export class Duration {
    * Creates a Duration from a human-readable string (e.g. "1d 2h 3m 4s")
    */
   static fromHumanReadable(humanReadable: string): Duration {
+    if (!humanReadable) return new Duration();
     let totalMs = 0;
 
     // Parse format: "1d 2h 3m 4s"

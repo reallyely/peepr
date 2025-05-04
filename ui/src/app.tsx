@@ -7,12 +7,12 @@ import "~/components/core/app.css";
 import Background from "./components/Background";
 
 export default function App() {
-	return (
-		<>
-			<Background />
-			<Router root={(props) => <Suspense>{props.children}</Suspense>}>
-				<FileRoutes />
-			</Router>
-		</>
-	);
+  return (
+    <>
+      <Background />
+      <Router root={(props) => <Suspense>{props.children}</Suspense>}>
+        <FileRoutes />
+      </Router>
+    </>
+  );
 }

@@ -114,7 +114,7 @@ test("Cycle - validation errors", () => {
 test("Cycle - getDateRange method", () => {
   const startDate = new Date("2023-01-01T00:00:00Z");
   const endDate = new Date("2023-01-15T00:00:00Z");
-  
+
   const cycle = Cycle.create({
     cycleNumber: 1,
     startDate,
@@ -122,7 +122,7 @@ test("Cycle - getDateRange method", () => {
   });
 
   const dateRange = cycle.getDateRange();
-  
+
   assert.strictEqual(dateRange.startDate, startDate);
   assert.strictEqual(dateRange.endDate, endDate);
 });
@@ -184,12 +184,12 @@ test("Cycle - getDefaultCycleNumber", () => {
 
 test("Cycle - getCycleDateRange", () => {
   const { startDate, endDate } = Cycle.getCycleDateRange(3);
-  
+
   // Cycle 3 starts on January 15, 2025 (2 weeks after January 1)
   assert.strictEqual(startDate.getFullYear(), 2025);
   assert.strictEqual(startDate.getMonth(), 0); // January
   assert.strictEqual(startDate.getDate(), 15);
-  
+
   // Ends 6 days later (January 21, 2025)
   assert.strictEqual(endDate.getFullYear(), 2025);
   assert.strictEqual(endDate.getMonth(), 0); // January
@@ -198,16 +198,16 @@ test("Cycle - getCycleDateRange", () => {
 
 test("Cycle - fromCycleNumber", () => {
   const cycle = Cycle.fromCycleNumber(5, "test-id");
-  
+
   assert.strictEqual(cycle.id.toString(), "test-id");
   assert.strictEqual(cycle.cycleNumber, 5);
   assert.strictEqual(cycle.year, 2025);
-  
+
   // Verify dates are correctly calculated for cycle 5
   const expectedStartDate = new Date(2025, 0, 1);
   expectedStartDate.setDate(expectedStartDate.getDate() + (5 - 1) * 7);
   assert.strictEqual(cycle.startDate.getTime(), expectedStartDate.getTime());
-  
+
   const expectedEndDate = new Date(expectedStartDate);
   expectedEndDate.setDate(expectedEndDate.getDate() + 6);
   assert.strictEqual(cycle.endDate.getTime(), expectedEndDate.getTime());
@@ -220,7 +220,7 @@ test("Cycle - format date methods", () => {
     startDate: dateStr,
     endDate: "2023-01-15T12:00:00Z",
   });
-  
+
   // Using exact UTC date to avoid timezone issues in testing
   const expectedDate = new Date(dateStr);
   const expected = expectedDate.toLocaleDateString("en-US", {
@@ -228,9 +228,9 @@ test("Cycle - format date methods", () => {
     month: "short",
     day: "numeric",
   });
-  
+
   assert.strictEqual(cycle.formatStartDate(), expected);
-  
+
   // Test that formatting is applied
   const customFormat = cycle.formatStartDate({ year: "numeric", month: "long" });
   assert.ok(customFormat.includes("January"));

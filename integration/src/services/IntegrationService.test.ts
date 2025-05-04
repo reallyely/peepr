@@ -27,9 +27,7 @@ maybeTest("IntegrationService - streamIntegrationsForCycle", async () => {
   const integrations: IntegrationEvent[] = [];
   let count = 0;
 
-  for await (const integration of integrationService.streamIntegrationsForCycle(
-    cycle,
-  )) {
+  for await (const integration of integrationService.streamIntegrationsForCycle(cycle)) {
     integrations.push(integration);
     count++;
 

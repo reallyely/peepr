@@ -10,13 +10,13 @@ test("IntegrationStatistics - create with required fields", () => {
     mean: Duration.fromMinutes(6),
     range: {
       min: Duration.fromMinutes(1),
-      max: Duration.fromMinutes(10)
+      max: Duration.fromMinutes(10),
     },
     quartiles: {
       q1: Duration.fromMinutes(3),
       q2: Duration.fromMinutes(5),
-      q3: Duration.fromMinutes(8)
-    }
+      q3: Duration.fromMinutes(8),
+    },
   });
 
   const openTime = StatisticalDistribution.create({
@@ -24,20 +24,20 @@ test("IntegrationStatistics - create with required fields", () => {
     mean: Duration.fromHours(30),
     range: {
       min: Duration.fromHours(5),
-      max: Duration.fromHours(72)
+      max: Duration.fromHours(72),
     },
     quartiles: {
       q1: Duration.fromHours(12),
       q2: Duration.fromHours(24),
-      q3: Duration.fromHours(48)
-    }
+      q3: Duration.fromHours(48),
+    },
   });
 
   const stats = IntegrationStatistics.create({
     totalPRs: 25,
     totalCIRuns: 75,
     ciDuration,
-    openTime
+    openTime,
   });
 
   assert.strictEqual(stats.totalPRs, 25);
@@ -64,27 +64,27 @@ test("IntegrationStatistics - toJSON representation", () => {
       mean: Duration.fromMinutes(6),
       range: {
         min: Duration.fromMinutes(1),
-        max: Duration.fromMinutes(10)
+        max: Duration.fromMinutes(10),
       },
       quartiles: {
         q1: Duration.fromMinutes(3),
         q2: Duration.fromMinutes(5),
-        q3: Duration.fromMinutes(8)
-      }
+        q3: Duration.fromMinutes(8),
+      },
     }),
     openTime: StatisticalDistribution.create({
       median: Duration.fromHours(24),
       mean: Duration.fromHours(30),
       range: {
         min: Duration.fromHours(5),
-        max: Duration.fromHours(72)
+        max: Duration.fromHours(72),
       },
       quartiles: {
         q1: Duration.fromHours(12),
         q2: Duration.fromHours(24),
-        q3: Duration.fromHours(48)
-      }
-    })
+        q3: Duration.fromHours(48),
+      },
+    }),
   });
 
   const json = stats.toJSON();

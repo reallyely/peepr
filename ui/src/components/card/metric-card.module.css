@@ -16,11 +16,15 @@
 
 .valueContainer {
     display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     gap: var(--spacing-sm);
 }
 
 .trend {
+    pointer-events: none;
+    user-select: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -31,12 +35,12 @@
     border-radius: 50%;
 }
 
-.trend--up {
+.trend--good {
     color: var(--emerald-medium);
     background-color: rgba(44, 195, 137, 0.1);
 }
 
-.trend--down {
+.trend--bad {
     color: var(--coral-medium);
     background-color: rgba(255, 90, 66, 0.1);
 }

@@ -21,7 +21,7 @@ export class StatisticalDistribution {
     median: Duration,
     mean: Duration,
     range: { min: Duration; max: Duration },
-    quartiles: { q1: Duration; q2: Duration; q3: Duration }
+    quartiles: { q1: Duration; q2: Duration; q3: Duration },
   ) {
     this.median = median;
     this.mean = mean;
@@ -38,12 +38,7 @@ export class StatisticalDistribution {
     range: { min: Duration; max: Duration };
     quartiles: { q1: Duration; q2: Duration; q3: Duration };
   }): StatisticalDistribution {
-    return new StatisticalDistribution(
-      data.median,
-      data.mean,
-      data.range,
-      data.quartiles
-    );
+    return new StatisticalDistribution(data.median, data.mean, data.range, data.quartiles);
   }
 
   /**
@@ -55,7 +50,7 @@ export class StatisticalDistribution {
       zeroDuration,
       zeroDuration,
       { min: zeroDuration, max: zeroDuration },
-      { q1: zeroDuration, q2: zeroDuration, q3: zeroDuration }
+      { q1: zeroDuration, q2: zeroDuration, q3: zeroDuration },
     );
   }
 
@@ -65,13 +60,13 @@ export class StatisticalDistribution {
       mean: this.mean.toHumanReadable(),
       range: {
         min: this.range.min.toHumanReadable(),
-        max: this.range.max.toHumanReadable()
+        max: this.range.max.toHumanReadable(),
       },
       quartiles: {
         q1: this.quartiles.q1.toHumanReadable(),
         q2: this.quartiles.q2.toHumanReadable(),
-        q3: this.quartiles.q3.toHumanReadable()
-      }
+        q3: this.quartiles.q3.toHumanReadable(),
+      },
     };
   }
 }

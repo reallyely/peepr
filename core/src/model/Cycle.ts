@@ -10,14 +10,7 @@ export class Cycle {
   readonly endDate: Date;
   readonly duration: Duration;
 
-  private constructor(
-    id: ID,
-    cycleNumber: number,
-    year: number,
-    startDate: Date,
-    endDate: Date,
-    duration: Duration,
-  ) {
+  private constructor(id: ID, cycleNumber: number, year: number, startDate: Date, endDate: Date, duration: Duration) {
     this.id = id;
     this.cycleNumber = cycleNumber;
     this.year = year;
@@ -36,19 +29,12 @@ export class Cycle {
   }): Cycle {
     try {
       // Validate required fields
-      if (
-        typeof data.cycleNumber !== "number" ||
-        data.cycleNumber < 1 ||
-        !Number.isInteger(data.cycleNumber)
-      ) {
+      if (typeof data.cycleNumber !== "number" || data.cycleNumber < 1 || !Number.isInteger(data.cycleNumber)) {
         throw new Error("Cycle number must be a positive integer");
       }
 
       // Process start date
-      const startDate =
-        data.startDate instanceof Date
-          ? data.startDate
-          : new Date(data.startDate);
+      const startDate = data.startDate instanceof Date ? data.startDate : new Date(data.startDate);
 
       if (Number.isNaN(startDate.getTime())) {
         throw new Error("Invalid start date");
@@ -66,8 +52,7 @@ export class Cycle {
 
       if (data.endDate) {
         // If end date is provided, calculate duration from it
-        endDate =
-          data.endDate instanceof Date ? data.endDate : new Date(data.endDate);
+        endDate = data.endDate instanceof Date ? data.endDate : new Date(data.endDate);
         if (Number.isNaN(endDate.getTime())) {
           throw new Error("Invalid end date");
         }
@@ -77,15 +62,10 @@ export class Cycle {
           throw new Error("End date must be after start date");
         }
 
-        duration = Duration.fromMilliseconds(
-          endDate.getTime() - startDate.getTime(),
-        );
+        duration = Duration.fromMilliseconds(endDate.getTime() - startDate.getTime());
       } else if (data.duration) {
         // If duration is provided, calculate end date from it
-        duration =
-          data.duration instanceof Duration
-            ? data.duration
-            : Duration.fromHumanReadable(data.duration);
+        duration = data.duration instanceof Duration ? data.duration : Duration.fromHumanReadable(data.duration);
 
         endDate = new Date(startDate.getTime() + duration.inMilliseconds);
       } else {
@@ -94,14 +74,7 @@ export class Cycle {
         endDate = new Date(startDate.getTime() + duration.inMilliseconds);
       }
 
-      return new Cycle(
-        ID.create(data.id),
-        data.cycleNumber,
-        year,
-        startDate,
-        endDate,
-        duration,
-      );
+      return new Cycle(ID.create(data.id), data.cycleNumber, year, startDate, endDate, duration);
     } catch (error) {
       throw error instanceof Error ? error : new Error(String(error));
     }
@@ -114,9 +87,7 @@ export class Cycle {
   static getDefaultCycleNumber(): number {
     const currentDate = new Date();
     const startDate = new Date(2025, 0, 1); // January 1, 2025
-    const daysSinceStart = Math.ceil(
-      (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-    );
+    const daysSinceStart = Math.ceil((currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
     return Math.max(1, Math.ceil(daysSinceStart / 7));
   }
 
@@ -158,7 +129,7 @@ export class Cycle {
   getDateRange(): { startDate: Date; endDate: Date } {
     return {
       startDate: this.startDate,
-      endDate: this.endDate
+      endDate: this.endDate,
     };
   }
 

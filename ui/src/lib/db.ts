@@ -1,4 +1,4 @@
-import { User } from '@peepr/core'
+import { User } from "@peepr/core";
 import { createStorage } from "unstorage";
 import fsLiteDriver from "unstorage/drivers/fs-lite";
 import { Cache } from "./cache";
@@ -8,18 +8,13 @@ const storage = createStorage({
     base: "./.data",
   }),
 });
-storage.setItem("users:data", [
-  User.create({ id: 0, username: "lol", password: "roflmao" }).toJSON(),
-]);
+storage.setItem("users:data", [User.create({ id: 0, username: "lol", password: "roflmao" }).toJSON()]);
 storage.setItem("users:counter", 1);
 
 export const db = {
   user: {
     async create({ data }: { data: { username: string; password: string } }) {
-      const [{ value: users }, { value: index }] = await storage.getItems([
-        "users:data",
-        "users:counter",
-      ]);
+      const [{ value: users }, { value: index }] = await storage.getItems(["users:data", "users:counter"]);
       const user = User.create({
         id: Number(index),
         password: data.password,
@@ -41,8 +36,7 @@ export const db = {
       where: { username = undefined, id = undefined },
     }: { where: { username?: string; id?: number } }) {
       // Cache key based on query type
-      const cacheKey =
-        id !== undefined ? `user:${id}` : `user:username:${username}`;
+      const cacheKey = id !== undefined ? `user:${id}` : `user:username:${username}`;
 
       return Cache.getOrSet(
         cacheKey,
