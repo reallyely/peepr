@@ -43,7 +43,10 @@ export function CardContent(props: { children: JSX.Element; class?: string }) {
   const [local, others] = splitProps(props, ["children", "class"]);
 
   return (
-    <div class={`${styles.card__content} ${local.class || ""}`} {...others}>
+    <div classList={{
+      [styles.card__content]: true,
+      [local.class]: !!local.class
+    }} {...others}>
       {local.children}
     </div>
   );
