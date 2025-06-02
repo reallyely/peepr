@@ -27,18 +27,14 @@ export class User {
   }
 
   static create(data: {
-    id?: string | number;
+    id?: string | number | ID;
     username: string;
     password: string;
   }): User {
-    try {
-      User.validateUsername(data.username);
-      User.validatePassword(data.password);
+    User.validateUsername(data.username);
+    User.validatePassword(data.password);
 
-      return new User(ID.create(data.id), data.username, data.password);
-    } catch (error) {
-      throw error instanceof Error ? error : new Error(String(error));
-    }
+    return new User(ID.create(data.id), data.username, data.password);
   }
 
   public toJSON(): { id: string; username: string; password: string } {

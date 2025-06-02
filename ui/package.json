@@ -7,8 +7,12 @@
     "start": "vinxi start"
   },
   "dependencies": {
+    "@auth/core": "^0.39.1",
+    "@auth/drizzle-adapter": "^1.9.1",
+    "@auth/solid-start": "^0.17.1",
     "@kobalte/core": "^0.13.9",
     "@peepr/core": "workspace:^",
+    "@peepr/infrastructure": "workspace:*",
     "@peepr/integration": "workspace:*",
     "@solidjs/router": "^0.15.0",
     "@solidjs/start": "^1.1.0",

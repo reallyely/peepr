@@ -32,7 +32,6 @@ export default function Integration() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [cycleNumber, setCycleNumber] = createSignal(Number(searchParams.cycle) || defaultCycleNumber);
 
-  // Add transition state using Solid's useTransition hook
   const [isPending, startTransition] = useTransition();
 
   // Synchronize URL changes with our local state

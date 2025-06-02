@@ -1,6 +1,6 @@
 import { User } from "@peepr/core";
 import { action, query, redirect } from "@solidjs/router";
-import { db } from "./db";
+import { database } from "./db";
 import { getSession, login, logout as logoutSession, register } from "./server";
 
 export const getUser = query(async () => {
@@ -9,7 +9,7 @@ export const getUser = query(async () => {
     const session = await getSession();
     const userId = session.data.userId;
     if (userId === undefined) throw new Error("User not found");
-    const user = await db.user.findUnique({ where: { id: userId } });
+    const user = await database.user.findUnique({ where: { id: userId } });
     if (!user) throw new Error("User not found");
     return { id: user.id, username: user.username };
   } catch {
@@ -24,9 +24,8 @@ export const loginOrRegister = action(async (formData: FormData) => {
   const password = String(formData.get("password"));
   const loginType = String(formData.get("loginType"));
 
-  User.create({ username, password });
-
   try {
+    const coreUser = User.create({ username, password });
     const user = await (loginType !== "login" ? register(username, password) : login(username, password));
     const session = await getSession();
     await session.update((d) => {
@@ -41,5 +40,5 @@ export const loginOrRegister = action(async (formData: FormData) => {
 export const logout = action(async () => {
   "use server";
   await logoutSession();
-  return redirect("/login");
+  return redirect("/");
 });

@@ -1,0 +1,42 @@
+{
+  "name": "@peepr/infrastructure",
+  "version": "1.0.0",
+  "description": "Infrastructure layer for Peepr - database, external APIs, and persistence",
+  "type": "module",
+  "main": "main.ts",
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:init": "node src/database/migrate.ts",
+    "db:seed": "node src/database/seed.ts"
+  },
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./main.ts",
+    "./database": "./src/database/index.ts"
+  },
+  "keywords": [
+    "database",
+    "infrastructure",
+    "persistence"
+  ],
+  "author": "Stephen Ely",
+  "license": "ISC",
+  "packageManager": "pnpm@10.5.1",
+  "dependencies": {
+    "@peepr/core": "workspace:^",
+    "@libsql/client": "^0.14.0",
+    "drizzle-orm": "^0.44.1",
+    "unstorage": "1.10.2"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.1"
+  },
+  "engines": {
+    "node": ">=23"
+  }
+}

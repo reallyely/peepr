@@ -29,6 +29,10 @@ export default function Home(props: RouteSectionProps) {
               label: "Styles Test",
               href: "/sample-ui",
             },
+            {
+              label: "Logout",
+              href: "/logout",
+            },
           ]}
         />
       </Show>

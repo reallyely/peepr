@@ -19,7 +19,9 @@ export class ID {
   /**
    * Creates a new ID, either with the provided value or generates a new UUID
    */
-  static create(value?: string | number): ID {
+  static create(value?: string | number | ID): ID {
+    if (value instanceof ID) return value;
+
     return new ID(value);
   }
 
