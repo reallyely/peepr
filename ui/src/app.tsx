@@ -4,12 +4,10 @@ import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
 
 import "~/components/core/app.css";
-import Background from "./components/Background.tsx";
 
 export default function App() {
   return (
     <>
-      <Background />
       <Router root={(props) => <Suspense>{props.children}</Suspense>}>
         <FileRoutes />
       </Router>

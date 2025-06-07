@@ -1,7 +1,7 @@
 import { type RouteDefinition, createAsync, useAction, useSearchParams } from "@solidjs/router";
 import { ErrorBoundary, Show, Suspense, createEffect, createMemo, createSignal, useTransition } from "solid-js";
-import { CycleSelector } from "~/components/CycleSelector/CycleSelector";
-import { Card, CardContent, CardHeader, MetricCard } from "~/components/card";
+import { Card, CardContent, CardHeader, MetricCard } from "~/components/Card";
+import { CycleSelector } from "~/components/CycleSelector/CycleSelector.tsx";
 import { Alert, ProgressBar } from "~/components/feedback";
 import styles from "./integration.module.css";
 
@@ -137,6 +137,7 @@ export default function Integration() {
                         title="Total PRs"
                         value={stats()?.totalPRs}
                         trend={() => (getPreviousStats()?.statistics?.totalPRs < stats()?.totalPRs ? "up" : "down")}
+                        trendValue={() => stats()?.totalPRs - getPreviousStats()?.statistics?.totalPRs}
                         description="The total number of pull requests in this cycle"
                       />
 
@@ -145,6 +146,9 @@ export default function Integration() {
                         value={stats()?.totalCIRuns}
                         trend={() =>
                           getPreviousStats()?.statistics?.totalCIRuns < stats()?.totalCIRuns ? "up" : "down"
+                        }
+                        trendValue={() =>
+                          getPreviousStats()?.statistics?.totalCIRuns - stats()?.totalCIRuns
                         }
                       />
 

@@ -4,21 +4,32 @@
 @import "./theme.css";
 @import "./reset.css";
 
+:root {
+    background: radial-gradient(
+        circle at top,
+        color-mix(in srgb, var(--bg-primary) 50%, black),
+        color-mix(in srgb, var(--bg-secondary) 50%, black)
+    );
+}
 /* Global utility classes */
 .transition-all {
-  transition: all var(--transition-duration-normal) var(--transition-timing);
+    transition: all var(--transition-duration-normal) var(--transition-timing);
 }
 
 .transition-opacity {
-  transition: opacity var(--transition-duration-normal) var(--transition-timing);
+    transition: opacity var(--transition-duration-normal)
+        var(--transition-timing);
 }
 
 .transition-transform {
-  transition: transform var(--transition-duration-normal) var(--transition-timing);
+    transition: transform var(--transition-duration-normal)
+        var(--transition-timing);
 }
 
 .transition-colors {
-  transition: color var(--transition-duration-normal) var(--transition-timing), background-color
-    var(--transition-duration-normal) var(--transition-timing), border-color var(--transition-duration-normal)
-    var(--transition-timing);
+    transition:
+        color var(--transition-duration-normal) var(--transition-timing),
+        background-color var(--transition-duration-normal)
+            var(--transition-timing),
+        border-color var(--transition-duration-normal) var(--transition-timing);
 }

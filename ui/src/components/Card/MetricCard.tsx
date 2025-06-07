@@ -1,6 +1,6 @@
 import { type Component, ErrorBoundary, type JSX, Show, Suspense, createEffect, createSignal } from "solid-js";
-import Button from "../form/Button";
-import { Card, CardContent, CardHeader } from "./card";
+import Button from "../form/Button.tsx";
+import { Card, CardContent, CardHeader } from "./Card.tsx";
 import styles from "./metric-card.module.css";
 
 export interface MetricCardProps {
@@ -18,6 +18,8 @@ export interface MetricCardProps {
   goodQualifier?: "up" | "down" | "neutral";
   /** Optional function to determine if the trend is good, bad or neutral */
   trendQualifierFn?: (trend: "up" | "down" | "neutral") => "good" | "bad" | "neutral";
+  /** The difference between the previous trend and the current trend */
+  trendValue?: () => string | number;
 }
 
 /**
@@ -39,11 +41,12 @@ export const MetricCard: Component<MetricCardProps> = (props) => {
           <CardContent class={styles.valueContainer}>
             <span class={styles.value}>{props.value}</span>
             <Show when={props.trend()} keyed>
-              <span class={`${styles.trend} ${styles[`trend--${qualifier()}`]}`} aria-label={`Trend: ${props.trend()}`}>
+              <div class={`${styles.trend} ${styles[`trend--${qualifier()}`]}`} aria-label={`Trend: ${props.trend()}`}>
                 {props.trend() === "up" && "↑"}
                 {props.trend() === "down" && "↓"}
                 {props.trend() === "neutral" && "–"}
-              </span>
+              </div>
+              <span class={styles.trendValue}>{props.trendValue?.()}</span>
             </Show>
           </CardContent>
         </Suspense>

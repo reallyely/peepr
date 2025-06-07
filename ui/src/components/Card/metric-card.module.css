@@ -7,22 +7,8 @@
     margin-bottom: var(--spacing-sm);
 }
 
-.value {
-    display: block;
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--text-primary);
-}
-
-.valueContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-
 .trend {
+    grid-area: trend;
     pointer-events: none;
     user-select: none;
     display: inline-flex;
@@ -31,8 +17,33 @@
     font-size: var(--font-size-md);
     font-weight: var(--font-weight-bold);
     width: 24px;
+    min-width: 24px;
     height: 24px;
     border-radius: 50%;
+}
+
+.trendValue {
+    grid-area: trendvalue;
+    align-content: center;
+    justify-content: center;
+}
+
+.valueContainer {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "value trend"
+        ". trendvalue";
+    align-items: flex-start;
+}
+
+.value {
+    grid-area: value;
+    display: block;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
 }
 
 .trend--good {
