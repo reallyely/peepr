@@ -46,7 +46,6 @@ export const MetricCard: Component<MetricCardProps> = (props) => {
                 {props.trend() === "down" && "↓"}
                 {props.trend() === "neutral" && "–"}
               </div>
-              <span class={styles.trendValue}>{props.trendValue?.()}</span>
             </Show>
           </CardContent>
         </Suspense>
