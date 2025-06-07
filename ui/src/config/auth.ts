@@ -8,11 +8,11 @@ import type { SolidAuthConfig } from "@auth/solid-start";
 export const authOpts: SolidAuthConfig = {
   providers: [
     GitHub({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      clientId: process.env.AUTH_GITHUB_ID,
+      clientSecret: process.env.AUTH_GITHUB_SECRET,
     }),
   ],
   /**  https://stackoverflow.com/questions/77871561/error-unknownaction-cannot-parse-action-at-api-auth-session */
   basePath: "/api/auth",
-  debug: false,
+  debug: process.env.DEBUG === "true",
 };
