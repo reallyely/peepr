@@ -4,7 +4,7 @@ import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
 
 import "~/components/core/app.css";
-import Background from "./components/Background";
+import Background from "./components/Background.tsx";
 
 export default function App() {
   return (

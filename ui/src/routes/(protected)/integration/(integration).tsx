@@ -9,8 +9,8 @@ import { DataGrid } from "~/components/data-grid";
 import Button from "~/components/form/Button";
 
 import { Cycle, DateVO, Duration } from "@peepr/core";
-import { refreshCacheAction } from "./actions";
-import { getCycleStatistics } from "./queries";
+import { refreshCacheAction } from "./actions.ts";
+import { getCycleStatistics } from "./queries.ts";
 
 export const route = {
   preload({ location }) {

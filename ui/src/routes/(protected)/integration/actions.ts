@@ -1,6 +1,6 @@
 import { action } from "@solidjs/router";
 import { Cache } from "~/lib/cache";
-import { cacheKey } from "./queries";
+import { cacheKey } from "./queries.ts";
 
 /**
  * Server action to invalidate cache and refresh data
