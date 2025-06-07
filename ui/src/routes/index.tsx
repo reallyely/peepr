@@ -1,44 +1,16 @@
-import { type RouteDefinition, type RouteSectionProps, createAsync } from "@solidjs/router";
-import { Show, Suspense } from "solid-js";
-import { Nav } from "~/components/nav";
-import { getUser, logout } from "~/lib";
+import { Button } from "@kobalte/core/button";
+import { A } from "@solidjs/router";
+import type { Component } from "solid-js";
+import { Card, CardContent } from "~/components/card";
 
-export const route = {
-  preload() {
-    getUser();
-  },
-} satisfies RouteDefinition;
-
-export default function Home(props: RouteSectionProps) {
-  const user = createAsync(() => getUser(), { deferStream: true });
-
+const Index: Component = () => {
   return (
-    <>
-      <Show when={user}>
-        <Nav
-          items={[
-            {
-              label: "Home",
-              href: "/",
-            },
-            {
-              label: "Integration Stats",
-              href: "/integration",
-            },
-            {
-              label: "Styles Test",
-              href: "/sample-ui",
-            },
-            {
-              label: "Logout",
-              href: "/logout",
-            },
-          ]}
-        />
-      </Show>
-      <div class="main-container">
-        <Suspense>{props.children}</Suspense>
-      </div>
-    </>
-  );
+    <main>
+      <Card>
+        <CardContent><A href="/integration"><Button>Go to Integration</Button></A></CardContent>
+      </Card>
+    </main>
+  )
 }
+
+export default Index;

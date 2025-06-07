@@ -1,20 +1,16 @@
-import { useAction } from "@solidjs/router";
-import { onMount, createSignal, Show } from "solid-js";
-import { logout } from "~/lib";
-import ProgressBar from "~/components/feedback/ProgressBar.js";
+import { signOut } from "@auth/solid-start/client";
+import { createAsync, query, redirect } from "@solidjs/router";
+import { Show, onMount } from "solid-js";
+import { Card } from "~/components/card";
 
 export default function Logout() {
-  const logoutAction = useAction(logout);
-  const [isLoggingOut, setIsLoggingOut] = createSignal(true);
-
   onMount(async () => {
-    await logoutAction();
-    setIsLoggingOut(false);
-  });
+    await signOut({ redirect: false });
+    throw redirect("/login");
+  }
+  )
 
   return (
-    <Show fallback={<ProgressBar indeterminate />} when={isLoggingOut()}>
-      <p>Logged out successfully</p>
-    </Show>
+    <Card>Logging out</Card>
   );
 }
