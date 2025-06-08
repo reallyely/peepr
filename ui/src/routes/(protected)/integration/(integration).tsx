@@ -111,20 +111,17 @@ export default function Integration() {
   return (
     <div class="main-container">
       <Card aria-labelledby="stats-summary">
-        <h2 id="stats-summary" class="visually-hidden">
-          Statistics Summary
-        </h2>
 
         <div class={styles["date-range-container"]}>
-          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-            <A href="/repositories" style="text-decoration: none;">
+          <div class="flex items-center gap-md mb-md">
+            <A href="/repositories" class="no-decoration">
               <Button size="sm" variant="secondary">
                 ← Change Repository
               </Button>
             </A>
             <div>
-              <h3 style="margin: 0; font-size: 1.125rem;">{repoFullName()}</h3>
-              <p style="margin: 0; font-size: 0.875rem; color: #666;">Repository Statistics</p>
+              <h3 class="m-0 text-lg">{repoFullName()}</h3>
+              <p class="text-sm text-secondary">Repository Statistics</p>
             </div>
           </div>
 
@@ -134,9 +131,7 @@ export default function Integration() {
             aria-label="Select cycle for PR statistics"
             autofocus
           />
-
-          <Alert type="info" class={styles["date-range"]}>
-            <span class={styles["date-range__value"]}>{dateRangeDisplay()}</span>
+          <div>
             <Button
               size="sm"
               variant="danger"
@@ -146,7 +141,7 @@ export default function Integration() {
             >
               Refresh Cache
             </Button>
-          </Alert>
+          </div>
         </div>
       </Card>
       <Card classList={{ [styles["card--pending"]]: isPending() }}>

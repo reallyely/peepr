@@ -2,7 +2,7 @@ import { type JSX, splitProps } from "solid-js";
 import styles from "./Button.module.css";
 
 type ButtonProps = {
-  variant?: "primary" | "secondary" | "danger" | "ghost";
+  variant?: "cta" | "primary" | "secondary" | "danger" | "ghost";
   size?: "sm" | "md" | "lg";
   fullWidth?: boolean;
   type?: "button" | "submit" | "reset";
@@ -29,8 +29,16 @@ export default function Button(props: ButtonProps) {
       .join(" ");
   };
 
+  const hasEnhancedEffects = () => variant === "cta" || variant === "danger";
+
   return (
     <button type={type} disabled={local.loading || props.disabled} class={buttonClass()} {...others}>
+      {hasEnhancedEffects() && (
+        <>
+          <span class={styles.button__noise} aria-hidden="true" />
+          <span class={styles.button__shadow} aria-hidden="true" />
+        </>
+      )}
       {local.loading ? (
         <span class={styles["button__loading-text"]}>
           <span class={styles.button__spinner} aria-hidden="true" />

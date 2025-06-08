@@ -1,106 +1,475 @@
+/* CSS Custom Properties for Button Effects */
+:root {
+    --button-radius: 8px;
+    --button-border-width: 1px;
+    --button-border-radius: calc(
+        var(--button-radius) + var(--button-border-width)
+    );
+    --button-highlight-height: 2px;
+    --button-shadow-height: 2px;
+    --button-edge-inset: 15%;
+    --button-transition-fast: 0.2s ease;
+    --button-transition-slow: 0.3s ease;
+}
+
 .button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: var(--font-weight-medium);
-  border: none;
-  border-radius: var(--border-radius-sm);
-  cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.1s ease;
-  position: relative;
-  overflow: hidden;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-medium);
+    border: none;
+    border-radius: var(--button-radius);
+    cursor: pointer;
+    transition: all var(--button-transition-fast);
+    overflow: hidden;
+    gap: 8px;
 }
 
 .button:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-primary);
+    outline: none;
+    box-shadow:
+        0 0 0 2px var(--bg-primary),
+        0 0 0 4px var(--accent-primary);
+}
+
+/* Focus styles with hover effects for keyboard navigation */
+.button--cta:focus-visible:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 25px rgba(49, 81, 208, 0.4),
+        0 0 0 2px var(--bg-primary),
+        0 0 0 4px var(--accent-primary);
+}
+
+.button--cta:focus-visible:not(:disabled)::before {
+    opacity: 1;
+    animation-duration: 2s;
+}
+
+.button--cta:focus-visible:not(:disabled)::after {
+    opacity: 1;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.9) 15%,
+        rgba(255, 255, 255, 1) 50%,
+        rgba(255, 255, 255, 0.9) 85%,
+        transparent 100%
+    );
+}
+
+.button--primary:focus-visible:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 
+        0 4px 16px rgba(49, 81, 208, 0.3),
+        0 0 0 2px var(--bg-primary),
+        0 0 0 4px var(--accent-primary);
+}
+
+.button--secondary:focus-visible:not(:disabled) {
+    background: rgba(127, 95, 227, 0.15);
+    border-color: rgba(127, 95, 227, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 
+        0 2px 8px rgba(127, 95, 227, 0.15),
+        0 0 0 2px var(--bg-primary),
+        0 0 0 4px var(--accent-primary);
+}
+
+.button--secondary:focus-visible:not(:disabled)::after {
+    opacity: 0.6;
+}
+
+.button--danger:focus-visible:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 25px rgba(255, 90, 66, 0.4),
+        0 0 0 2px var(--bg-primary),
+        0 0 0 4px var(--accent-primary);
+}
+
+.button--danger:focus-visible:not(:disabled)::before {
+    opacity: 1;
+    animation-duration: 2s;
+}
+
+.button--danger:focus-visible:not(:disabled)::after {
+    opacity: 1;
+}
+
+.button--ghost:focus-visible:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    border-color: var(--border-medium);
+    transform: translateY(-1px);
+    box-shadow: 
+        0 2px 6px rgba(0, 0, 0, 0.15),
+        0 0 0 2px var(--bg-primary),
+        0 0 0 4px var(--accent-primary);
+}
+
+.button--cta:focus-visible:not(:disabled) .button__shadow,
+.button--danger:focus-visible:not(:disabled) .button__shadow {
+    opacity: 0.8;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 0, 0, 0.45) 25%,
+        rgba(0, 0, 0, 0.6) 50%,
+        rgba(0, 0, 0, 0.45) 75%,
+        transparent 100%
+    );
 }
 
 .button:active {
-  transform: translateY(1px);
+    transform: translateY(0) !important;
 }
 
 .button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
 }
 
-/* Variants */
+/* CTA (Call to Action) Variant - Full enhanced effects */
+.button--cta {
+    background: var(--gradient-cta);
+    color: white;
+    box-shadow: 0 4px 20px rgba(49, 81, 208, 0.3);
+}
+
+.button--cta::before {
+    content: "";
+    position: absolute;
+    inset: calc(-1 * var(--button-border-width));
+    border-radius: var(--button-border-radius);
+    background: var(--gradient-cta);
+    background-size: 300% 300%;
+    animation: borderGlow 3s ease-in-out infinite;
+    z-index: -1;
+    opacity: 0.6;
+}
+
+.button--cta::after {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--button-border-width));
+    left: var(--button-edge-inset);
+    right: var(--button-edge-inset);
+    height: var(--button-highlight-height);
+    border-radius: var(--button-radius) var(--button-radius) 0 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.8) 25%,
+        rgba(255, 255, 255, 1) 50%,
+        rgba(255, 255, 255, 0.8) 75%,
+        transparent 100%
+    );
+    z-index: 1;
+    opacity: 0.7;
+}
+
+.button--cta:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(49, 81, 208, 0.4);
+}
+
+.button--cta:hover:not(:disabled)::before {
+    opacity: 1;
+    animation-duration: 2s;
+}
+
+.button--cta:hover:not(:disabled)::after {
+    opacity: 1;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.9) 15%,
+        rgba(255, 255, 255, 1) 50%,
+        rgba(255, 255, 255, 0.9) 85%,
+        transparent 100%
+    );
+}
+
+/* Primary Variant - Simplified effects */
 .button--primary {
-  background: var(--gradient-primary);
-  color: white;
+    background: linear-gradient(
+        135deg,
+        var(--royal-blue-medium) 0%,
+        var(--royal-blue-dark) 100%
+    );
+    color: white;
+    box-shadow: 0 2px 12px rgba(49, 81, 208, 0.2);
 }
 
 .button--primary:hover:not(:disabled) {
-  opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(49, 81, 208, 0.3);
 }
 
+/* Secondary Variant - Border style */
 .button--secondary {
-  background: var(--gradient-secondary);
-  color: white;
+    background: rgba(127, 95, 227, 0.1);
+    color: var(--deep-purple-light);
+    border: 1px solid rgba(127, 95, 227, 0.3);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button--secondary::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 25%;
+    right: 25%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(127, 95, 227, 0.4) 50%,
+        transparent 100%
+    );
+    z-index: 1;
+    opacity: 0.3;
 }
 
 .button--secondary:hover:not(:disabled) {
-  opacity: 0.9;
+    background: rgba(127, 95, 227, 0.15);
+    border-color: rgba(127, 95, 227, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(127, 95, 227, 0.15);
 }
 
+.button--secondary:hover:not(:disabled)::after {
+    opacity: 0.6;
+}
+
+/* Danger Variant - Enhanced like Primary but with danger colors */
 .button--danger {
-  background: var(--gradient-danger);
-  color: white;
+    background: var(--gradient-danger);
+    color: white;
+    box-shadow: 0 4px 20px rgba(255, 90, 66, 0.3);
+}
+
+.button--danger::before {
+    content: "";
+    position: absolute;
+    inset: calc(-1 * var(--button-border-width));
+    border-radius: var(--button-border-radius);
+    background: linear-gradient(
+        135deg,
+        var(--coral-light),
+        var(--coral-medium),
+        var(--coral-dark),
+        var(--coral-light)
+    );
+    background-size: 300% 300%;
+    animation: borderGlow 3s ease-in-out infinite;
+    z-index: -1;
+    opacity: 0.6;
+}
+
+.button--danger::after {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--button-border-width));
+    left: var(--button-edge-inset);
+    right: var(--button-edge-inset);
+    height: var(--button-highlight-height);
+    border-radius: var(--button-radius) var(--button-radius) 0 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.8) 25%,
+        rgba(255, 255, 255, 1) 50%,
+        rgba(255, 255, 255, 0.8) 75%,
+        transparent 100%
+    );
+    z-index: 1;
+    opacity: 0.7;
 }
 
 .button--danger:hover:not(:disabled) {
-  opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 90, 66, 0.4);
 }
 
+.button--danger:hover:not(:disabled)::before {
+    opacity: 1;
+    animation-duration: 2s;
+}
+
+.button--danger:hover:not(:disabled)::after {
+    opacity: 1;
+}
+
+/* Ghost Variant - Subtle effects */
 .button--ghost {
-  background: transparent;
-  color: var(--text-primary);
-  border: var(--border-width-thin) var(--border-style-solid) var(--border-color);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .button--ghost:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    border-color: var(--border-medium);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 /* Sizes */
 .button--sm {
-  padding: var(--spacing-xs) var(--spacing-md);
-  font-size: var(--font-size-sm);
+    padding: 8px 16px;
+    font-size: 14px;
+    --button-radius: 6px;
 }
 
 .button--md {
-  padding: var(--spacing-md) var(--spacing-lg);
-  font-size: var(--font-size-base);
+    padding: 12px 24px;
+    font-size: 16px;
+    --button-radius: 8px;
 }
 
 .button--lg {
-  padding: var(--spacing-md) var(--spacing-xl);
-  font-size: var(--font-size-md);
+    padding: 16px 32px;
+    font-size: 18px;
+    --button-radius: 10px;
 }
 
 .button--full-width {
-  width: 100%;
+    width: 100%;
 }
 
 /* Loading state */
 .button__loading-text {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .button__spinner {
-  width: 1em;
-  height: 1em;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top-color: white;
-  animation: spin 0.8s linear infinite;
+    width: 1em;
+    height: 1em;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Noise overlay for CTA and danger variants */
+.button__noise {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+            circle at 25% 25%,
+            rgba(255, 255, 255, 0.06) 1px,
+            transparent 1px
+        ),
+        radial-gradient(
+            circle at 75% 25%,
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px
+        ),
+        radial-gradient(
+            circle at 25% 75%,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+        ),
+        radial-gradient(
+            circle at 75% 75%,
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px
+        ),
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(255, 255, 255, 0.03) 1px,
+            transparent 1px
+        );
+    background-size:
+        8px 8px,
+        12px 12px,
+        10px 10px,
+        14px 14px,
+        6px 6px;
+    background-position:
+        0 0,
+        4px 4px,
+        2px 2px,
+        6px 6px,
+        3px 3px;
+    opacity: 0.6;
+    pointer-events: none;
+    border-radius: var(--button-radius);
+    animation: noiseShift 20s linear infinite;
+}
+
+/* Shadow border for CTA and danger variants */
+.button__shadow {
+    position: absolute;
+    bottom: calc(-1 * var(--button-border-width));
+    left: var(--button-edge-inset);
+    right: var(--button-edge-inset);
+    height: var(--button-shadow-height);
+    border-radius: 0 0 var(--button-radius) var(--button-radius);
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 0, 0, 0.4) 25%,
+        rgba(0, 0, 0, 0.5) 50%,
+        rgba(0, 0, 0, 0.4) 75%,
+        transparent 100%
+    );
+    z-index: 1;
+    opacity: 0.7;
+}
+
+.button--cta:hover:not(:disabled) .button__shadow,
+.button--danger:hover:not(:disabled) .button__shadow {
+    opacity: 0.8;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 0, 0, 0.45) 25%,
+        rgba(0, 0, 0, 0.6) 50%,
+        rgba(0, 0, 0, 0.45) 75%,
+        transparent 100%
+    );
+}
+
+/* Keyframe animations */
+@keyframes borderGlow {
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes noiseShift {
+    0% {
+        transform: translate(0, 0);
+    }
+    25% {
+        transform: translate(-1px, 1px);
+    }
+    50% {
+        transform: translate(1px, -1px);
+    }
+    75% {
+        transform: translate(-1px, -1px);
+    }
+    100% {
+        transform: translate(0, 0);
+    }
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+    to {
+        transform: rotate(360deg);
+    }
 }

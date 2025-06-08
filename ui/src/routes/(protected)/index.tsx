@@ -9,15 +9,12 @@ const Index: Component = () => {
       <Card>
         <CardHeader>
           <h1>Welcome to Peepr</h1>
+          <p>Peepr is a tool to help you track your pull requests across your organization.</p>
+          <p>Get insights into PR statistics, CI/CD metrics, and development velocity.</p>
         </CardHeader>
         <CardContent class="flex flex-col items-center gap-4">
-          <div>
-            <p>Peepr is a tool to help you track your pull requests across your organization.</p>
-            <p>Get insights into PR statistics, CI/CD metrics, and development velocity.</p>
-          </div>
-
-          <A href="/repositories" class="no-decoration">
-            <Button variant="primary" size="lg">
+          <A href="/repositories" class="no-decoration" tabIndex={-1}>
+            <Button size="lg" variant="cta">
               Choose Repository
             </Button>
           </A>

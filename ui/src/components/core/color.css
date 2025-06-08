@@ -103,6 +103,14 @@
         var(--midnight-dark)
     );
 
+    --gradient-cta: radial-gradient(
+        circle at top left,
+        var(--teal-dark),
+        var(--deep-purple-medium),
+        var(--deep-purple-dark),
+        var(--midnight-light)
+    );
+
     /* Border Colors */
     --border-light: rgba(255, 255, 255, 0.1);
     --border-medium: rgba(255, 255, 255, 0.15);

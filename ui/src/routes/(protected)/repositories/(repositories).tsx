@@ -113,7 +113,7 @@ export default function Repositories() {
                       cell: (info) => {
                         const lang = info.getValue() as string | null;
                         return lang ? (
-                          <Badge variant="info" style="soft" size="sm">
+                          <Badge variant="info" style="soft">
                             {lang}
                           </Badge>
                         ) : (
@@ -131,7 +131,6 @@ export default function Repositories() {
                           <Badge
                             variant={isPrivate ? "warning" : "success"}
                             style="soft"
-                            size="sm"
                           >
                             {formatVisibility(isPrivate)}
                           </Badge>
@@ -161,8 +160,8 @@ export default function Repositories() {
                             class="no-decoration"
                             tabIndex={-1}
                           >
-                            <Button size="sm" variant="primary">
-                              Select
+                            <Button size="sm" variant="secondary">
+                              🡆
                             </Button>
                           </A>
                         );

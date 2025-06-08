@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Button Variants</title>
+        <style>
+            :root {
+                --button-radius: 50px;
+                --border-width: 1px;
+                --border-radius: calc(
+                    var(--button-radius) + var(--border-width)
+                );
+                --highlight-height: 2px;
+                --shadow-height: 2px;
+                --gradient-primary: linear-gradient(
+                    135deg,
+                    #8b5cf6 0%,
+                    #6366f1 50%,
+                    #3b82f6 100%
+                );
+                --gradient-border: linear-gradient(
+                    135deg,
+                    #a855f7,
+                    #6366f1,
+                    #3b82f6,
+                    #8b5cf6
+                );
+                --gradient-highlight: linear-gradient(
+                    90deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.8) 25%,
+                    rgba(255, 255, 255, 1) 50%,
+                    rgba(255, 255, 255, 0.8) 75%,
+                    transparent 100%
+                );
+                --gradient-shadow: linear-gradient(
+                    90deg,
+                    transparent 0%,
+                    rgba(0, 0, 0, 0.4) 25%,
+                    rgba(0, 0, 0, 0.5) 50%,
+                    rgba(0, 0, 0, 0.4) 75%,
+                    transparent 100%
+                );
+                --edge-inset: 15%;
+                --transition-fast: 0.2s ease;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+                background: #1a1a1a;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 40px;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                padding: 40px;
+            }
+
+            .button-showcase {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+                align-items: center;
+            }
+
+            .variant-label {
+                color: #9ca3af;
+                font-size: 14px;
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: -8px;
+            }
+
+            .button-base {
+                position: relative;
+                border: none;
+                border-radius: var(--button-radius);
+                padding: 16px 32px;
+                font-size: 18px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                cursor: pointer;
+                transition: all var(--transition-fast);
+                overflow: hidden;
+            }
+
+            /* CTA (Call to Action) - Full effects */
+            .btn-cta {
+                background: var(--gradient-primary);
+                color: white;
+                box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+            }
+
+            .btn-cta::before {
+                content: "";
+                position: absolute;
+                inset: calc(-1 * var(--border-width));
+                border-radius: var(--border-radius);
+                background: var(--gradient-border);
+                background-size: 300% 300%;
+                animation: borderGlow 3s ease-in-out infinite;
+                z-index: -1;
+                opacity: 0.6;
+            }
+
+            .btn-cta::after {
+                content: "";
+                position: absolute;
+                top: calc(-1 * var(--border-width));
+                left: var(--edge-inset);
+                right: var(--edge-inset);
+                height: var(--highlight-height);
+                border-radius: var(--button-radius) var(--button-radius) 0 0;
+                background: var(--gradient-highlight);
+                z-index: 1;
+                opacity: 0.7;
+            }
+
+            .btn-cta:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+            }
+
+            .btn-cta:hover::before {
+                opacity: 1;
+                animation-duration: 2s;
+            }
+
+            .btn-cta:hover::after {
+                opacity: 1;
+                background: linear-gradient(
+                    90deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.9) 15%,
+                    rgba(255, 255, 255, 1) 50%,
+                    rgba(255, 255, 255, 0.9) 85%,
+                    transparent 100%
+                );
+            }
+
+            .btn-cta:hover .shadow-border {
+                opacity: 0.8;
+                background: linear-gradient(
+                    90deg,
+                    transparent 0%,
+                    rgba(0, 0, 0, 0.45) 25%,
+                    rgba(0, 0, 0, 0.6) 50%,
+                    rgba(0, 0, 0, 0.45) 75%,
+                    transparent 100%
+                );
+            }
+
+            /* Primary - Simplified effects */
+            .btn-primary {
+                background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                color: white;
+                box-shadow: 0 2px 12px rgba(139, 92, 246, 0.2);
+            }
+
+            .btn-primary::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 20%;
+                right: 20%;
+                height: 1px;
+                border-radius: var(--button-radius) var(--button-radius) 0 0;
+                background: linear-gradient(
+                    90deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.6) 50%,
+                    transparent 100%
+                );
+                z-index: 1;
+                opacity: 0.5;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+            }
+
+            .btn-primary:hover::after {
+                opacity: 0.8;
+            }
+
+            /* Secondary - Border style */
+            .btn-secondary {
+                background: rgba(139, 92, 246, 0.1);
+                color: #a855f7;
+                border: 1px solid rgba(139, 92, 246, 0.3);
+                box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .btn-secondary::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 25%;
+                right: 25%;
+                height: 1px;
+                background: linear-gradient(
+                    90deg,
+                    transparent 0%,
+                    rgba(168, 85, 247, 0.4) 50%,
+                    transparent 100%
+                );
+                z-index: 1;
+                opacity: 0.3;
+            }
+
+            .btn-secondary:hover {
+                background: rgba(139, 92, 246, 0.15);
+                border-color: rgba(139, 92, 246, 0.5);
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
+            }
+
+            .btn-secondary:hover::after {
+                opacity: 0.6;
+            }
+
+            /* Subtle - Minimal effects */
+            .btn-subtle {
+                background: rgba(255, 255, 255, 0.05);
+                color: #d1d5db;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+
+            .btn-subtle:hover {
+                background: rgba(255, 255, 255, 0.08);
+                color: #f3f4f6;
+                border-color: rgba(255, 255, 255, 0.15);
+                transform: translateY(-1px);
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            }
+
+            /* Shared noise effect (only for CTA) */
+            .noise-overlay {
+                position: absolute;
+                inset: 0;
+                background-image: radial-gradient(
+                        circle at 25% 25%,
+                        rgba(255, 255, 255, 0.06) 1px,
+                        transparent 1px
+                    ),
+                    radial-gradient(
+                        circle at 75% 25%,
+                        rgba(255, 255, 255, 0.04) 1px,
+                        transparent 1px
+                    ),
+                    radial-gradient(
+                        circle at 25% 75%,
+                        rgba(255, 255, 255, 0.05) 1px,
+                        transparent 1px
+                    ),
+                    radial-gradient(
+                        circle at 75% 75%,
+                        rgba(255, 255, 255, 0.04) 1px,
+                        transparent 1px
+                    ),
+                    radial-gradient(
+                        circle at 50% 50%,
+                        rgba(255, 255, 255, 0.03) 1px,
+                        transparent 1px
+                    );
+                background-size:
+                    8px 8px,
+                    12px 12px,
+                    10px 10px,
+                    14px 14px,
+                    6px 6px;
+                background-position:
+                    0 0,
+                    4px 4px,
+                    2px 2px,
+                    6px 6px,
+                    3px 3px;
+                opacity: 0.6;
+                pointer-events: none;
+                border-radius: var(--button-radius);
+                animation: noiseShift 20s linear infinite;
+            }
+
+            .shadow-border {
+                position: absolute;
+                bottom: calc(-1 * var(--border-width));
+                left: var(--edge-inset);
+                right: var(--edge-inset);
+                height: var(--shadow-height);
+                border-radius: 0 0 25px 25px;
+                background: var(--gradient-shadow);
+                z-index: 1;
+                opacity: 0.7;
+            }
+
+            .button-base:active {
+                transform: translateY(0);
+            }
+
+            .plus-icon {
+                width: 20px;
+                height: 20px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+                font-weight: 300;
+            }
+
+            .btn-secondary .plus-icon {
+                background: rgba(168, 85, 247, 0.2);
+            }
+
+            .btn-subtle .plus-icon {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .dropdown-arrow {
+                margin-left: 8px;
+                font-size: 14px;
+                opacity: 0.8;
+            }
+
+            @keyframes borderGlow {
+                0%,
+                100% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+            }
+
+            @keyframes noiseShift {
+                0% {
+                    transform: translate(0, 0);
+                }
+                25% {
+                    transform: translate(-1px, 1px);
+                }
+                50% {
+                    transform: translate(1px, -1px);
+                }
+                75% {
+                    transform: translate(-1px, -1px);
+                }
+                100% {
+                    transform: translate(0, 0);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="button-showcase">
+            <div class="variant-label">Call to Action</div>
+            <button class="button-base btn-cta">
+                <span class="noise-overlay"></span>
+                <span class="shadow-border"></span>
+                <span class="plus-icon">+</span>
+                New
+                <span class="dropdown-arrow">▼</span>
+            </button>
+        </div>
+
+        <div class="button-showcase">
+            <div class="variant-label">Primary</div>
+            <button class="button-base btn-primary">
+                <span class="plus-icon">+</span>
+                New
+                <span class="dropdown-arrow">▼</span>
+            </button>
+        </div>
+
+        <div class="button-showcase">
+            <div class="variant-label">Secondary</div>
+            <button class="button-base btn-secondary">
+                <span class="plus-icon">+</span>
+                New
+                <span class="dropdown-arrow">▼</span>
+            </button>
+        </div>
+
+        <div class="button-showcase">
+            <div class="variant-label">Subtle</div>
+            <button class="button-base btn-subtle">
+                <span class="plus-icon">+</span>
+                New
+                <span class="dropdown-arrow">▼</span>
+            </button>
+        </div>
+    </body>
+</html>
