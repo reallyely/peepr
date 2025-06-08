@@ -16,3 +16,60 @@
     color: var(--text-tertiary);
     font-style: italic;
 }
+
+/* Pending state and transitions */
+.card--pending {
+    cursor: wait;
+    position: relative;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+    overflow: hidden;
+}
+
+.card--pending::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--bg-secondary);
+    opacity: 0.2;
+    pointer-events: none;
+    border-radius: inherit;
+    backdrop-filter: blur(1px);
+    z-index: 1;
+}
+
+/* Shimmer effect overlay */
+.card--pending::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        325deg,
+        transparent,
+        rgba(255, 255, 255, 0.05),
+        rgba(255, 255, 255, 0.15),
+        rgba(255, 255, 255, 0.05),
+        transparent
+    );
+    z-index: 2;
+    pointer-events: none;
+    animation: shimmer 3.5s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(0%) scaleX(50%);
+    }
+    20% {
+        transform: translateX(20%) scaleX(150%);
+    }
+    30% {
+        transform: translateX(50%) scaleX(200%);
+    }
+    100% {
+        transform: translateX(400%) scaleX(50%);
+    }
+}

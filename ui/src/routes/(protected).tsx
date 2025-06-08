@@ -16,10 +16,6 @@ export default function Home(props: RouteSectionProps) {
             href: "/repositories",
           },
           {
-            label: "Styles Test",
-            href: "/sample-ui",
-          },
-          {
             label: "Logout",
             href: "/logout",
           },

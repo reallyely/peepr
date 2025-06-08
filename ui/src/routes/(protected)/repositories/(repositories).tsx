@@ -1,27 +1,28 @@
-import { A, type RouteDefinition, createAsync } from "@solidjs/router";
-import { ErrorBoundary, Show, Suspense, createSignal } from "solid-js";
+import { A, type RouteDefinition, createAsync, useAction } from "@solidjs/router";
+import { ErrorBoundary, Show, Suspense, createSignal, useTransition } from "solid-js";
 import { Badge } from "~/components/Badge";
 import { Card, CardContent, CardHeader } from "~/components/Card";
 import { DataGrid } from "~/components/DataGrid";
 import { Alert, ProgressBar } from "~/components/feedback";
 import Button from "~/components/form/Button";
 import TextInput from "~/components/form/TextInput";
+import { refreshRepositoriesCacheAction } from "./actions.ts";
 import { getRepositories } from "./queries.ts";
 
 import styles from "./repositories.module.css";
 
 export const route = {
   preload() {
-    // Preload repositories data
     getRepositories();
   },
 } satisfies RouteDefinition;
 
 export default function Repositories() {
   const [searchTerm, setSearchTerm] = createSignal("");
+  const refreshCache = useAction(refreshRepositoriesCacheAction);
+  const [isPending, startTransition] = useTransition();
 
   const repositories = createAsync(() => getRepositories(), {
-    deferStream: true,
     name: "get-repositories"
   });
 
@@ -48,22 +49,45 @@ export default function Repositories() {
     return isPrivate ? "Private" : "Public";
   };
 
+  // Function to handle data refresh with transition
+  const handleRefresh = () => {
+    startTransition(async () => {
+      await refreshCache();
+      await getRepositories();
+    });
+  };
+
   return (
     <div class="main-container flex flex-col gap-4">
-      <div class="flex flex-col">
-        <h1>Select a Repository</h1>
-        <p>Choose a repository to track pull request statistics and CI/CD metrics.</p>
+      <div class="flex flex-col gap-4">
+        <div>
+          <h1>Select a Repository</h1>
+          <p>Choose a repository to track pull request statistics and CI/CD metrics.</p>
+        </div>
 
-        <TextInput
-          name="repository-search"
-          type="text"
-          placeholder="Search repositories..."
-          value={searchTerm()}
-          onInput={(e) => setSearchTerm(e.currentTarget.value)}
-        />
+        <div class="flex gap-lg items-center">
+          <TextInput
+            name="repository-search"
+            class="flex-1"
+            type="text"
+            placeholder="Search repositories ..."
+            value={searchTerm()}
+            onInput={(e) => setSearchTerm(e.currentTarget.value)}
+          />
+          <Button
+            size="sm"
+            variant="danger"
+            onClick={handleRefresh}
+            title="Refresh repository cache to get latest data from GitHub"
+            disabled={isPending()}
+          >
+            Refresh Cache
+          </Button>
+
+        </div>
       </div>
 
-      <Card>
+      <Card classList={{ [styles["card--pending"]]: isPending() }}>
         <Suspense fallback={<ProgressBar indeterminate />}>
           <ErrorBoundary
             fallback={(error) => (
@@ -151,7 +175,7 @@ export default function Repositories() {
                     },
                     {
                       id: "actions",
-                      header: "Actions",
+                      header: "View Details",
                       cell: (info) => {
                         const repo = info.row.original;
                         return (
