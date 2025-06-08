@@ -113,16 +113,15 @@ export default function Integration() {
       <Card aria-labelledby="stats-summary">
 
         <div class={styles["date-range-container"]}>
-          <div class="flex items-center gap-md mb-md">
+          <div class="flex justify-between gap-sm">
+            <div>
+              <h3 class="m-0">{repoFullName()}</h3>
+            </div>
             <A href="/repositories" class="no-decoration">
               <Button size="sm" variant="secondary">
                 ← Change Repository
               </Button>
             </A>
-            <div>
-              <h3 class="m-0 text-lg">{repoFullName()}</h3>
-              <p class="text-sm text-secondary">Repository Statistics</p>
-            </div>
           </div>
 
           <CycleSelector
@@ -131,7 +130,7 @@ export default function Integration() {
             aria-label="Select cycle for PR statistics"
             autofocus
           />
-          <div>
+          <div class="self-end">
             <Button
               size="sm"
               variant="danger"
