@@ -1,8 +1,9 @@
-import { type RouteDefinition, createAsync, useAction, useSearchParams } from "@solidjs/router";
+import { A, type RouteDefinition, createAsync, redirect, useAction, useNavigate, useSearchParams } from "@solidjs/router";
 import { ErrorBoundary, Show, Suspense, createEffect, createMemo, createSignal, useTransition } from "solid-js";
 import { Card, CardContent, CardHeader, MetricCard } from "~/components/Card";
 import { CycleSelector } from "~/components/CycleSelector/CycleSelector.tsx";
 import { Alert, ProgressBar } from "~/components/feedback";
+
 import styles from "./integration.module.css";
 
 import { DataGrid } from "~/components/data-grid";
@@ -15,12 +16,15 @@ import { getCycleStatistics } from "./queries.ts";
 export const route = {
   preload({ location }) {
     const searchParams = new URLSearchParams(location.search);
+    const repoFullName = searchParams.get("repo");
+
     // Default to the current cycle if no cycle number provided
     const defaultCycleNumber = Cycle.getDefaultCycleNumber();
 
     // Preload data
     getCycleStatistics({
       cycleNumber: Number(searchParams.get("cycle")) || defaultCycleNumber,
+      repoFullName,
     });
   },
 } satisfies RouteDefinition;
@@ -31,8 +35,17 @@ export default function Integration() {
   const refreshCache = useAction(refreshCacheAction);
   const [searchParams, setSearchParams] = useSearchParams();
   const [cycleNumber, setCycleNumber] = createSignal(Number(searchParams.cycle) || defaultCycleNumber);
+  const navigate = useNavigate();
 
   const [isPending, startTransition] = useTransition();
+
+  // Get repository from URL params
+  const repoFullName = () => searchParams.repo;
+
+  // Redirect if no repository is selected
+  if (!repoFullName()) {
+    return navigate("/repositories");
+  }
 
   // Synchronize URL changes with our local state
   createEffect(() => {
@@ -46,6 +59,7 @@ export default function Integration() {
     async () => {
       const stats = await getCycleStatistics({
         cycleNumber: cycleNumber(),
+        repoFullName: repoFullName(),
       });
       return stats;
     },
@@ -56,6 +70,7 @@ export default function Integration() {
     async () => {
       const stats = await getCycleStatistics({
         cycleNumber: cycleNumber() - 1,
+        repoFullName: repoFullName(),
       });
       return stats;
     },
@@ -65,9 +80,10 @@ export default function Integration() {
   // Function to handle data refresh with transition
   const handleRefresh = () => {
     startTransition(async () => {
-      await refreshCache({ cycleNumber: cycleNumber() });
+      await refreshCache({ cycleNumber: cycleNumber(), repoFullName: repoFullName() });
       await getCycleStatistics({
         cycleNumber: cycleNumber(),
+        repoFullName: repoFullName(),
       });
     });
   };
@@ -93,13 +109,25 @@ export default function Integration() {
   });
 
   return (
-    <main class="main-container">
+    <div class="main-container">
       <Card aria-labelledby="stats-summary">
         <h2 id="stats-summary" class="visually-hidden">
           Statistics Summary
         </h2>
 
         <div class={styles["date-range-container"]}>
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <A href="/repositories" style="text-decoration: none;">
+              <Button size="sm" variant="secondary">
+                ← Change Repository
+              </Button>
+            </A>
+            <div>
+              <h3 style="margin: 0; font-size: 1.125rem;">{repoFullName()}</h3>
+              <p style="margin: 0; font-size: 0.875rem; color: #666;">Repository Statistics</p>
+            </div>
+          </div>
+
           <CycleSelector
             value={cycleNumber()}
             onChange={handleCycleChange}
@@ -300,6 +328,6 @@ export default function Integration() {
           </ErrorBoundary>
         </Suspense>
       </Card>
-    </main>
+    </div>
   );
 }

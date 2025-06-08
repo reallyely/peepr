@@ -2,108 +2,107 @@
 @import "../core/theme.css";
 
 .dataGrid {
-  width: 100%;
-  overflow-x: auto;
-  margin: var(--spacing-md) 0;
-  border-radius: var(--border-radius-sm);
+    width: 100%;
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    border-radius: var(--border-radius-sm);
 }
 
 .dataGrid table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: var(--font-size-sm);
-  color: var(--text-primary);
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
 }
 
 .dataGrid th {
-  padding: var(--spacing-sm) var(--spacing-md);
-  text-align: left;
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-secondary);
-  background-color: rgba(255, 255, 255, 0.04);
-  border-bottom: 1px solid var(--border-color);
-  position: sticky;
-  top: 0;
-  z-index: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .dataGrid td {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-bottom: 1px solid var(--border-color);
-  white-space: nowrap;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
 }
 
 .dataGrid tr:last-child td {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 .dataGrid tbody tr {
-  transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease;
 }
 
 .dataGrid tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.03);
+    background: color-mix(in srgb, var(--midnight-dark), transparent 50%);
 }
 
 .dataGrid .clickable {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .dataGrid .clickable:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+    background: color-mix(in srgb, var(--midnight-dark), transparent 50%);
 }
 
 .dataGrid .clickable:focus {
-  outline: none;
-  background-color: rgba(255, 255, 255, 0.07);
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.07);
 }
 
 .sortable {
-  cursor: pointer;
-  user-select: none;
+    cursor: pointer;
+    user-select: none;
 }
 
 .sortable:hover {
-  background-color: rgba(255, 255, 255, 0.07);
+    background: color-mix(in srgb, var(--midnight-dark), transparent 50%);
 }
 
 .headerContent {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .sortIcon {
-  display: inline-block;
-  margin-left: var(--spacing-sm);
-  opacity: 0.7;
-  font-size: var(--font-size-xs);
+    display: inline-block;
+    margin-left: var(--spacing-sm);
+    opacity: 0.7;
+    font-size: var(--font-size-xs);
 }
 
 .emptyMessage {
-  padding: var(--spacing-xl) !important;
-  text-align: center;
-  color: var(--text-tertiary);
-  font-style: italic;
+    padding: var(--spacing-xl) !important;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-style: italic;
 }
 
 .caption {
-  caption-side: top;
-  padding: var(--spacing-sm) var(--spacing-md);
-  text-align: left;
-  font-weight: var(--font-weight-medium);
-  color: var(--text-primary);
+    caption-side: top;
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
 }
 
 /* Responsive styles */
 @media (max-width: 768px) {
-  .dataGrid {
-    margin: var(--spacing-sm) 0;
-  }
+    .dataGrid {
+        margin: var(--spacing-sm) 0;
+    }
 
-  .dataGrid th,
-  .dataGrid td {
-    padding: var(--spacing-xs) var(--spacing-sm);
-  }
+    .dataGrid th,
+    .dataGrid td {
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
 }

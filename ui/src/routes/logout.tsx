@@ -1,7 +1,7 @@
 import { signOut } from "@auth/solid-start/client";
 import { createAsync, query, redirect } from "@solidjs/router";
 import { Show, onMount } from "solid-js";
-import { Card } from "~/components/card";
+import { Card } from "~/components/Card";
 
 export default function Logout() {
   onMount(async () => {

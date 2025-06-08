@@ -9,7 +9,6 @@
 .nav {
     width: 100%;
     border: 1px solid var(--border-color);
-    margin-bottom: var(--spacing-md);
     box-shadow: var(--shadow-lg);
     position: relative;
     overflow: hidden;

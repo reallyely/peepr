@@ -11,6 +11,7 @@ const querySession = query(async () => {
   const request = getWebRequest()
   const session = await getSession(request, authOpts)
 
+  console.log({ session })
   if (!session?.user) throw redirect("/login")
   return session;
 }, "get-session");

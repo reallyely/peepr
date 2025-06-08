@@ -12,30 +12,117 @@ const MyOctokit = Octokit.plugin(restEndpointMethods, paginateRest);
  */
 export class GitHubService {
   private octokit: InstanceType<typeof MyOctokit>;
-  private owner = "rivial-data-security";
-  private repo = "rivial-information-security-center";
+  private owner?: string;
+  private repo?: string;
 
-  constructor(authToken: string) {
+  constructor(authToken: string, owner?: string, repo?: string) {
     this.octokit = new MyOctokit({
       auth: authToken,
     });
+    this.owner = owner;
+    this.repo = repo;
   }
 
-  async getRepository(options: Partial<Parameters<typeof this.octokit.rest.repos.get>[0]> = {}) {
+  /**
+   * Set the repository context for subsequent operations
+   */
+  setRepository(owner: string, repo: string): void {
+    this.owner = owner;
+    this.repo = repo;
+  }
+
+  /**
+   * Get the current authenticated user
+   */
+  async getCurrentUser() {
+    const { data } = await this.octokit.rest.users.getAuthenticated();
+    return data;
+  }
+
+  /**
+   * List repositories accessible to the current user
+   */
+  async getRepositories(
+    options: {
+      type?: "all" | "owner" | "public" | "private" | "member";
+      sort?: "created" | "updated" | "pushed" | "full_name";
+      direction?: "asc" | "desc";
+      per_page?: number;
+      page?: number;
+    } = {},
+  ) {
+    const { data } = await this.octokit.rest.repos.listForAuthenticatedUser({
+      type: "all",
+      sort: "updated",
+      direction: "desc",
+      per_page: 100,
+      ...options,
+    });
+    return data
+  }
+
+  /**
+   * List repositories for a specific organization
+   */
+  async getOrganizationRepositories(
+    org: string,
+    options: {
+      type?: "all" | "public" | "private" | "forks" | "sources" | "member";
+      sort?: "created" | "updated" | "pushed" | "full_name";
+      direction?: "asc" | "desc";
+      per_page?: number;
+      page?: number;
+    } = {},
+  ) {
+    const { data } = await this.octokit.rest.repos.listForOrg({
+      org,
+      type: "all",
+      sort: "updated",
+      direction: "desc",
+      per_page: 100,
+      ...options,
+    });
+    return data
+  }
+
+  /**
+   * Get repository details by owner and repo name
+   */
+  async getRepository(
+    owner?: string,
+    repo?: string,
+    options: Partial<Parameters<typeof this.octokit.rest.repos.get>[0]> = {},
+  ) {
+    const targetOwner = owner || this.owner;
+    const targetRepo = repo || this.repo;
+
+    if (!targetOwner || !targetRepo) {
+      throw new Error("Repository owner and name must be provided either in constructor or method parameters");
+    }
+
     return await this.octokit.rest.repos.get({
-      owner: this.owner,
-      repo: this.repo,
+      owner: targetOwner,
+      repo: targetRepo,
       ...options,
     });
   }
 
   async getIssues(
     state: "open" | "closed" | "all" = "open",
+    owner?: string,
+    repo?: string,
     options: Partial<Parameters<typeof this.octokit.rest.issues.listForRepo>[0]> = {},
   ) {
+    const targetOwner = owner || this.owner;
+    const targetRepo = repo || this.repo;
+
+    if (!targetOwner || !targetRepo) {
+      throw new Error("Repository owner and name must be provided either in constructor or method parameters");
+    }
+
     return await this.octokit.rest.issues.listForRepo({
-      owner: this.owner,
-      repo: this.repo,
+      owner: targetOwner,
+      repo: targetRepo,
       state,
       ...options,
     });
@@ -43,32 +130,62 @@ export class GitHubService {
 
   async getPullRequests(
     state: "open" | "closed" | "all" = "open",
+    owner?: string,
+    repo?: string,
     options: Partial<Parameters<typeof this.octokit.rest.pulls.list>[0]> = {},
   ) {
+    const targetOwner = owner || this.owner;
+    const targetRepo = repo || this.repo;
+
+    if (!targetOwner || !targetRepo) {
+      throw new Error("Repository owner and name must be provided either in constructor or method parameters");
+    }
+
     return await this.octokit.rest.pulls.list({
-      owner: this.owner,
-      repo: this.repo,
+      owner: targetOwner,
+      repo: targetRepo,
       state,
       ...options,
     });
   }
 
-  async getBranches(options: Partial<Parameters<typeof this.octokit.rest.repos.listBranches>[0]> = {}) {
+  async getBranches(
+    owner?: string,
+    repo?: string,
+    options: Partial<Parameters<typeof this.octokit.rest.repos.listBranches>[0]> = {},
+  ) {
+    const targetOwner = owner || this.owner;
+    const targetRepo = repo || this.repo;
+
+    if (!targetOwner || !targetRepo) {
+      throw new Error("Repository owner and name must be provided either in constructor or method parameters");
+    }
+
     return await this.octokit.rest.repos.listBranches({
-      owner: this.owner,
-      repo: this.repo,
+      owner: targetOwner,
+      repo: targetRepo,
       ...options,
     });
   }
+
   async getBranchesWithActivity(
     limit = 10,
+    owner?: string,
+    repo?: string,
     options: Partial<Parameters<typeof this.octokit.rest.repos.listBranches>[0]> = {},
     commitOptions: Partial<Parameters<typeof this.octokit.rest.repos.listCommits>[0]> = {},
   ) {
+    const targetOwner = owner || this.owner;
+    const targetRepo = repo || this.repo;
+
+    if (!targetOwner || !targetRepo) {
+      throw new Error("Repository owner and name must be provided either in constructor or method parameters");
+    }
+
     // First get all branches
     const branches = await this.octokit.rest.repos.listBranches({
-      owner: this.owner,
-      repo: this.repo,
+      owner: targetOwner,
+      repo: targetRepo,
       ...options,
     });
 
@@ -76,8 +193,8 @@ export class GitHubService {
     const branchesWithActivity = await Promise.all(
       branches.data.map(async (branch) => {
         const commits = await this.octokit.rest.repos.listCommits({
-          owner: this.owner,
-          repo: this.repo,
+          owner: targetOwner,
+          repo: targetRepo,
           sha: branch.name,
           per_page: 1,
           ...commitOptions,
@@ -102,10 +219,22 @@ export class GitHubService {
       .slice(0, limit);
   }
 
-  async getCommits(branch = "main", options: Partial<Parameters<typeof this.octokit.rest.repos.listCommits>[0]> = {}) {
+  async getCommits(
+    branch = "main",
+    owner?: string,
+    repo?: string,
+    options: Partial<Parameters<typeof this.octokit.rest.repos.listCommits>[0]> = {},
+  ) {
+    const targetOwner = owner || this.owner;
+    const targetRepo = repo || this.repo;
+
+    if (!targetOwner || !targetRepo) {
+      throw new Error("Repository owner and name must be provided either in constructor or method parameters");
+    }
+
     return await this.octokit.rest.repos.listCommits({
-      owner: this.owner,
-      repo: this.repo,
+      owner: targetOwner,
+      repo: targetRepo,
       sha: branch,
       ...options,
     });
@@ -113,11 +242,20 @@ export class GitHubService {
 
   async getPullRequestDetails(
     prNumber: number,
+    owner?: string,
+    repo?: string,
     options: Partial<Parameters<typeof this.octokit.rest.pulls.get>[0]> = {},
   ): Promise<components["schemas"]["pull-request"]> {
+    const targetOwner = owner || this.owner;
+    const targetRepo = repo || this.repo;
+
+    if (!targetOwner || !targetRepo) {
+      throw new Error("Repository owner and name must be provided either in constructor or method parameters");
+    }
+
     const { data } = await this.octokit.rest.pulls.get({
-      owner: this.owner,
-      repo: this.repo,
+      owner: targetOwner,
+      repo: targetRepo,
       pull_number: prNumber,
       ...options,
     });
@@ -127,11 +265,20 @@ export class GitHubService {
   async getWorkflowRuns(
     branch: string,
     createdSince: string,
+    owner?: string,
+    repo?: string,
     options: Partial<Parameters<typeof this.octokit.rest.actions.listWorkflowRunsForRepo>[0]> = {},
   ) {
+    const targetOwner = owner || this.owner;
+    const targetRepo = repo || this.repo;
+
+    if (!targetOwner || !targetRepo) {
+      throw new Error("Repository owner and name must be provided either in constructor or method parameters");
+    }
+
     const { data } = await this.octokit.rest.actions.listWorkflowRunsForRepo({
-      owner: this.owner,
-      repo: this.repo,
+      owner: targetOwner,
+      repo: targetRepo,
       branch,
       created: `>=${createdSince}`,
       ...options,
@@ -141,11 +288,20 @@ export class GitHubService {
 
   async getWorkflowRunUsage(
     runId: number,
+    owner?: string,
+    repo?: string,
     options: Partial<Parameters<typeof this.octokit.rest.actions.getWorkflowRunUsage>[0]> = {},
   ) {
+    const targetOwner = owner || this.owner;
+    const targetRepo = repo || this.repo;
+
+    if (!targetOwner || !targetRepo) {
+      throw new Error("Repository owner and name must be provided either in constructor or method parameters");
+    }
+
     const { data } = await this.octokit.rest.actions.getWorkflowRunUsage({
-      owner: this.owner,
-      repo: this.repo,
+      owner: targetOwner,
+      repo: targetRepo,
       run_id: runId,
       ...options,
     });
@@ -154,11 +310,20 @@ export class GitHubService {
 
   async getWorkflowJobs(
     runId: number,
+    owner?: string,
+    repo?: string,
     options: Partial<Parameters<typeof this.octokit.rest.actions.listJobsForWorkflowRun>[0]> = {},
   ) {
+    const targetOwner = owner || this.owner;
+    const targetRepo = repo || this.repo;
+
+    if (!targetOwner || !targetRepo) {
+      throw new Error("Repository owner and name must be provided either in constructor or method parameters");
+    }
+
     const { data } = await this.octokit.rest.actions.listJobsForWorkflowRun({
-      owner: this.owner,
-      repo: this.repo,
+      owner: targetOwner,
+      repo: targetRepo,
       run_id: runId,
       ...options,
     });
@@ -167,21 +332,35 @@ export class GitHubService {
 
   async getAllWorkflowRunsForPR(
     prNumber: number,
+    owner?: string,
+    repo?: string,
     prOptions: Partial<Parameters<typeof this.octokit.rest.pulls.get>[0]> = {},
     workflowOptions: Partial<Parameters<typeof this.octokit.rest.actions.listWorkflowRunsForRepo>[0]> = {},
   ) {
-    const pr = await this.getPullRequestDetails(prNumber, prOptions);
+    const targetOwner = owner || this.owner;
+    const targetRepo = repo || this.repo;
 
-    return await this.getWorkflowRuns(pr.head.ref, pr.created_at, workflowOptions);
+    const pr = await this.getPullRequestDetails(prNumber, targetOwner, targetRepo, prOptions);
+
+    return await this.getWorkflowRuns(pr.head.ref, pr.created_at, targetOwner, targetRepo, workflowOptions);
   }
 
   async *getPullRequestsByDateRange(
     startDate: string,
     endDate: string = new Date().toISOString(),
+    owner?: string,
+    repo?: string,
     options: Partial<Parameters<typeof this.octokit.rest.search.issuesAndPullRequests>[0]> = {},
   ) {
+    const targetOwner = owner || this.owner;
+    const targetRepo = repo || this.repo;
+
+    if (!targetOwner || !targetRepo) {
+      throw new Error("Repository owner and name must be provided either in constructor or method parameters");
+    }
+
     const iterator = this.octokit.paginate.iterator(this.octokit.rest.search.issuesAndPullRequests, {
-      q: `type:pr repo:${this.owner}/${this.repo} is:merged merged:${startDate}..${endDate}`,
+      q: `type:pr repo:${targetOwner}/${targetRepo} is:merged merged:${startDate}..${endDate}`,
       sort: "created",
       order: "desc",
       per_page: 100,

@@ -2,7 +2,7 @@ import { type JSX, splitProps } from "solid-js";
 import styles from "./TextInput.module.css";
 
 type TextInputProps = {
-  id: string;
+  id?: string;
   name: string;
   error?: string;
   class?: string;

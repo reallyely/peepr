@@ -1,3 +1,3 @@
-import { CycleSelector } from "./CycleSelector";
+import { CycleSelector } from "./CycleSelector.tsx";
 
 export default CycleSelector;

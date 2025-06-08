@@ -1,0 +1,280 @@
+@import "../core/color.css";
+@import "../core/theme.css";
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-xs);
+  line-height: 1;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: all var(--transition-duration-fast) var(--transition-timing);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+
+/* Size variants */
+.badge--sm {
+  padding: 0.125rem 0.375rem;
+  font-size: 0.6875rem; /* 11px */
+  min-height: 1rem;
+}
+
+.badge--md {
+  padding: 0.1875rem 0.5rem;
+  font-size: var(--font-size-xs);
+  min-height: 1.25rem;
+}
+
+.badge--lg {
+  padding: 0.25rem 0.625rem;
+  font-size: var(--font-size-sm);
+  min-height: 1.5rem;
+}
+
+/* Color variants */
+.badge--primary {
+  background: var(--gradient-primary);
+  color: white;
+  border-color: var(--royal-blue-medium);
+}
+
+.badge--secondary {
+  background: var(--gradient-secondary);
+  color: white;
+  border-color: var(--deep-purple-medium);
+}
+
+.badge--success {
+  background: var(--gradient-success);
+  color: white;
+  border-color: var(--emerald-medium);
+}
+
+.badge--warning {
+  background: var(--gradient-warning);
+  color: white;
+  border-color: var(--amber-medium);
+}
+
+.badge--danger {
+  background: var(--gradient-danger);
+  color: white;
+  border-color: var(--coral-medium);
+}
+
+.badge--info {
+  background: var(--gradient-info);
+  color: white;
+  border-color: var(--teal-medium);
+}
+
+.badge--neutral {
+  background: color-mix(in srgb, var(--midnight-light), transparent 50%);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+/* Style variants */
+.badge--outline {
+  background: transparent;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.badge--outline.badge--primary {
+  color: var(--royal-blue-light);
+  border-color: var(--royal-blue-medium);
+  background: color-mix(in srgb, var(--royal-blue-medium), transparent 90%);
+}
+
+.badge--outline.badge--secondary {
+  color: var(--deep-purple-light);
+  border-color: var(--deep-purple-medium);
+  background: color-mix(in srgb, var(--deep-purple-medium), transparent 90%);
+}
+
+.badge--outline.badge--success {
+  color: var(--emerald-light);
+  border-color: var(--emerald-medium);
+  background: color-mix(in srgb, var(--emerald-medium), transparent 90%);
+}
+
+.badge--outline.badge--warning {
+  color: var(--amber-light);
+  border-color: var(--amber-medium);
+  background: color-mix(in srgb, var(--amber-medium), transparent 90%);
+}
+
+.badge--outline.badge--danger {
+  color: var(--coral-light);
+  border-color: var(--coral-medium);
+  background: color-mix(in srgb, var(--coral-medium), transparent 90%);
+}
+
+.badge--outline.badge--info {
+  color: var(--teal-light);
+  border-color: var(--teal-medium);
+  background: color-mix(in srgb, var(--teal-medium), transparent 90%);
+}
+
+.badge--outline.badge--neutral {
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+  background: color-mix(in srgb, var(--midnight-light), transparent 95%);
+}
+
+.badge--soft {
+  border: none;
+}
+
+.badge--soft.badge--primary {
+  background: color-mix(in srgb, var(--royal-blue-medium), transparent 85%);
+  color: var(--royal-blue-light);
+}
+
+.badge--soft.badge--secondary {
+  background: color-mix(in srgb, var(--deep-purple-medium), transparent 85%);
+  color: var(--deep-purple-light);
+}
+
+.badge--soft.badge--success {
+  background: color-mix(in srgb, var(--emerald-medium), transparent 85%);
+  color: var(--emerald-light);
+}
+
+.badge--soft.badge--warning {
+  background: color-mix(in srgb, var(--amber-medium), transparent 85%);
+  color: var(--amber-light);
+}
+
+.badge--soft.badge--danger {
+  background: color-mix(in srgb, var(--coral-medium), transparent 85%);
+  color: var(--coral-light);
+}
+
+.badge--soft.badge--info {
+  background: color-mix(in srgb, var(--teal-medium), transparent 85%);
+  color: var(--teal-light);
+}
+
+.badge--soft.badge--neutral {
+  background: color-mix(in srgb, var(--midnight-light), transparent 70%);
+  color: var(--text-secondary);
+}
+
+/* Interactive state for clickable badges */
+.badge--clickable {
+  cursor: pointer;
+}
+
+.badge--clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.badge--clickable:active {
+  transform: translateY(0);
+}
+
+.badge--clickable:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-primary);
+}
+
+/* Dot indicator */
+.badge__dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  margin-right: var(--spacing-xs);
+  flex-shrink: 0;
+}
+
+.badge--sm .badge__dot {
+  width: 0.25rem;
+  height: 0.25rem;
+}
+
+.badge--lg .badge__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+/* Pulse animation for status badges */
+.badge--pulse .badge__dot {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Close button for dismissible badges */
+.badge__close {
+  margin-left: var(--spacing-xs);
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  transition: background-color var(--transition-duration-fast) var(--transition-timing);
+  flex-shrink: 0;
+}
+
+.badge--sm .badge__close {
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-left: 0.125rem;
+}
+
+.badge--lg .badge__close {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.badge__close:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.badge__close:focus-visible {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+/* Icon support */
+.badge__icon {
+  margin-right: var(--spacing-xs);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.badge--sm .badge__icon {
+  margin-right: 0.125rem;
+}
+
+.badge__icon:last-child {
+  margin-right: 0;
+  margin-left: var(--spacing-xs);
+}
+
+.badge--sm .badge__icon:last-child {
+  margin-left: 0.125rem;
+}

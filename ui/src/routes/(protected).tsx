@@ -1,5 +1,4 @@
-
-import { type RouteDefinition, type RouteSectionProps, createAsync, query, redirect } from "@solidjs/router";
+import type { RouteSectionProps } from "@solidjs/router";
 import { Nav } from "~/components/nav";
 import { ProtectedRoute } from "~/layout/ProtectedRoute";
 
@@ -13,8 +12,8 @@ export default function Home(props: RouteSectionProps) {
             href: "/",
           },
           {
-            label: "Integration Stats",
-            href: "/integration",
+            label: "Repositories",
+            href: "/repositories",
           },
           {
             label: "Styles Test",
@@ -26,9 +25,7 @@ export default function Home(props: RouteSectionProps) {
           },
         ]}
       />
-      <div class="main-container">
-        {props.children}
-      </div>
+      <div class="main-container">{props.children}</div>
     </ProtectedRoute>
   );
 }

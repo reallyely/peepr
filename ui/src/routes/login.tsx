@@ -1,4 +1,4 @@
-import { Card, CardContent } from "~/components/card";
+import { Card } from "~/components/Card";
 
 import styles from "./login.module.css";
 

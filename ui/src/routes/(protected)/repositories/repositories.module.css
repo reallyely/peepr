@@ -1,0 +1,18 @@
+@import "../../../components/core/color.css";
+@import "../../../components/core/typography.css";
+@import "../../../components/core/theme.css";
+
+/* Search container */
+.searchContainer {
+    margin-bottom: var(--spacing-md);
+}
+
+/* Description cell */
+.descriptionCell {
+    color: var(--text-secondary);
+}
+
+.descriptionEmpty {
+    color: var(--text-tertiary);
+    font-style: italic;
+}

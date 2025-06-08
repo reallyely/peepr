@@ -5,11 +5,11 @@ import { cacheKey } from "./queries.ts";
 /**
  * Server action to invalidate cache and refresh data
  */
-export const refreshCacheAction = action(async ({ cycleNumber }) => {
+export const refreshCacheAction = action(async ({ cycleNumber, repoFullName }) => {
   "use server";
   try {
-    await Cache.delete(cacheKey(cycleNumber));
-    console.log(`Cleared cache for key: ${cacheKey(cycleNumber)}`);
+    await Cache.delete(cacheKey(cycleNumber, repoFullName));
+    console.log(`Cleared cache for key: ${cacheKey(cycleNumber, repoFullName)}`);
     return { success: true, message: "Cache refreshed successfully!" };
   } catch (error) {
     console.error("Failed to refresh cache:", error);
