@@ -1,4 +1,4 @@
-import { A, type RouteDefinition, createAsync, redirect, useAction, useNavigate, useSearchParams } from "@solidjs/router";
+import { A, type RouteDefinition, createAsync, useAction, useNavigate, useSearchParams } from "@solidjs/router";
 import { ErrorBoundary, Show, Suspense, createEffect, createMemo, createSignal, useTransition } from "solid-js";
 import { Card, CardContent, CardHeader, MetricCard } from "~/components/Card";
 import { CycleSelector } from "~/components/CycleSelector/CycleSelector.tsx";
@@ -6,7 +6,7 @@ import { Alert, ProgressBar } from "~/components/feedback";
 
 import styles from "./integration.module.css";
 
-import { DataGrid } from "~/components/data-grid";
+import { DataGrid } from "~/components/DataGrid";
 import Button from "~/components/form/Button";
 
 import { Cycle, DateVO, Duration } from "@peepr/core";

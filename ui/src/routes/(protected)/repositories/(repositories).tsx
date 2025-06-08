@@ -1,8 +1,8 @@
 import { A, type RouteDefinition, createAsync } from "@solidjs/router";
-import { ErrorBoundary, Show, Suspense, createMemo, createSignal } from "solid-js";
+import { ErrorBoundary, Show, Suspense, createSignal } from "solid-js";
 import { Badge } from "~/components/Badge";
 import { Card, CardContent, CardHeader } from "~/components/Card";
-import { DataGrid } from "~/components/data-grid";
+import { DataGrid } from "~/components/DataGrid";
 import { Alert, ProgressBar } from "~/components/feedback";
 import Button from "~/components/form/Button";
 import TextInput from "~/components/form/TextInput";
@@ -21,11 +21,11 @@ export default function Repositories() {
   const [searchTerm, setSearchTerm] = createSignal("");
 
   const repositories = createAsync(() => getRepositories(), {
+    deferStream: true,
     name: "get-repositories"
   });
 
-  // Filter repositories based on search term
-  const filteredRepositories = createMemo(() => {
+  const filteredRepositories = () => {
     const repos = repositories();
     if (!repos || !searchTerm()) return repos;
 
@@ -34,7 +34,7 @@ export default function Repositories() {
       repo.name.toLowerCase().includes(term) ||
       repo.full_name.toLowerCase().includes(term)
     );
-  });
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

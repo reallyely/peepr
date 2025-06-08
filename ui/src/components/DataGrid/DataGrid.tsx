@@ -7,7 +7,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/solid-table";
 import { For, createMemo, createSignal } from "solid-js";
-import styles from "./data-grid.module.css";
+import styles from "./DataGrid.module.css";
 
 export interface DataGridProps<T> {
   data?: T[] | (() => T[] | undefined);
