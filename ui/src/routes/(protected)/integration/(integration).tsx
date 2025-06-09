@@ -117,7 +117,7 @@ export default function Integration() {
             <div>
               <h3 class="m-0">{repoFullName()}</h3>
             </div>
-            <A href="/repositories" class="no-decoration">
+            <A href="/repositories" class="no-decoration" tabIndex={-1}>
               <Button size="sm" variant="secondary">
                 ← Change Repository
               </Button>
