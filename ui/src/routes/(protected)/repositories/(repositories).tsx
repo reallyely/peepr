@@ -1,4 +1,4 @@
-import { A, type RouteDefinition, createAsync, useAction } from "@solidjs/router";
+import { A, type RouteDefinition, createAsync, useAction, useNavigate } from "@solidjs/router";
 import { ErrorBoundary, Show, Suspense, createSignal, useTransition } from "solid-js";
 import { Badge } from "~/components/Badge";
 import { Card, CardContent, CardHeader } from "~/components/Card";
@@ -9,6 +9,7 @@ import TextInput from "~/components/form/TextInput";
 import { refreshRepositoriesCacheAction } from "./actions.ts";
 import { getRepositories } from "./queries.ts";
 
+import cardStyles from "../../../components/Card/card.module.css";
 import styles from "./repositories.module.css";
 
 export const route = {
@@ -21,6 +22,7 @@ export default function Repositories() {
   const [searchTerm, setSearchTerm] = createSignal("");
   const refreshCache = useAction(refreshRepositoriesCacheAction);
   const [isPending, startTransition] = useTransition();
+  const navigate = useNavigate();
 
   const repositories = createAsync(() => getRepositories(), {
     name: "get-repositories"
@@ -59,12 +61,22 @@ export default function Repositories() {
 
   return (
     <div class="main-container flex flex-col gap-4">
-      <div class="flex flex-col gap-4">
-        <div>
-          <h1>Select a Repository</h1>
-          <p>Choose a repository to track pull request statistics and CI/CD metrics.</p>
+      <div>
+        <h1>Select a Repository</h1>
+        <p>Choose a repository to track pull request statistics and CI/CD metrics.</p>
+      </div>
+      <div class={`flex flex-col gap-4 sticky-top ${cardStyles["card"]} ${cardStyles["card--subtle"]}`}>
+        <div class="self-end">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={handleRefresh}
+            title="Refresh repository cache to get latest data from GitHub"
+            disabled={isPending()}
+          >
+            Refresh
+          </Button>
         </div>
-
         <div class="flex gap-lg items-center">
           <TextInput
             name="repository-search"
@@ -74,15 +86,6 @@ export default function Repositories() {
             value={searchTerm()}
             onInput={(e) => setSearchTerm(e.currentTarget.value)}
           />
-          <Button
-            size="sm"
-            variant="danger"
-            onClick={handleRefresh}
-            title="Refresh repository cache to get latest data from GitHub"
-            disabled={isPending()}
-          >
-            Refresh Cache
-          </Button>
 
         </div>
       </div>
@@ -173,34 +176,16 @@ export default function Repositories() {
                       sortingFn: "datetime",
                       enableSorting: true,
                     },
-                    {
-                      id: "actions",
-                      header: "View Details",
-                      cell: (info) => {
-                        const repo = info.row.original;
-                        return (
-                          <A
-                            href={`/integration?repo=${encodeURIComponent(repo.full_name)}`}
-                            class="no-decoration"
-                            tabIndex={-1}
-                          >
-                            <Button size="sm" variant="secondary">
-                              🡆
-                            </Button>
-                          </A>
-                        );
-                      },
-                      enableSorting: false,
-                    },
                   ]}
                   initialSorting={[{ id: "updated_at", desc: true }]}
                   emptyMessage="No repositories found"
+                  onRowClick={(repo) => navigate(`/integration?repo=${encodeURIComponent(repo.full_name)}`)}
                 />
               </CardContent>
             </Show>
           </ErrorBoundary>
         </Suspense>
       </Card>
-    </div>
+    </div >
   );
 }

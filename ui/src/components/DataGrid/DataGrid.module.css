@@ -6,6 +6,7 @@
     overflow-x: auto;
     margin: var(--spacing-md) 0;
     border-radius: var(--border-radius-sm);
+    -webkit-overflow-scrolling: touch;
 }
 
 .dataGrid table {
@@ -31,6 +32,7 @@
     padding: var(--spacing-sm) var(--spacing-md);
     border-bottom: 1px solid var(--border-color);
     white-space: nowrap;
+    vertical-align: top;
 }
 
 .dataGrid tr:last-child td {
@@ -96,13 +98,60 @@
 }
 
 /* Responsive styles */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
     .dataGrid {
         margin: var(--spacing-sm) 0;
+        border-radius: var(--border-radius-xs);
+    }
+
+    .dataGrid table {
+        font-size: var(--font-size-xs);
+        min-width: 600px; /* Ensure table doesn't collapse too much */
     }
 
     .dataGrid th,
     .dataGrid td {
         padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .dataGrid th {
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-medium);
+    }
+
+    .dataGrid td {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .headerContent {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+
+    .sortIcon {
+        margin-left: var(--spacing-xs);
+        font-size: 10px;
+    }
+
+    .emptyMessage {
+        padding: var(--spacing-lg) var(--spacing-sm) !important;
+        font-size: var(--font-size-sm);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .dataGrid th,
+    .dataGrid td {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+}
+
+@media (min-width: 1024px) {
+    .dataGrid th,
+    .dataGrid td {
+        padding: var(--spacing-md) var(--spacing-lg);
     }
 }

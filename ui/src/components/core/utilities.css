@@ -663,7 +663,9 @@
     position: fixed;
 }
 
-.sticky {
+.sticky-top {
+    z-index: 1;
+    top: 0;
     position: sticky;
 }
 

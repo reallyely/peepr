@@ -6,17 +6,17 @@ interface CardProps extends JSX.HTMLAttributes<HTMLElement> {
 }
 
 export function Card(props: CardProps) {
-  const [local, others] = splitProps(props, ["children", "class", "variant"]);
-
-  const getVariantClass = () => {
-    if (local.variant === "highlight") return styles["card--highlight"];
-    if (local.variant === "subtle") return styles["card--subtle"];
-    if (local.variant === "error") return styles["card--error"];
-    return "";
-  };
+  const [local, others] = splitProps(props, ["children", "class", "variant", "classList"]);
 
   return (
-    <article class={`${styles.card} ${getVariantClass()} ${local.class || ""}`} {...others}>
+    <article classList={{
+      [styles.card]: true,
+      [styles["card--highlight"]]: local.variant === "highlight",
+      [styles["card--subtle"]]: local.variant === "subtle",
+      [styles["card--error"]]: local.variant === "error",
+      [local.class]: !!local.class,
+      ...local.classList
+    }} {...others}>
       {local.children}
     </article>
   );
