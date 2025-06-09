@@ -35,7 +35,7 @@ export const MetricCard: Component<MetricCardProps> = (props) => {
   });
   return (
     <ErrorBoundary fallback={(error, reset) => <ErrorCard error={error} reset={reset} />}>
-      <Card variant="subtle" class={`${props.class} `}>
+      <Card variant="subtle" class={`${props.class} `} >
         <CardHeader>{props.title}</CardHeader>
         <Suspense fallback={<div class={styles.valueContainer}>{props.value}</div>}>
           <CardContent class={styles.valueContainer}>
