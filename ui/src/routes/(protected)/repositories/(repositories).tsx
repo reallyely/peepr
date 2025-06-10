@@ -65,7 +65,7 @@ export default function Repositories() {
         <h1>Select a Repository</h1>
         <p>Choose a repository to track pull request statistics and CI/CD metrics.</p>
       </div>
-      <div class={`flex flex-col gap-4 sticky-top ${cardStyles["card"]} ${cardStyles["card--subtle"]}`}>
+      <div class={`flex flex-col gap-4 sticky-top ${cardStyles.card} ${cardStyles["card--subtle"]}`}>
         <div class="self-end">
           <Button
             size="sm"

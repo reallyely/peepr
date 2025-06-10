@@ -4,11 +4,11 @@ import { StartServer, createHandler } from "@solidjs/start/server";
 export default createHandler(() => (
   <StartServer
     document={({ assets, children, scripts }) => (
-      <html lang="en">
+      <html lang="en" style="background-color: #1a1d42;">
         <head>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="theme-color" content="#0b0b24" />
+          <meta name="theme-color" content="#1a1d42" />
           <link rel="icon" href="/favicon.ico" />
           {assets}
         </head>

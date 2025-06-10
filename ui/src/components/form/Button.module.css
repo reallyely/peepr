@@ -5,9 +5,9 @@
     --button-border-radius: calc(
         var(--button-radius) + var(--button-border-width)
     );
-    --button-highlight-height: 2px;
-    --button-shadow-height: 2px;
-    --button-edge-inset: 15%;
+    --button-highlight-height: 3px;
+    --button-shadow-height: 3px;
+    --button-edge-inset: 0%;
     --button-transition-fast: 0.2s ease;
     --button-transition-slow: 0.3s ease;
 }
@@ -36,7 +36,7 @@
 /* Focus styles with hover effects for keyboard navigation */
 .button--cta:focus-visible:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 
+    box-shadow:
         0 8px 25px rgba(49, 81, 208, 0.4),
         0 0 0 2px var(--bg-primary),
         0 0 0 4px var(--accent-primary);
@@ -61,7 +61,7 @@
 
 .button--primary:focus-visible:not(:disabled) {
     transform: translateY(-1px);
-    box-shadow: 
+    box-shadow:
         0 4px 16px rgba(49, 81, 208, 0.3),
         0 0 0 2px var(--bg-primary),
         0 0 0 4px var(--accent-primary);
@@ -71,7 +71,7 @@
     background: rgba(127, 95, 227, 0.15);
     border-color: rgba(127, 95, 227, 0.5);
     transform: translateY(-1px);
-    box-shadow: 
+    box-shadow:
         0 2px 8px rgba(127, 95, 227, 0.15),
         0 0 0 2px var(--bg-primary),
         0 0 0 4px var(--accent-primary);
@@ -83,7 +83,7 @@
 
 .button--danger:focus-visible:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 
+    box-shadow:
         0 8px 25px rgba(255, 90, 66, 0.4),
         0 0 0 2px var(--bg-primary),
         0 0 0 4px var(--accent-primary);
@@ -103,7 +103,7 @@
     color: var(--text-primary);
     border-color: var(--border-medium);
     transform: translateY(-1px);
-    box-shadow: 
+    box-shadow:
         0 2px 6px rgba(0, 0, 0, 0.15),
         0 0 0 2px var(--bg-primary),
         0 0 0 4px var(--accent-primary);
@@ -137,6 +137,7 @@
     background: var(--gradient-cta);
     color: white;
     box-shadow: 0 4px 20px rgba(49, 81, 208, 0.3);
+    position: relative;
 }
 
 .button--cta::before {
@@ -154,17 +155,17 @@
 .button--cta::after {
     content: "";
     position: absolute;
-    top: calc(-1 * var(--button-border-width));
+    top: calc(-1.5 * var(--button-border-width));
     left: var(--button-edge-inset);
     right: var(--button-edge-inset);
     height: var(--button-highlight-height);
-    border-radius: var(--button-radius) var(--button-radius) 0 0;
+    border-radius: var(--button-radius);
     background: linear-gradient(
         90deg,
         transparent 0%,
-        rgba(255, 255, 255, 0.8) 25%,
-        rgba(255, 255, 255, 1) 50%,
-        rgba(255, 255, 255, 0.8) 75%,
+        rgba(200, 200, 255, 0.8) 25%,
+        rgba(200, 200, 255, 1) 50%,
+        rgba(200, 200, 255, 0.8) 75%,
         transparent 100%
     );
     z-index: 1;
@@ -182,15 +183,7 @@
 }
 
 .button--cta:hover:not(:disabled)::after {
-    opacity: 1;
-    background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.9) 15%,
-        rgba(255, 255, 255, 1) 50%,
-        rgba(255, 255, 255, 0.9) 85%,
-        transparent 100%
-    );
+    opacity: 0.8;
 }
 
 /* Primary Variant - Simplified effects */
