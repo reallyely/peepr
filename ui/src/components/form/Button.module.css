@@ -28,9 +28,7 @@
 
 .button:focus-visible {
     outline: none;
-    box-shadow:
-        0 0 0 2px var(--bg-primary),
-        0 0 0 4px var(--accent-primary);
+    box-shadow: var(--focus-glow-primary);
 }
 
 /* Focus styles with hover effects for keyboard navigation */
@@ -38,8 +36,7 @@
     transform: translateY(-2px);
     box-shadow:
         0 8px 25px rgba(49, 81, 208, 0.4),
-        0 0 0 2px var(--bg-primary),
-        0 0 0 4px var(--accent-primary);
+        var(--focus-glow-primary);
 }
 
 .button--cta:focus-visible:not(:disabled)::before {
@@ -63,8 +60,7 @@
     transform: translateY(-1px);
     box-shadow:
         0 4px 16px rgba(49, 81, 208, 0.3),
-        0 0 0 2px var(--bg-primary),
-        0 0 0 4px var(--accent-primary);
+        var(--focus-glow-primary);
 }
 
 .button--secondary:focus-visible:not(:disabled) {
@@ -73,8 +69,7 @@
     transform: translateY(-1px);
     box-shadow:
         0 2px 8px rgba(127, 95, 227, 0.15),
-        0 0 0 2px var(--bg-primary),
-        0 0 0 4px var(--accent-primary);
+        var(--focus-glow-primary);
 }
 
 .button--secondary:focus-visible:not(:disabled)::after {
@@ -85,8 +80,7 @@
     transform: translateY(-2px);
     box-shadow:
         0 8px 25px rgba(255, 90, 66, 0.4),
-        0 0 0 2px var(--bg-primary),
-        0 0 0 4px var(--accent-primary);
+        var(--focus-glow-danger);
 }
 
 .button--danger:focus-visible:not(:disabled)::before {
@@ -105,8 +99,7 @@
     transform: translateY(-1px);
     box-shadow:
         0 2px 6px rgba(0, 0, 0, 0.15),
-        0 0 0 2px var(--bg-primary),
-        0 0 0 4px var(--accent-primary);
+        var(--focus-glow-primary);
 }
 
 .button--cta:focus-visible:not(:disabled) .button__shadow,

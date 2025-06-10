@@ -84,13 +84,14 @@
     z-index: 2;
 }
 
-.nav__item:hover {
+.nav__item:hover,
+.nav__item:focus-visible {
     background-color: var(--card-highlight);
     color: var(--text-primary);
     text-decoration: none;
 }
 
-.nav__item:focus {
+.nav__item:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px rgba(var(--royal-blue-medium), 0.3);
 }
@@ -178,7 +179,7 @@
     text-decoration: none;
 }
 
-.nav__sub_item:focus {
+.nav__sub_item:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px rgba(var(--royal-blue-medium), 0.3);
 }

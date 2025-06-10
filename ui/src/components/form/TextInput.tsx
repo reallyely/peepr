@@ -15,7 +15,11 @@ export default function TextInput(props: TextInputProps) {
     <input
       id={local.id}
       name={local.name}
-      class={`${styles.input} ${local.error ? styles["input--error"] : ""} ${local.class || ""}`}
+      classList={{
+        [styles.input]: true,
+        [styles["input--error"]]: !!local.error,
+        [local.class || ""]: !!local.class
+      }}
       aria-invalid={local.error ? "true" : "false"}
       aria-describedby={local.error ? `${local.id}-error` : undefined}
       {...others}

@@ -1,6 +1,8 @@
 /* Import theme variables and reset styles */
 @import "./color.css";
 @import "./typography.css";
+@import "./interactions.css";
+@import "./transitions.css";
 @import "./theme.css";
 @import "./utilities.css";
 @import "./reset.css";
@@ -8,9 +10,11 @@
 :root {
     background: radial-gradient(
         circle at top,
-        color-mix(in srgb, var(--midnight-light) 50%, var(--bg-primary)) 2.5%,
-        color-mix(in srgb, var(--bg-primary) 30%, rgb(0, 05, 10)) 20%,
-        color-mix(in srgb, black, var(--bg-secondary) 90%)
+        color-mix(in srgb, var(--emerald-dark) 10%, var(--midnight-light) 10%)
+            0.35%,
+        color-mix(in srgb, var(--bg-primary), rgb(0, 05, 10) 10%) 3.5%,
+        color-mix(in srgb, var(--bg-primary), rgb(0, 05, 10)) 50.5%,
+        color-mix(in srgb, rgb(0, 05, 10), var(--bg-secondary) 80%) 95%
     );
     background-attachment: fixed;
     min-height: 100vh;
@@ -19,12 +23,6 @@
 
 html,
 body {
-    background: radial-gradient(
-        circle at top,
-        color-mix(in srgb, var(--midnight-light) 50%, var(--bg-primary)) 2.5%,
-        color-mix(in srgb, var(--bg-primary) 30%, rgb(0, 05, 10)) 20%,
-        color-mix(in srgb, black, var(--bg-secondary) 90%)
-    );
     background-attachment: fixed;
     min-height: 100vh;
     min-height: 100dvh; /* Dynamic viewport height for mobile */

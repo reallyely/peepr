@@ -1,0 +1,594 @@
+/* Core Transitions and Animations */
+
+/* ===== TIMING FUNCTIONS ===== */
+:root {
+    /* Easing Functions */
+    --ease-linear: linear;
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Custom Easing */
+    --ease-out-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --ease-in-smooth: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --ease-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --ease-elastic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+
+    /* ===== DURATION VARIABLES ===== */
+    --transition-instant: 0.1s;
+    --transition-fast: 0.15s;
+    --transition-normal: 0.25s;
+    --transition-slow: 0.4s;
+    --transition-slower: 0.6s;
+    --transition-slowest: 1s;
+
+    /* Legacy support */
+    --transition-duration-fast: var(--transition-fast);
+    --transition-duration-normal: var(--transition-normal);
+    --transition-duration-slow: var(--transition-slow);
+    --transition-timing: var(--ease-out-smooth);
+
+    /* ===== COMMON TRANSITION COMBINATIONS ===== */
+    --transition-interactive: background-color var(--transition-fast)
+            var(--ease-out-smooth),
+        border-color var(--transition-fast) var(--ease-out-smooth),
+        color var(--transition-fast) var(--ease-out-smooth),
+        opacity var(--transition-fast) var(--ease-out-smooth);
+
+    --transition-focus: box-shadow var(--transition-normal)
+            var(--ease-out-smooth),
+        border-color var(--transition-normal) var(--ease-out-smooth);
+
+    --transition-transform: transform var(--transition-fast)
+        var(--ease-out-smooth);
+
+    --transition-all-smooth: all var(--transition-normal) var(--ease-out-smooth);
+
+    --transition-colors: color var(--transition-normal) var(--ease-out-smooth),
+        background-color var(--transition-normal) var(--ease-out-smooth),
+        border-color var(--transition-normal) var(--ease-out-smooth);
+
+    /* ===== LOADING STATES ===== */
+    --pending-opacity: 0.7;
+    --pending-overlay: rgba(19, 19, 54, 0.2);
+    --pending-blur: 1px;
+
+    /* ===== TRANSFORM STATES ===== */
+    --active-scale: 0.98;
+    --hover-scale: 1.02;
+    --focus-scale: 1.01;
+}
+
+/* ===== KEYFRAME ANIMATIONS ===== */
+
+/* Floating animation for background orbs */
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-5vh) scale(1.05);
+    }
+}
+
+/* Subtle pulse animation */
+@keyframes pulse-subtle {
+    0%,
+    100% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Standard pulse animation */
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+/* Spinning loader */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Bounce animation */
+@keyframes bounce {
+    0%,
+    20%,
+    53%,
+    80%,
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+    40%,
+    43% {
+        transform: translate3d(0, -8px, 0);
+    }
+    70% {
+        transform: translate3d(0, -4px, 0);
+    }
+    90% {
+        transform: translate3d(0, -2px, 0);
+    }
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Fade out animation */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Slide in from top */
+@keyframes slideInTop {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Slide in from bottom */
+@keyframes slideInBottom {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Slide in from left */
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Slide in from right */
+@keyframes slideInRight {
+    from {
+        transform: translateX(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Scale in animation */
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Shimmer loading effect */
+@keyframes shimmer {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+/* Progress bar animation */
+@keyframes progress {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* ===== LOADING STATES ===== */
+
+/* Loading/Pending state */
+.pending {
+    opacity: var(--pending-opacity);
+    position: relative;
+    pointer-events: none;
+}
+
+.pending::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--pending-overlay);
+    backdrop-filter: blur(var(--pending-blur));
+    border-radius: inherit;
+    z-index: 1;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-left-color: var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-spinner--large {
+    width: 2rem;
+    height: 2rem;
+    border-width: 3px;
+}
+
+.loading-spinner--small {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-width: 1px;
+}
+
+/* Loading dots */
+.loading-dots {
+    display: inline-flex;
+    gap: 0.25rem;
+}
+
+.loading-dots > div {
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: var(--accent-primary);
+    border-radius: 50%;
+    animation: pulse 1.4s ease-in-out infinite both;
+}
+
+.loading-dots > div:nth-child(1) {
+    animation-delay: -0.32s;
+}
+.loading-dots > div:nth-child(2) {
+    animation-delay: -0.16s;
+}
+.loading-dots > div:nth-child(3) {
+    animation-delay: 0;
+}
+
+/* Shimmer loading effect */
+.loading-shimmer {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    background-size: 200px 100%;
+    animation: shimmer 2s infinite;
+}
+
+/* Progress bar */
+.progress-bar {
+    position: relative;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-bar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 30%;
+    background: var(--gradient-primary);
+    border-radius: inherit;
+    animation: progress 2s ease-in-out infinite;
+}
+
+/* ===== ANIMATION UTILITY CLASSES ===== */
+
+/* Basic animations */
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-pulse-subtle {
+    animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+.animate-bounce {
+    animation: bounce 1s infinite;
+}
+
+.animate-float {
+    animation: float 20s ease-in-out infinite;
+}
+
+/* Entrance animations */
+.animate-fade-in {
+    animation: fadeIn var(--transition-normal) var(--ease-out);
+}
+
+.animate-slide-in-top {
+    animation: slideInTop var(--transition-normal) var(--ease-out);
+}
+
+.animate-slide-in-bottom {
+    animation: slideInBottom var(--transition-normal) var(--ease-out);
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft var(--transition-normal) var(--ease-out);
+}
+
+.animate-slide-in-right {
+    animation: slideInRight var(--transition-normal) var(--ease-out);
+}
+
+.animate-scale-in {
+    animation: scaleIn var(--transition-normal) var(--ease-out);
+}
+
+/* Animation delays */
+.animate-delay-75 {
+    animation-delay: 75ms;
+}
+
+.animate-delay-100 {
+    animation-delay: 100ms;
+}
+
+.animate-delay-150 {
+    animation-delay: 150ms;
+}
+
+.animate-delay-200 {
+    animation-delay: 200ms;
+}
+
+.animate-delay-300 {
+    animation-delay: 300ms;
+}
+
+.animate-delay-500 {
+    animation-delay: 500ms;
+}
+
+.animate-delay-700 {
+    animation-delay: 700ms;
+}
+
+.animate-delay-1000 {
+    animation-delay: 1000ms;
+}
+
+/* ===== TRANSITION UTILITY CLASSES ===== */
+
+/* Basic transitions */
+.transition-all {
+    transition: all var(--transition-normal) var(--ease-out-smooth);
+}
+
+.transition-colors {
+    transition: var(--transition-colors);
+}
+
+.transition-opacity {
+    transition: opacity var(--transition-normal) var(--ease-out-smooth);
+}
+
+.transition-transform {
+    transition: var(--transition-transform);
+}
+
+.transition-interactive {
+    transition: var(--transition-interactive);
+}
+
+.transition-focus {
+    transition: var(--transition-focus);
+}
+
+/* Duration modifiers */
+.transition-fast {
+    transition-duration: var(--transition-fast);
+}
+
+.transition-slow {
+    transition-duration: var(--transition-slow);
+}
+
+.transition-slower {
+    transition-duration: var(--transition-slower);
+}
+
+/* Easing modifiers */
+.ease-linear {
+    transition-timing-function: var(--ease-linear);
+}
+
+.ease-in {
+    transition-timing-function: var(--ease-in);
+}
+
+.ease-out {
+    transition-timing-function: var(--ease-out);
+}
+
+.ease-in-out {
+    transition-timing-function: var(--ease-in-out);
+}
+
+.ease-bounce {
+    transition-timing-function: var(--ease-bounce);
+}
+
+.ease-back {
+    transition-timing-function: var(--ease-back);
+}
+
+/* ===== VIEW TRANSITIONS ===== */
+
+/* Page transitions */
+.page-enter {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.page-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+        opacity var(--transition-normal) var(--ease-out),
+        transform var(--transition-normal) var(--ease-out);
+}
+
+.page-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.page-exit-active {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition:
+        opacity var(--transition-normal) var(--ease-in),
+        transform var(--transition-normal) var(--ease-in);
+}
+
+/* Modal transitions */
+.modal-enter {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.modal-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition:
+        opacity var(--transition-normal) var(--ease-out),
+        transform var(--transition-normal) var(--ease-out);
+}
+
+.modal-exit {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.modal-exit-active {
+    opacity: 0;
+    transform: scale(0.95);
+    transition:
+        opacity var(--transition-fast) var(--ease-in),
+        transform var(--transition-fast) var(--ease-in);
+}
+
+/* Backdrop transitions */
+.backdrop-enter {
+    opacity: 0;
+}
+
+.backdrop-enter-active {
+    opacity: 1;
+    transition: opacity var(--transition-normal) var(--ease-out);
+}
+
+.backdrop-exit {
+    opacity: 1;
+}
+
+.backdrop-exit-active {
+    opacity: 0;
+    transition: opacity var(--transition-normal) var(--ease-out);
+}
+
+/* ===== REDUCED MOTION SUPPORT ===== */
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* Disable floating animations */
+    .animate-float,
+    .glowOrb {
+        animation: none;
+    }
+
+    /* Reduce transform effects */
+    .hover-card:hover {
+        transform: none;
+    }
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+/* Use GPU acceleration for better performance */
+.gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Optimize animations */
+.optimized-animation {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Remove will-change after animation */
+.animation-complete {
+    will-change: auto;
+}

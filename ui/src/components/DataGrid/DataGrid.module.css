@@ -1,4 +1,5 @@
 @import "../core/color.css";
+@import "../core/interactions.css";
 @import "../core/theme.css";
 
 .dataGrid {
@@ -22,7 +23,7 @@
     text-align: left;
     font-weight: var(--font-weight-semibold);
     color: var(--text-secondary);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
     position: sticky;
     top: 0;
     z-index: 1;
@@ -30,7 +31,7 @@
 
 .dataGrid td {
     padding: var(--spacing-sm) var(--spacing-md);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
     white-space: nowrap;
     vertical-align: top;
 }
@@ -40,33 +41,64 @@
 }
 
 .dataGrid tbody tr {
-    transition: background-color 0.2s ease;
+    transition: var(--transition-interactive);
 }
 
 .dataGrid tbody tr:hover {
-    background: color-mix(in srgb, var(--midnight-dark), transparent 50%);
+    background: var(--hover-subtle-gradient);
+    box-shadow: inset 0 0 0 1px
+        color-mix(in srgb, var(--royal-blue-medium) 5%, transparent);
 }
 
 .dataGrid .clickable {
-    cursor: pointer;
+    cursor: var(--cursor-interactive);
+    transition: var(--transition-interactive);
 }
 
 .dataGrid .clickable:hover {
-    background: color-mix(in srgb, var(--midnight-dark), transparent 50%);
+    background: var(--hover-primary-gradient);
+    box-shadow:
+        0 0 10px 8px
+            color-mix(in srgb, var(--royal-blue-medium) 8%, transparent),
+        inset 0 0 6px 4px
+            color-mix(in srgb, var(--royal-blue-medium) 10%, transparent);
 }
 
-.dataGrid .clickable:focus {
+.dataGrid .clickable:focus-visible {
     outline: none;
-    background-color: rgba(255, 255, 255, 0.07);
+    background: var(--focus-bg-medium-gradient);
+    box-shadow: var(--focus-glow-primary);
+}
+
+.dataGrid .clickable:active {
+    background: var(--active-bg-gradient);
+    box-shadow: var(--active-glow);
+    opacity: var(--active-opacity);
 }
 
 .sortable {
-    cursor: pointer;
+    cursor: var(--cursor-interactive);
     user-select: none;
+    transition: var(--transition-interactive);
 }
 
 .sortable:hover {
-    background: color-mix(in srgb, var(--midnight-dark), transparent 50%);
+    background: var(--hover-light-gradient);
+    color: var(--text-primary);
+    box-shadow: inset 0 0 0 1px
+        color-mix(in srgb, var(--royal-blue-medium) 8%, transparent);
+}
+
+.sortable:focus-visible {
+    outline: none;
+    background: var(--focus-bg-medium-gradient);
+    box-shadow: var(--focus-glow-primary);
+}
+
+.sortable:active {
+    background: var(--active-bg-gradient);
+    box-shadow: var(--active-glow);
+    filter: brightness(0.95);
 }
 
 .headerContent {
@@ -80,6 +112,11 @@
     margin-left: var(--spacing-sm);
     opacity: 0.7;
     font-size: var(--font-size-xs);
+    transition: opacity var(--transition-fast) var(--ease-out-smooth);
+}
+
+.sortable:hover .sortIcon {
+    opacity: 1;
 }
 
 .emptyMessage {
@@ -133,7 +170,7 @@
 
     .sortIcon {
         margin-left: var(--spacing-xs);
-        font-size: 10px;
+        font-size: var(--font-size-xs);
     }
 
     .emptyMessage {

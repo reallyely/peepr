@@ -1,0 +1,501 @@
+/* Core Interaction Variables */
+:root {
+    /* ===== HOVER STATES ===== */
+
+    /* Gradient hover effects - progressive intensity */
+    --hover-subtle-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--text-primary) 2%, transparent),
+        color-mix(in srgb, var(--text-primary) 4%, transparent)
+    );
+    --hover-light-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--text-primary) 3%, transparent),
+        color-mix(in srgb, var(--text-primary) 7%, transparent)
+    );
+    --hover-medium-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--text-primary) 5%, transparent),
+        color-mix(in srgb, var(--text-primary) 9%, transparent)
+    );
+    --hover-strong-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--text-primary) 7%, transparent),
+        color-mix(in srgb, var(--text-primary) 13%, transparent)
+    );
+
+    /* Colored gradient hovers using theme colors */
+    --hover-primary-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--royal-blue-medium) 8%, transparent),
+        color-mix(in srgb, var(--royal-blue-medium) 12%, transparent)
+    );
+    --hover-secondary-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--deep-purple-light) 8%, transparent),
+        color-mix(in srgb, var(--deep-purple-light) 12%, transparent)
+    );
+    --hover-success-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--emerald-light) 8%, transparent),
+        color-mix(in srgb, var(--emerald-light) 12%, transparent)
+    );
+
+    /* Specialized hover states */
+    --hover-interactive: var(--hover-light-gradient);
+    --hover-clickable: var(--hover-medium-gradient);
+    --hover-card: var(--hover-subtle-gradient);
+    --hover-button: var(--hover-strong-gradient);
+
+    /* Shimmer overlay for enhanced hover effects */
+    --shimmer-overlay: linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--text-primary) 6%, transparent),
+        transparent
+    );
+
+    /* ===== FOCUS STATES ===== */
+
+    /* Focus ring colors */
+    --focus-ring-primary: var(--accent-primary);
+    --focus-ring-danger: var(--accent-danger);
+    --focus-ring-success: var(--accent-success);
+    --focus-ring-warning: var(--accent-warning);
+
+    /* Focus ring sizes */
+    --focus-ring-width: 2px;
+    --focus-ring-width-large: 3px;
+    --focus-ring-offset: 2px;
+
+    /* Enhanced focus glow effects with multiple layers */
+    --focus-glow-primary: 0 0 0 var(--focus-ring-width)
+            color-mix(in srgb, var(--royal-blue-medium) 40%, transparent),
+        0 0 12px color-mix(in srgb, var(--royal-blue-medium) 25%, transparent),
+        0 0 24px color-mix(in srgb, var(--royal-blue-medium) 15%, transparent),
+        0 0 36px color-mix(in srgb, var(--royal-blue-medium) 8%, transparent),
+        inset 0 0 0 1px
+            color-mix(in srgb, var(--royal-blue-medium) 10%, transparent);
+
+    --focus-glow-danger: 0 0 0 var(--focus-ring-width)
+            color-mix(in srgb, var(--coral-medium) 40%, transparent),
+        0 0 12px color-mix(in srgb, var(--coral-medium) 30%, transparent),
+        0 0 24px color-mix(in srgb, var(--coral-medium) 20%, transparent),
+        0 0 36px color-mix(in srgb, var(--coral-medium) 10%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--coral-medium) 10%, transparent);
+
+    --focus-glow-success: 0 0 0 var(--focus-ring-width)
+            color-mix(in srgb, var(--emerald-light) 40%, transparent),
+        0 0 12px color-mix(in srgb, var(--emerald-light) 25%, transparent),
+        0 0 24px color-mix(in srgb, var(--emerald-light) 15%, transparent),
+        0 0 36px color-mix(in srgb, var(--emerald-light) 8%, transparent),
+        inset 0 0 0 1px
+            color-mix(in srgb, var(--emerald-light) 10%, transparent);
+
+    --focus-glow-warning: 0 0 0 var(--focus-ring-width)
+            color-mix(in srgb, var(--amber-light) 40%, transparent),
+        0 0 12px color-mix(in srgb, var(--amber-light) 25%, transparent),
+        0 0 24px color-mix(in srgb, var(--amber-light) 15%, transparent),
+        0 0 36px color-mix(in srgb, var(--amber-light) 8%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--amber-light) 10%, transparent);
+
+    /* Simple focus rings for smaller elements */
+    --focus-ring-simple: 0 0 0 var(--focus-ring-width) var(--focus-ring-primary);
+    --focus-ring-simple-danger: 0 0 0 var(--focus-ring-width)
+        var(--focus-ring-danger);
+
+    /* Focus background gradients */
+    --focus-bg-subtle-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--royal-blue-medium) 3%, transparent),
+        color-mix(in srgb, var(--royal-blue-medium) 6%, transparent)
+    );
+    --focus-bg-medium-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--royal-blue-medium) 5%, transparent),
+        color-mix(in srgb, var(--royal-blue-medium) 9%, transparent)
+    );
+    --focus-bg-strong-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--royal-blue-medium) 8%, transparent),
+        color-mix(in srgb, var(--royal-blue-medium) 12%, transparent)
+    );
+
+    /* ===== ACTIVE/PRESSED STATES ===== */
+
+    /* Active backgrounds with inward glow effect */
+    --active-bg-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--text-primary) 6%, transparent),
+        color-mix(in srgb, var(--text-primary) 12%, transparent)
+    );
+    --active-glow: inset 0 2px 8px
+        color-mix(in srgb, var(--bg-primary) 15%, transparent);
+    --active-opacity: 0.95;
+
+    /* ===== DISABLED STATES ===== */
+
+    --disabled-opacity: 0.4;
+    --disabled-bg-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--text-primary) 1%, transparent),
+        color-mix(in srgb, var(--text-primary) 3%, transparent)
+    );
+    --disabled-border: color-mix(in srgb, var(--text-primary) 6%, transparent);
+    --disabled-text: color-mix(in srgb, var(--text-primary) 30%, transparent);
+
+    /* ===== SELECTION STATES ===== */
+
+    --selected-bg-gradient: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--royal-blue-medium) 12%, transparent),
+        color-mix(in srgb, var(--royal-blue-medium) 18%, transparent)
+    );
+    --selected-border: var(--accent-primary);
+    --selected-text: var(--text-primary);
+    --selected-glow: 0 0 8px
+            color-mix(in srgb, var(--royal-blue-medium) 20%, transparent),
+        inset 0 0 0 1px
+            color-mix(in srgb, var(--royal-blue-medium) 15%, transparent);
+
+    /* ===== ELEVATION/DEPTH ===== */
+
+    /* Glow-based elevation instead of traditional shadows */
+    --elevation-rest-glow: 0 0 8px
+        color-mix(in srgb, var(--bg-primary) 10%, transparent);
+    --elevation-hover-glow: 0 0 16px
+            color-mix(in srgb, var(--bg-primary) 15%, transparent),
+        0 0 32px color-mix(in srgb, var(--royal-blue-medium) 8%, transparent);
+    --elevation-active-glow: inset 0 0 8px
+        color-mix(in srgb, var(--bg-primary) 20%, transparent);
+    --elevation-focus-glow: var(--focus-glow-primary);
+
+    /* ===== CURSOR STATES ===== */
+
+    --cursor-interactive: pointer;
+    --cursor-disabled: not-allowed;
+    --cursor-grabbing: grabbing;
+    --cursor-resizing: col-resize;
+
+    /* ===== BACKDROP EFFECTS ===== */
+
+    --backdrop-overlay: color-mix(in srgb, var(--bg-primary) 60%, transparent);
+    --backdrop-blur: blur(8px);
+
+    /* ===== SHIMMER ANIMATIONS ===== */
+
+    --shimmer-duration: 2s;
+    --shimmer-timing: ease-in-out;
+}
+
+/* ===== SHIMMER KEYFRAMES ===== */
+
+@keyframes shimmer-sweep {
+    0% {
+        background-position: -200% 0;
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        background-position: 200% 0;
+        opacity: 0;
+    }
+}
+
+@keyframes glow-pulse {
+    0%,
+    100% {
+        box-shadow:
+            0 0 8px
+                color-mix(in srgb, var(--royal-blue-medium) 20%, transparent),
+            0 0 16px
+                color-mix(in srgb, var(--royal-blue-medium) 10%, transparent);
+    }
+    50% {
+        box-shadow:
+            0 0 12px
+                color-mix(in srgb, var(--royal-blue-medium) 30%, transparent),
+            0 0 24px
+                color-mix(in srgb, var(--royal-blue-medium) 15%, transparent),
+            0 0 36px
+                color-mix(in srgb, var(--royal-blue-medium) 8%, transparent);
+    }
+}
+
+@keyframes subtle-brightness {
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.05);
+    }
+}
+
+/* ===== INTERACTION MIXINS AS UTILITY CLASSES ===== */
+
+/* Base interactive element */
+.interactive {
+    cursor: var(--cursor-interactive);
+    transition: var(--transition-interactive);
+    user-select: none;
+    overflow: hidden;
+}
+
+.interactive:hover {
+    background: var(--hover-interactive);
+}
+
+.interactive:focus-visible {
+    outline: none;
+    background: var(--focus-bg-subtle-gradient);
+    box-shadow: var(--focus-ring-simple);
+}
+
+.interactive:active {
+    background: var(--active-bg-gradient);
+    box-shadow: var(--active-glow);
+    opacity: var(--active-opacity);
+}
+
+/* Enhanced interactive (with glow and shimmer) */
+.interactive-enhanced {
+    overflow: hidden;
+}
+
+.interactive-enhanced::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--shimmer-overlay);
+    background-size: 200% 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast) var(--ease-out-smooth);
+}
+
+.interactive-enhanced:hover::before {
+    animation: shimmer-sweep var(--shimmer-duration) var(--shimmer-timing);
+}
+
+.interactive-enhanced:focus-visible {
+    outline: none;
+    background: var(--focus-bg-medium-gradient);
+    box-shadow: var(--focus-glow-primary);
+}
+
+/* Clickable items */
+.clickable {
+    cursor: var(--cursor-interactive);
+    transition: var(--transition-interactive);
+}
+
+.clickable:hover {
+    background: var(--hover-clickable);
+}
+
+.clickable:focus-visible {
+    outline: none;
+    background: var(--focus-bg-medium-gradient);
+    box-shadow: var(--focus-ring-simple);
+}
+
+.clickable:active {
+    background: var(--active-bg-gradient);
+    box-shadow: var(--active-glow);
+}
+
+/* Subtle hover effects */
+.hover-subtle:hover {
+    background: var(--hover-subtle-gradient);
+}
+
+/* Card-like hover effects with glow */
+.hover-card {
+    transition: var(--transition-interactive);
+}
+
+.hover-card:hover {
+    background: var(--hover-card);
+    box-shadow: var(--elevation-hover-glow);
+    filter: brightness(1.02);
+}
+
+.hover-card:focus-visible {
+    outline: none;
+    background: var(--focus-bg-subtle-gradient);
+    box-shadow: var(--focus-glow-primary);
+}
+
+/* Button-like strong hover with primary color accent */
+.hover-button {
+    overflow: hidden;
+}
+
+.hover-button:hover {
+    background: var(--hover-primary-gradient);
+    box-shadow:
+        0 0 12px color-mix(in srgb, var(--royal-blue-medium) 15%, transparent),
+        inset 0 0 0 1px
+            color-mix(in srgb, var(--royal-blue-medium) 10%, transparent);
+}
+
+.hover-button:focus-visible {
+    outline: none;
+    background: var(--focus-bg-strong-gradient);
+    box-shadow: var(--focus-glow-primary);
+}
+
+.hover-button:active {
+    background: var(--active-bg-gradient);
+    box-shadow: var(--active-glow);
+    filter: brightness(0.95);
+}
+
+/* Shimmer effect utility */
+.shimmer-on-hover {
+    overflow: hidden;
+}
+
+.shimmer-on-hover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--text-primary) 10%, transparent),
+        transparent
+    );
+    background-size: 200% 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast) var(--ease-out-smooth);
+}
+
+.shimmer-on-hover:hover::after {
+    animation: shimmer-sweep 1.5s ease-out;
+}
+
+/* Glow pulse effect */
+.glow-pulse {
+    animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Subtle brightness animation */
+.brightness-pulse {
+    animation: subtle-brightness 4s ease-in-out infinite;
+}
+
+/* Disabled state */
+.disabled {
+    opacity: var(--disabled-opacity);
+    cursor: var(--cursor-disabled);
+    pointer-events: none;
+    background: var(--disabled-bg-gradient);
+    border-color: var(--disabled-border);
+    color: var(--disabled-text);
+    filter: grayscale(0.5);
+}
+
+/* Selected state */
+.selected {
+    background: var(--selected-bg-gradient);
+    border-color: var(--selected-border);
+    color: var(--selected-text);
+    box-shadow: var(--selected-glow);
+}
+
+.selected:hover {
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--royal-blue-medium) 15%, transparent),
+        color-mix(in srgb, var(--royal-blue-medium) 22%, transparent)
+    );
+    box-shadow:
+        0 0 12px color-mix(in srgb, var(--royal-blue-medium) 25%, transparent),
+        inset 0 0 0 1px
+            color-mix(in srgb, var(--royal-blue-medium) 20%, transparent);
+}
+
+/* Focus management utilities */
+.focus-ring {
+    outline: none;
+}
+
+.focus-ring:focus-visible {
+    box-shadow: var(--focus-ring-simple);
+}
+
+.focus-glow:focus-visible {
+    box-shadow: var(--focus-glow-primary);
+}
+
+/* Variant focus glows */
+.focus-glow-danger:focus-visible {
+    box-shadow: var(--focus-glow-danger);
+}
+
+.focus-glow-success:focus-visible {
+    box-shadow: var(--focus-glow-success);
+}
+
+.focus-glow-warning:focus-visible {
+    box-shadow: var(--focus-glow-warning);
+}
+
+/* Enhanced interactive states with theme colors */
+.interactive-primary:hover {
+    background: var(--hover-primary-gradient);
+}
+
+.interactive-secondary:hover {
+    background: var(--hover-secondary-gradient);
+}
+
+.interactive-success:hover {
+    background: var(--hover-success-gradient);
+}
+
+/* Light mode adjustments */
+@media (prefers-color-scheme: light) {
+    :root {
+        --hover-subtle-gradient: linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--bg-primary) 2%, transparent),
+            color-mix(in srgb, var(--bg-primary) 4%, transparent)
+        );
+        --hover-light-gradient: linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--bg-primary) 3%, transparent),
+            color-mix(in srgb, var(--bg-primary) 6%, transparent)
+        );
+        --shimmer-overlay: linear-gradient(
+            90deg,
+            transparent,
+            color-mix(in srgb, var(--text-primary) 40%, transparent),
+            transparent
+        );
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .interactive-enhanced::before,
+    .shimmer-on-hover::after {
+        animation: none;
+    }
+
+    .glow-pulse,
+    .brightness-pulse {
+        animation: none;
+    }
+
+    .shimmer-on-hover:hover::after,
+    .interactive-enhanced:hover::before {
+        opacity: 0.5;
+        animation: none;
+    }
+}

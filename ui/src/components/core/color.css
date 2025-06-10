@@ -104,7 +104,7 @@
     );
 
     --gradient-cta: radial-gradient(
-        circle at top left,
+        ellipse at top left,
         var(--royal-blue-medium),
         var(--deep-purple-medium),
         var(--deep-purple-dark),
