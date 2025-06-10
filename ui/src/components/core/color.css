@@ -1,44 +1,44 @@
-/* Base Color Palette with Variations */
+/* Base Color Palette with Variations - Moderately Lightened with Rich Saturation */
 :root {
-    /* 1. Royal Blue - Primary brand color from the screenshot */
-    --royal-blue-light: #5673f0;
-    --royal-blue-medium: #3151d0;
-    --royal-blue-dark: #233aa0;
+    /* 1. Royal Blue - Primary brand color (moderately lightened) */
+    --royal-blue-light: #6b82f2;
+    --royal-blue-medium: #4866dd;
+    --royal-blue-dark: #3651c5;
 
-    /* 2. Deep Purple - Secondary color complementing the dark theme */
-    --deep-purple-light: #7f5fe3;
-    --deep-purple-medium: #6043c0;
-    --deep-purple-dark: #432c91;
+    /* 2. Deep Purple - Secondary color (moderately lightened) */
+    --deep-purple-light: #8b6ee5;
+    --deep-purple-medium: #7055ca;
+    --deep-purple-dark: #5a44a8;
 
-    /* 3. Teal - For success states and highlights */
-    --teal-light: #40d9ca;
-    --teal-medium: #20b6a8;
-    --teal-dark: #108779;
+    /* 3. Teal - For success states and highlights (moderately lightened) */
+    --teal-light: #52e0d1;
+    --teal-medium: #35c5b8;
+    --teal-dark: #249e93;
 
-    /* 4. Coral - For warnings and attention items */
-    --coral-light: #ff7e6b;
-    --coral-medium: #ff5a42;
-    --coral-dark: #e3412c;
+    /* 4. Coral - For warnings and attention items (moderately lightened) */
+    --coral-light: #ff8a77;
+    --coral-medium: #ff6e54;
+    --coral-dark: #f5523a;
 
-    /* 5. Amber - For secondary alerts and highlights */
-    --amber-light: #ffcc66;
-    --amber-medium: #ffb340;
-    --amber-dark: #e69426;
+    /* 5. Amber - For secondary alerts and highlights (moderately lightened) */
+    --amber-light: #ffd175;
+    --amber-medium: #ffc255;
+    --amber-dark: #f0b538;
 
-    /* 6. Emerald - For positive elements and growth indicators */
-    --emerald-light: #4ce5a7;
-    --emerald-medium: #2cc389;
-    --emerald-dark: #1e8f63;
+    /* 6. Emerald - For positive elements and growth indicators (moderately lightened) */
+    --emerald-light: #58e6ab;
+    --emerald-medium: #3bd098;
+    --emerald-dark: #28a572;
 
-    /* 7. Fuchsia - For creative elements and special highlights */
-    --fuchsia-light: #fa7de3;
-    --fuchsia-medium: #e852cb;
-    --fuchsia-dark: #c134a2;
+    /* 7. Fuchsia - For creative elements and special highlights (moderately lightened) */
+    --fuchsia-light: #fc8ae6;
+    --fuchsia-medium: #f066d5;
+    --fuchsia-dark: #dd4db9;
 
-    /* 8. Midnight - Base background from screenshot with variations */
-    --midnight-light: #232350;
-    --midnight-medium: #131336;
-    --midnight-dark: #0b0b24;
+    /* 8. Midnight - Base background moderately lightened */
+    --midnight-light: #2d3058;
+    --midnight-medium: #1a1d42;
+    --midnight-dark: #12122e;
 
     /* ---- Theme Application Variables ---- */
 
@@ -47,10 +47,10 @@
     --bg-secondary: var(--midnight-medium);
     --bg-tertiary: var(--midnight-light);
 
-    /* Text Colors */
-    --text-primary: rgba(255, 255, 255, 0.9);
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --text-tertiary: rgba(255, 255, 255, 0.5);
+    /* Text Colors - Optimized for moderate lightening */
+    --text-primary: rgba(255, 255, 255, 0.92);
+    --text-secondary: rgba(255, 255, 255, 0.75);
+    --text-tertiary: rgba(255, 255, 255, 0.58);
 
     /* Accent Colors */
     --accent-primary: var(--royal-blue-medium);
@@ -61,7 +61,7 @@
     --accent-info: var(--teal-medium);
     --accent-special: var(--fuchsia-medium);
 
-    /* Gradients */
+    /* Gradients - Updated with moderately lightened colors */
     --gradient-primary: linear-gradient(
         135deg,
         var(--royal-blue-light),
@@ -111,10 +111,10 @@
         var(--midnight-light)
     );
 
-    /* Border Colors */
-    --border-light: rgba(255, 255, 255, 0.1);
-    --border-medium: rgba(255, 255, 255, 0.15);
-    --border-highlight: rgba(var(--royal-blue-light), 0.5);
+    /* Border Colors - Balanced for moderate lightening */
+    --border-light: rgba(255, 255, 255, 0.15);
+    --border-medium: rgba(255, 255, 255, 0.2);
+    --border-highlight: rgba(107, 130, 242, 0.55);
 
     /* Status Colors */
     --status-online: var(--emerald-medium);
@@ -123,7 +123,7 @@
     --status-offline: var(--text-tertiary);
 }
 
-/* Ocean Theme */
+/* Ocean Theme - Moderately Lightened */
 .theme-ocean {
     --accent-primary: var(--teal-medium);
     --accent-secondary: var(--royal-blue-medium);
@@ -139,7 +139,7 @@
     );
 }
 
-/* Sunset Theme */
+/* Sunset Theme - Moderately Lightened */
 .theme-sunset {
     --accent-primary: var(--coral-medium);
     --accent-secondary: var(--amber-medium);
@@ -155,7 +155,7 @@
     );
 }
 
-/* Forest Theme */
+/* Forest Theme - Moderately Lightened */
 .theme-forest {
     --accent-primary: var(--emerald-medium);
     --accent-secondary: var(--deep-purple-medium);
