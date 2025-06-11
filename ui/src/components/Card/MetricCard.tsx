@@ -41,9 +41,9 @@ export const MetricCard: Component<MetricCardProps> = (props) => {
           <CardContent class={styles.valueContainer}>
             <span class={styles.value}>{props.value}</span>
             <Show when={props.trend()} keyed>
-              <div class={`${styles.trend} ${styles[`trend--${qualifier()}`]}`} aria-label={`Trend: ${props.trend()}`}>
-                {props.trend() === "up" && "↑"}
-                {props.trend() === "down" && "↓"}
+              <div class={` ${styles.trend} ${styles[`trend--${qualifier()}`]}`} aria-label={`Trend: ${props.trend()}`}>
+                {props.trend() === "up" && "🡥"}
+                {props.trend() === "down" && "🡦"}
                 {props.trend() === "neutral" && "–"}
               </div>
             </Show>

@@ -52,7 +52,7 @@
     /* ===== LOADING STATES ===== */
     --pending-opacity: 0.7;
     --pending-overlay: rgba(19, 19, 54, 0.2);
-    --pending-blur: 1px;
+    --pending-blur: 50px;
 
     /* ===== TRANSFORM STATES ===== */
     --active-scale: 0.98;
@@ -208,16 +208,6 @@
     }
 }
 
-/* Shimmer loading effect */
-@keyframes shimmer {
-    0% {
-        background-position: -200px 0;
-    }
-    100% {
-        background-position: calc(200px + 100%) 0;
-    }
-}
-
 /* Progress bar animation */
 @keyframes progress {
     0% {
@@ -227,58 +217,94 @@
         transform: translateX(100%);
     }
 }
-
+/* Soft glow loading effect */
+@keyframes softGlow {
+    0% {
+        filter: brightness(90%);
+    }
+    50% {
+        filter: brightness(100%);
+    }
+    100% {
+        filter: brightness(90%);
+    }
+}
 /* ===== LOADING STATES ===== */
 
-/* Loading/Pending state */
-.pending {
-    opacity: var(--pending-opacity);
-    position: relative;
-    pointer-events: none;
-}
-
-.pending::after {
-    content: "";
+/* Base Loading Component */
+.loading {
     position: absolute;
     inset: 0;
-    background: var(--pending-overlay);
-    backdrop-filter: blur(var(--pending-blur));
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: inherit;
-    z-index: 1;
+    cursor: not-allowed;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition:
+        opacity var(--transition-normal) var(--ease-out-smooth),
+        filter var(--transition-normal) var(--ease-out-smooth),
+        backdrop-filter var(--transition-normal) var(--ease-out-smooth);
 }
 
-/* Loading spinner */
+/* Glow variant - soft radial gradient with blur */
+.loading--glow {
+    background: radial-gradient(
+        ellipse at 50% 10%,
+        rgba(255, 255, 255, 0.12) 0%,
+        rgba(255, 255, 255, 0.06) 40%,
+        transparent 70%
+    );
+    opacity: 0;
+    backdrop-filter: blur(5px);
+}
+
+.loading--active {
+    opacity: 1;
+}
+
+.loading--glow.loading--active {
+    opacity: 1;
+    animation: softGlow 2.5s ease-in-out infinite;
+}
+
+/* Minimal variant - just a subtle overlay with blur */
+.loading--minimal {
+    background: rgba(255, 255, 255, 0.03);
+    filter: blur(0.5px);
+}
+
+/* Spinner variant */
+.loading--spinner {
+    background: rgba(19, 19, 54, 0.1);
+    filter: blur(1px);
+}
+
 .loading-spinner {
-    display: inline-block;
-    width: 1rem;
-    height: 1rem;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid rgba(255, 255, 255, 0.2);
     border-left-color: var(--accent-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
 
-.loading-spinner--large {
-    width: 2rem;
-    height: 2rem;
-    border-width: 3px;
+/* Dots variant */
+.loading--dots {
+    background: rgba(19, 19, 54, 0.1);
+    filter: blur(1px);
 }
 
-.loading-spinner--small {
-    width: 0.75rem;
-    height: 0.75rem;
-    border-width: 1px;
-}
-
-/* Loading dots */
 .loading-dots {
-    display: inline-flex;
-    gap: 0.25rem;
+    display: flex;
+    gap: 0.5rem;
 }
 
 .loading-dots > div {
-    width: 0.5rem;
-    height: 0.5rem;
+    width: 0.75rem;
+    height: 0.75rem;
     background-color: var(--accent-primary);
     border-radius: 50%;
     animation: pulse 1.4s ease-in-out infinite both;
@@ -294,19 +320,30 @@
     animation-delay: 0;
 }
 
-/* Shimmer loading effect */
-.loading-shimmer {
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.05) 0%,
-        rgba(255, 255, 255, 0.1) 50%,
-        rgba(255, 255, 255, 0.05) 100%
-    );
-    background-size: 200px 100%;
-    animation: shimmer 2s infinite;
+/* Size variations */
+.loading--sm .loading-spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-width: 2px;
 }
 
-/* Progress bar */
+.loading--sm .loading-dots > div {
+    width: 0.5rem;
+    height: 0.5rem;
+}
+
+.loading--lg .loading-spinner {
+    width: 3rem;
+    height: 3rem;
+    border-width: 4px;
+}
+
+.loading--lg .loading-dots > div {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Progress bar - kept for compatibility */
 .progress-bar {
     position: relative;
     height: 4px;

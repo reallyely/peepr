@@ -3,6 +3,7 @@ import { ErrorBoundary, Show, Suspense, createEffect, createMemo, createSignal, 
 import { Card, CardContent, CardHeader, MetricCard } from "~/components/Card";
 import { CycleSelector } from "~/components/CycleSelector/CycleSelector.tsx";
 import { Alert, ProgressBar } from "~/components/feedback";
+import { Loading } from "~/components/Loading";
 
 import styles from "./integration.module.css";
 
@@ -143,7 +144,8 @@ export default function Integration() {
           </div>
         </div>
       </Card>
-      <Card classList={{ [styles["card--pending"]]: isPending() }}>
+      <Card >
+        <Loading active={isPending()} variant="glow" />
         <Suspense fallback={<ProgressBar indeterminate />}>
           <ErrorBoundary fallback={<Alert type="error">There was a problem fetching the data</Alert>}>
             <Show
@@ -261,7 +263,8 @@ export default function Integration() {
           </ErrorBoundary>
         </Suspense>
       </Card>
-      <Card classList={{ [styles["card--pending"]]: isPending() }}>
+      <Card>
+        <Loading active={isPending()} variant="glow" />
         <Suspense fallback={<ProgressBar indeterminate />}>
           <ErrorBoundary fallback={<Alert type="error">There was a problem fetching the data</Alert>}>
             <CardHeader count={getIntegrationStats()?.integrationEvents?.length || 0}>Pull Request Details</CardHeader>

@@ -11,6 +11,7 @@ import { getRepositories } from "./queries.ts";
 
 import cardStyles from "../../../components/Card/card.module.css";
 import styles from "./repositories.module.css";
+import { Loading } from "~/components/Loading/index.ts";
 
 export const route = {
   preload() {
@@ -91,7 +92,8 @@ export default function Repositories() {
         </div>
       </div>
 
-      <Card classList={{ pending: isPending() }}>
+      <Card >
+        <Loading active={isPending()} variant="glow" />
         <Suspense fallback={<ProgressBar indeterminate />}>
           <ErrorBoundary
             fallback={(error) => (
