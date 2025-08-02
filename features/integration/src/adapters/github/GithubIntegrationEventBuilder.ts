@@ -2,7 +2,7 @@ import type { components } from "@octokit/openapi-types";
 import type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 import { Duration } from "@peepr/core";
 import { differenceInMilliseconds } from "date-fns";
-import { IntegrationEvent } from "#src/model/IntegrationEvent.ts"
+import { PullRequest } from "#src/model/PullRequest.ts"
 
 /**
  * WorkItemIntegrationBuilder takes GitHub API data and builds a WorkItemIntegration object
@@ -78,7 +78,7 @@ export class GithubIntegrationEventBuilder {
   }
 
   // Builds the final WorkItemIntegration object
-  build(): IntegrationEvent {
+  build(): PullRequest {
     // Calculate current open duration if PR is still open
     this.calculateCurrentOpenDuration();
 
@@ -87,7 +87,7 @@ export class GithubIntegrationEventBuilder {
       throw new Error("Cannot build IntegrationEvent: missing pull request information");
     }
 
-    return IntegrationEvent.create({
+    return PullRequest.create({
       id: this.prId,
       prNumber: this.prNumber,
       title: this.prTitle,

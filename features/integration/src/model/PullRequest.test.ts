@@ -1,11 +1,10 @@
 import assert from "node:assert";
 import { test } from "node:test";
 import { Duration } from "@peepr/core";
-import { IntegrationEvent } from "./IntegrationEvent.ts";
-Event;
+import { PullRequest } from "./PullRequest.ts";
 
-test("IntegrationEvent - create with required fields", () => {
-  const integration = IntegrationEvent.create({
+test("PullRequest - create with required fields", () => {
+  const pr = PullRequest.create({
     prNumber: 123,
     title: "Test PR",
     createdAt: "2023-01-01T00:00:00Z",
@@ -15,20 +14,20 @@ test("IntegrationEvent - create with required fields", () => {
     totalDuration: "3h 45m",
   });
 
-  assert.strictEqual(integration.prNumber, 123);
-  assert.strictEqual(integration.title, "Test PR");
-  assert.strictEqual(integration.createdAt.toISOString(), "2023-01-01T00:00:00.000Z");
-  assert.strictEqual(integration.updatedAt.toISOString(), "2023-01-02T00:00:00.000Z");
-  assert.strictEqual(integration.mergedAt, null);
-  assert.strictEqual(integration.closedAt, null);
-  assert.ok(integration.timeOpen instanceof Duration);
-  assert.strictEqual(integration.timeOpen.toHumanReadable(), "2h 30m");
-  assert.strictEqual(integration.checkRuns, 5);
-  assert.strictEqual(integration.totalDuration.toHumanReadable(), "3h 45m");
+  assert.strictEqual(pr.prNumber, 123);
+  assert.strictEqual(pr.title, "Test PR");
+  assert.strictEqual(pr.createdAt.toISOString(), "2023-01-01T00:00:00.000Z");
+  assert.strictEqual(pr.updatedAt.toISOString(), "2023-01-02T00:00:00.000Z");
+  assert.strictEqual(pr.mergedAt, null);
+  assert.strictEqual(pr.closedAt, null);
+  assert.ok(pr.timeOpen instanceof Duration);
+  assert.strictEqual(pr.timeOpen.toHumanReadable(), "2h 30m");
+  assert.strictEqual(pr.checkRuns, 5);
+  assert.strictEqual(pr.totalDuration.toHumanReadable(), "3h 45m");
 });
 
-test("IntegrationEvent - create with all fields", () => {
-  const integration = IntegrationEvent.create({
+test("PullRequest - create with all fields", () => {
+  const pr = PullRequest.create({
     id: 456,
     prNumber: 123,
     title: "Test PR",
@@ -41,17 +40,17 @@ test("IntegrationEvent - create with all fields", () => {
     totalDuration: "3h 45m",
   });
 
-  assert.strictEqual(integration.id.toString(), "456");
-  assert.strictEqual(integration.mergedAt?.toISOString(), "2023-01-03T00:00:00.000Z");
-  assert.strictEqual(integration.closedAt?.toISOString(), "2023-01-03T00:00:00.000Z");
+  assert.strictEqual(pr.id.toString(), "456");
+  assert.strictEqual(pr.mergedAt?.toISOString(), "2023-01-03T00:00:00.000Z");
+  assert.strictEqual(pr.closedAt?.toISOString(), "2023-01-03T00:00:00.000Z");
 });
 
-test("IntegrationEvent - create with Date objects", () => {
+test("PullRequest - create with Date objects", () => {
   const createdAt = new Date("2023-01-01T00:00:00Z");
   const updatedAt = new Date("2023-01-02T00:00:00Z");
   const mergedAt = new Date("2023-01-03T00:00:00Z");
 
-  const integration = IntegrationEvent.create({
+  const pr = PullRequest.create({
     prNumber: 123,
     title: "Test PR",
     createdAt,
@@ -62,14 +61,14 @@ test("IntegrationEvent - create with Date objects", () => {
     totalDuration: new Duration(13500000), // 3.75 hours in ms
   });
 
-  assert.strictEqual(integration.createdAt, createdAt);
-  assert.strictEqual(integration.updatedAt, updatedAt);
-  assert.strictEqual(integration.mergedAt, mergedAt);
+  assert.strictEqual(pr.createdAt, createdAt);
+  assert.strictEqual(pr.updatedAt, updatedAt);
+  assert.strictEqual(pr.mergedAt, mergedAt);
 });
 
-test("IntegrationEvent - validation errors", () => {
+test("PullRequest - validation errors", () => {
   assert.throws(() => {
-    IntegrationEvent.create({
+    PullRequest.create({
       // @ts-ignore - this is expected to throw
       prNumber: "123",
       title: "Test PR",
@@ -82,7 +81,7 @@ test("IntegrationEvent - validation errors", () => {
   }, /PR number is required and must be a number/);
 
   assert.throws(() => {
-    IntegrationEvent.create({
+    PullRequest.create({
       prNumber: 123,
       title: null,
       createdAt: "2023-01-01T00:00:00Z",
@@ -94,9 +93,9 @@ test("IntegrationEvent - validation errors", () => {
   }, /Title is required and must be a string/);
 });
 
-test("IntegrationEvent - state methods", () => {
+test("PullRequest - state methods", () => {
   // In progress
-  const inProgressIntegration = IntegrationEvent.create({
+  const inProgressPr = PullRequest.create({
     prNumber: 123,
     title: "In Progress PR",
     createdAt: "2023-01-01T00:00:00Z",
@@ -106,12 +105,12 @@ test("IntegrationEvent - state methods", () => {
     totalDuration: "3h 45m",
   });
 
-  assert.strictEqual(inProgressIntegration.isInProgress(), true);
-  assert.strictEqual(inProgressIntegration.isComplete(), false);
-  assert.strictEqual(inProgressIntegration.isAbandoned(), false);
+  assert.strictEqual(inProgressPr.isInProgress(), true);
+  assert.strictEqual(inProgressPr.isComplete(), false);
+  assert.strictEqual(inProgressPr.isAbandoned(), false);
 
   // Completed
-  const completedIntegration = IntegrationEvent.create({
+  const completedPr = PullRequest.create({
     prNumber: 123,
     title: "Completed PR",
     createdAt: "2023-01-01T00:00:00Z",
@@ -123,12 +122,12 @@ test("IntegrationEvent - state methods", () => {
     totalDuration: "3h 45m",
   });
 
-  assert.strictEqual(completedIntegration.isInProgress(), false);
-  assert.strictEqual(completedIntegration.isComplete(), true);
-  assert.strictEqual(completedIntegration.isAbandoned(), false);
+  assert.strictEqual(completedPr.isInProgress(), false);
+  assert.strictEqual(completedPr.isComplete(), true);
+  assert.strictEqual(completedPr.isAbandoned(), false);
 
   // Abandoned
-  const abandonedIntegration = IntegrationEvent.create({
+  const abandonedPr = PullRequest.create({
     prNumber: 123,
     title: "Abandoned PR",
     createdAt: "2023-01-01T00:00:00Z",
@@ -139,14 +138,14 @@ test("IntegrationEvent - state methods", () => {
     totalDuration: "3h 45m",
   });
 
-  assert.strictEqual(abandonedIntegration.isInProgress(), false);
-  assert.strictEqual(abandonedIntegration.isComplete(), false);
-  assert.strictEqual(abandonedIntegration.isAbandoned(), true);
+  assert.strictEqual(abandonedPr.isInProgress(), false);
+  assert.strictEqual(abandonedPr.isComplete(), false);
+  assert.strictEqual(abandonedPr.isAbandoned(), true);
 });
 
-test("IntegrationEvent - getSummary method", () => {
+test("PullRequest - getSummary method", () => {
   // In progress
-  const inProgressIntegration = IntegrationEvent.create({
+  const inProgressPr = PullRequest.create({
     prNumber: 123,
     title: "In Progress PR",
     createdAt: "2023-01-01T00:00:00Z",
@@ -156,10 +155,10 @@ test("IntegrationEvent - getSummary method", () => {
     totalDuration: "3h 45m",
   });
 
-  assert.strictEqual(inProgressIntegration.getSummary(), 'PR #123 "In Progress PR" has been open for 2h 30m.');
+  assert.strictEqual(inProgressPr.getSummary(), 'PR #123 "In Progress PR" has been open for 2h 30m.');
 
   // Completed
-  const completedIntegration = IntegrationEvent.create({
+  const completedPr = PullRequest.create({
     prNumber: 123,
     title: "Completed PR",
     createdAt: "2023-01-01T00:00:00Z",
@@ -172,12 +171,12 @@ test("IntegrationEvent - getSummary method", () => {
   });
 
   assert.strictEqual(
-    completedIntegration.getSummary(),
+    completedPr.getSummary(),
     'PR #123 "Completed PR" was merged after 2h 30m with 5 check runs.',
   );
 
   // Abandoned
-  const abandonedIntegration = IntegrationEvent.create({
+  const abandonedPr = PullRequest.create({
     prNumber: 123,
     title: "Abandoned PR",
     createdAt: "2023-01-01T00:00:00Z",
@@ -189,13 +188,13 @@ test("IntegrationEvent - getSummary method", () => {
   });
 
   assert.strictEqual(
-    abandonedIntegration.getSummary(),
+    abandonedPr.getSummary(),
     'PR #123 "Abandoned PR" was closed without merging after 2h 30m.',
   );
 });
 
-test("IntegrationEvent - toJSON method", () => {
-  const integration = IntegrationEvent.create({
+test("PullRequest - toJSON method", () => {
+  const pr = PullRequest.create({
     id: "456",
     prNumber: 123,
     title: "Test PR",
@@ -208,7 +207,7 @@ test("IntegrationEvent - toJSON method", () => {
     totalDuration: "3h 45m",
   });
 
-  const json = integration.toJSON();
+  const json = pr.toJSON();
 
   assert.deepStrictEqual(json, {
     id: "456",

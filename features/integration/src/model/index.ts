@@ -1,2 +1,2 @@
-export * from "./IntegrationStatistics.ts";
-export * from "./IntegrationEvent.ts";
+export * from "./PullRequestStatistics.ts";
+export * from "./PullRequest.ts";

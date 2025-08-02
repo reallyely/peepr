@@ -2,7 +2,7 @@ import assert from "node:assert";
 import { test } from "node:test";
 import { Duration } from "@peepr/core";
 import { StatisticalDistribution } from "@peepr/core";
-import { IntegrationStatistics } from "./IntegrationStatistics.ts";
+import { PullRequestStatistics } from "./PullRequestStatistics.ts";
 
 test("IntegrationStatistics - create with required fields", () => {
   const ciDuration = StatisticalDistribution.create({
@@ -33,7 +33,7 @@ test("IntegrationStatistics - create with required fields", () => {
     },
   });
 
-  const stats = IntegrationStatistics.create({
+  const stats = PullRequestStatistics.create({
     totalPRs: 25,
     totalCIRuns: 75,
     ciDuration,
@@ -47,7 +47,7 @@ test("IntegrationStatistics - create with required fields", () => {
 });
 
 test("IntegrationStatistics - empty static factory", () => {
-  const stats = IntegrationStatistics.empty();
+  const stats = PullRequestStatistics.empty();
 
   assert.strictEqual(stats.totalPRs, 0);
   assert.strictEqual(stats.totalCIRuns, 0);
@@ -56,7 +56,7 @@ test("IntegrationStatistics - empty static factory", () => {
 });
 
 test("IntegrationStatistics - toJSON representation", () => {
-  const stats = IntegrationStatistics.create({
+  const stats = PullRequestStatistics.create({
     totalPRs: 25,
     totalCIRuns: 75,
     ciDuration: StatisticalDistribution.create({

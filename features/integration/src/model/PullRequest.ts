@@ -1,6 +1,6 @@
 import { Duration, ID } from "@peepr/core";
 
-export class IntegrationEvent {
+export class PullRequest {
   readonly id: ID;
   readonly prNumber: number;
   readonly title: string;
@@ -47,7 +47,7 @@ export class IntegrationEvent {
     timeOpen: Duration | string;
     checkRuns: number;
     totalDuration: Duration | string;
-  }): IntegrationEvent {
+  }): PullRequest {
     try {
       // Validate required fields
       if (!data.prNumber || typeof data.prNumber !== "number") {
@@ -85,7 +85,7 @@ export class IntegrationEvent {
               : 0,
           );
 
-      return new IntegrationEvent(
+      return new PullRequest(
         ID.create(data.id),
         data.prNumber,
         data.title,

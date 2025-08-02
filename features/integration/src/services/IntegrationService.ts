@@ -2,7 +2,7 @@ import type { Cycle, Duration } from "@peepr/core";
 import { calculateDurationStatisticalDistribution } from "@peepr/core";
 import { GithubIntegrationEventBuilder } from "#src/adapters/github/GithubIntegrationEventBuilder.ts";
 import type { GitHubService } from "#src/adapters/github/github.service.ts";
-import { type IntegrationEvent, IntegrationStatistics } from "#src/model/index.ts";
+import { type PullRequest, PullRequestStatistics } from "#src/model/index.ts";
 
 /**
  * Service for retrieving and processing integration events related to cycles
@@ -19,7 +19,7 @@ export class IntegrationService {
    * Streams integration events for a given cycle
    * @param cycle The cycle to retrieve integration events for
    */
-  async *streamIntegrationsForCycle(cycle: Cycle): AsyncGenerator<IntegrationEvent> {
+  async *streamIntegrationsForCycle(cycle: Cycle): AsyncGenerator<PullRequest> {
     const startDateISO = cycle.startDate.toISOString();
     const endDateISO = cycle.endDate.toISOString();
 
@@ -62,7 +62,7 @@ export class IntegrationService {
    * Calculates statistics for a cycle using streaming to minimize memory usage
    * @param cycle The cycle to calculate statistics for
    */
-  async getStatisticsForCycle(integrations: IntegrationEvent[]): Promise<IntegrationStatistics> {
+  async getStatisticsForCycle(integrations: PullRequest[]): Promise<PullRequestStatistics> {
     // Create a streaming calculator that processes events incrementally
     const calculator = new StreamingStatisticsCalculator();
 
@@ -99,7 +99,7 @@ class StreamingStatisticsCalculator {
   /**
    * Processes a single integration event and updates statistics
    */
-  addIntegration(integration: IntegrationEvent): void {
+  addIntegration(integration: PullRequest): void {
     this.totalPRs++;
     this.totalCIRuns += integration.checkRuns;
 
@@ -111,9 +111,9 @@ class StreamingStatisticsCalculator {
   /**
    * Returns the final statistics after processing all events
    */
-  getResults(): IntegrationStatistics {
+  getResults(): PullRequestStatistics {
     // Use the existing StatisticsService to calculate distributions
-    return IntegrationStatistics.create({
+    return PullRequestStatistics.create({
       totalPRs: this.totalPRs,
       totalCIRuns: this.totalCIRuns,
       ciDuration: calculateDurationStatisticalDistribution(this.ciDurations),

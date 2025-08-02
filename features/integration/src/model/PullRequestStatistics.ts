@@ -3,7 +3,7 @@ import { StatisticalDistribution } from "@peepr/core";
 /**
  * Represents statistics about integration events, typically for a cycle
  */
-export class IntegrationStatistics {
+export class PullRequestStatistics {
   readonly totalPRs: number;
   readonly totalCIRuns: number;
   readonly meanCIRuns: number;
@@ -31,15 +31,15 @@ export class IntegrationStatistics {
     totalCIRuns: number;
     ciDuration: StatisticalDistribution;
     openTime: StatisticalDistribution;
-  }): IntegrationStatistics {
-    return new IntegrationStatistics(data.totalPRs, data.totalCIRuns, data.ciDuration, data.openTime);
+  }): PullRequestStatistics {
+    return new PullRequestStatistics(data.totalPRs, data.totalCIRuns, data.ciDuration, data.openTime);
   }
 
   /**
    * Creates an empty statistics object with zero values
    */
-  static empty(): IntegrationStatistics {
-    return new IntegrationStatistics(0, 0, StatisticalDistribution.empty(), StatisticalDistribution.empty());
+  static empty(): PullRequestStatistics {
+    return new PullRequestStatistics(0, 0, StatisticalDistribution.empty(), StatisticalDistribution.empty());
   }
 
   toJSON() {
