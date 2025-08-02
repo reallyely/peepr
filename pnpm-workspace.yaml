@@ -1,5 +1,5 @@
 packages:
   - ui
   - infrastructure
-  - integration
+  - features/*
   - core

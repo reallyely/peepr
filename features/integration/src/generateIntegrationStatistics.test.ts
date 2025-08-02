@@ -1,11 +1,11 @@
 import assert from "node:assert";
 import { test } from "node:test";
-import { Duration } from "../model/Duration.ts";
-import { IntegrationEvent } from "../model/IntegrationEvent.ts";
-import { StatisticsService } from "./StatisticsService.ts";
+import { Duration } from "@peepr/core";
+import { generateIntegrationStatistics } from "#src/generateIntegrationStatistics.ts";
+import { IntegrationEvent } from "#src/model/IntegrationEvent.ts";
 
 test("StatisticsService - generateStatistics with empty array", () => {
-  const stats = StatisticsService.generateStatistics([]);
+  const stats = generateIntegrationStatistics([]);
 
   assert.strictEqual(stats.totalPRs, 0);
   assert.strictEqual(stats.totalCIRuns, 0);
@@ -50,7 +50,7 @@ test("StatisticsService - generateStatistics with integration events", () => {
     }),
   ];
 
-  const stats = StatisticsService.generateStatistics(events);
+  const stats = generateIntegrationStatistics(events);
 
   // Basic counts
   assert.strictEqual(stats.totalPRs, 3);

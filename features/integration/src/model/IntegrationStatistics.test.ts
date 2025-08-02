@@ -1,8 +1,8 @@
 import assert from "node:assert";
 import { test } from "node:test";
-import { Duration } from "../Duration.ts";
+import { Duration } from "@peepr/core";
+import { StatisticalDistribution } from "@peepr/core";
 import { IntegrationStatistics } from "./IntegrationStatistics.ts";
-import { StatisticalDistribution } from "./StatisticalDistribution.ts";
 
 test("IntegrationStatistics - create with required fields", () => {
   const ciDuration = StatisticalDistribution.create({

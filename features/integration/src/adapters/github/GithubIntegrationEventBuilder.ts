@@ -1,7 +1,8 @@
 import type { components } from "@octokit/openapi-types";
 import type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
-import { Duration, IntegrationEvent } from "@peepr/core";
+import { Duration } from "@peepr/core";
 import { differenceInMilliseconds } from "date-fns";
+import { IntegrationEvent } from "#src/model/IntegrationEvent.ts"
 
 /**
  * WorkItemIntegrationBuilder takes GitHub API data and builds a WorkItemIntegration object

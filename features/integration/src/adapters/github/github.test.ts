@@ -3,18 +3,12 @@ import { test } from "node:test";
 import { GITHUB_TOKEN } from "./config/github.ts";
 import { GitHubService } from "./github.service.ts";
 
-const githubService = new GitHubService(GITHUB_TOKEN);
+const githubService = new GitHubService(GITHUB_TOKEN, "rivial-data-security", "rivial-information-security-center");
 
 test("GitHubService - getRepository", async () => {
   const response = await githubService.getRepository();
   assert.ok(response.data);
   assert.strictEqual(response.data.full_name, "rivial-data-security/rivial-information-security-center");
-});
-
-test("GitHubService - getIssues", async () => {
-  const response = await githubService.getIssues();
-  assert.ok(response.data);
-  assert.ok(Array.isArray(response.data));
 });
 
 test("GitHubService - getPullRequests", async () => {

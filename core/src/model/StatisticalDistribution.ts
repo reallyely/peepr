@@ -1,4 +1,6 @@
-import { Duration } from "../Duration.ts";
+// NOTE: Is this actually useful? It's too specific to Duration
+// we have to basically provide the whole data structure so what does it really do?
+import { Duration } from "./Duration.ts";
 
 /**
  * Represents a statistical distribution of duration measurements

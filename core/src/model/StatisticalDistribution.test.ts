@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { test } from "node:test";
+import { Duration } from "@peepr/core";
 import { StatisticalDistribution } from "./StatisticalDistribution.ts";
-import { Duration } from "../Duration.ts";
 
 test("StatisticalDistribution - create with required fields", () => {
   const median = new Duration(5000);

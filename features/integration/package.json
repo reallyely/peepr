@@ -8,7 +8,7 @@
     "test": "node --env-file=.env --test"
   },
   "imports": {
-    "#/*": "./src/*"
+    "#src/*": "./src/*"
   },
   "exports": {
     ".": "./main.ts"
@@ -27,7 +27,6 @@
   },
   "devDependencies": {
     "@octokit/openapi-types": "^24.0.0",
-    "@octokit/types": "^13.8.0",
-    "types": "link:@octokit/core/types"
+    "@octokit/types": "^13.8.0"
   }
 }

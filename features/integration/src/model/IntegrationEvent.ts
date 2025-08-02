@@ -1,5 +1,4 @@
-import { Duration } from "./Duration.ts";
-import { ID } from "./ID.ts";
+import { Duration, ID } from "@peepr/core";
 
 export class IntegrationEvent {
   readonly id: ID;
@@ -74,17 +73,17 @@ export class IntegrationEvent {
         data.timeOpen instanceof Duration
           ? data.timeOpen
           : new Duration(
-              typeof data.timeOpen === "string" ? Duration.fromHumanReadable(data.timeOpen).inMilliseconds : 0,
-            );
+            typeof data.timeOpen === "string" ? Duration.fromHumanReadable(data.timeOpen).inMilliseconds : 0,
+          );
 
       const totalDuration =
         data.totalDuration instanceof Duration
           ? data.totalDuration
           : new Duration(
-              typeof data.totalDuration === "string"
-                ? Duration.fromHumanReadable(data.totalDuration).inMilliseconds
-                : 0,
-            );
+            typeof data.totalDuration === "string"
+              ? Duration.fromHumanReadable(data.totalDuration).inMilliseconds
+              : 0,
+          );
 
       return new IntegrationEvent(
         ID.create(data.id),
@@ -163,5 +162,3 @@ export class IntegrationEvent {
     };
   }
 }
-
-export type GithubIntegrationEventCreationError = Error;

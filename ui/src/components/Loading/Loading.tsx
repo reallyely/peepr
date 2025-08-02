@@ -1,4 +1,4 @@
-import { type JSX, splitProps, Show } from "solid-js";
+import { type JSX, Show, splitProps } from "solid-js";
 import "../core/transitions.css";
 
 export interface LoadingProps {
@@ -23,7 +23,6 @@ export function Loading(props: LoadingProps) {
   const variant = () => local.variant || "glow";
   const size = () => local.size || "md";
 
-  console.log(local.active)
   return (
     <div
       classList={{

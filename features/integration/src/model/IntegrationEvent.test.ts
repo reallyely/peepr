@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { test } from "node:test";
-import { Duration } from "./Duration.ts";
+import { Duration } from "@peepr/core";
 import { IntegrationEvent } from "./IntegrationEvent.ts";
 Event;
 

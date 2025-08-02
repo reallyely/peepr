@@ -9,9 +9,9 @@ import TextInput from "~/components/form/TextInput";
 import { refreshRepositoriesCacheAction } from "./actions.ts";
 import { getRepositories } from "./queries.ts";
 
+import { Loading } from "~/components/Loading/index.ts";
 import cardStyles from "../../../components/Card/card.module.css";
 import styles from "./repositories.module.css";
-import { Loading } from "~/components/Loading/index.ts";
 
 export const route = {
   preload() {

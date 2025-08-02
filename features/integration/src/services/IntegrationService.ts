@@ -1,18 +1,15 @@
-import {
-  type Cycle,
-  type Duration,
-  type IntegrationEvent,
-  IntegrationStatistics,
-  StatisticsService,
-} from "@peepr/core";
-import { GithubIntegrationEventBuilder } from "../adapters/github/GithubIntegrationEventBuilder.ts";
-import type { GitHubService } from "../ports/github/github.service.ts";
+import type { Cycle, Duration } from "@peepr/core";
+import { calculateDurationStatisticalDistribution } from "@peepr/core";
+import { GithubIntegrationEventBuilder } from "#src/adapters/github/GithubIntegrationEventBuilder.ts";
+import type { GitHubService } from "#src/adapters/github/github.service.ts";
+import { type IntegrationEvent, IntegrationStatistics } from "#src/model/index.ts";
 
 /**
  * Service for retrieving and processing integration events related to cycles
  * Uses streaming for memory efficiency and better performance
  */
 export class IntegrationService {
+  // TODO: Inject the service which fetches the integration data instead of coupling to GitHub
   private readonly githubService: GitHubService;
 
   constructor(githubService: GitHubService) {
@@ -119,8 +116,8 @@ class StreamingStatisticsCalculator {
     return IntegrationStatistics.create({
       totalPRs: this.totalPRs,
       totalCIRuns: this.totalCIRuns,
-      ciDuration: StatisticsService.calculateStatisticalDistribution(this.ciDurations),
-      openTime: StatisticsService.calculateStatisticalDistribution(this.openTimes),
+      ciDuration: calculateDurationStatisticalDistribution(this.ciDurations),
+      openTime: calculateDurationStatisticalDistribution(this.openTimes),
     });
   }
 }

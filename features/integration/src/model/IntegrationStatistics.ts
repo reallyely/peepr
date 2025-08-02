@@ -1,4 +1,4 @@
-import { StatisticalDistribution } from "./StatisticalDistribution.ts";
+import { StatisticalDistribution } from "@peepr/core";
 
 /**
  * Represents statistics about integration events, typically for a cycle

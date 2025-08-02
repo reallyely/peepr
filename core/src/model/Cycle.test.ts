@@ -2,7 +2,6 @@ import assert from "node:assert";
 import { test } from "node:test";
 import { Cycle } from "./Cycle.ts";
 import { Duration } from "./Duration.ts";
-import { IntegrationEvent } from "./IntegrationEvent.ts";
 
 test("Cycle - create with required fields", () => {
   const startDate = new Date("2023-02-01T00:00:00Z");
