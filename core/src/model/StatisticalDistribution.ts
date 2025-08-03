@@ -44,6 +44,56 @@ export class StatisticalDistribution {
   }
 
   /**
+   * Creates a StatisticalDistribution from an array of Duration objects
+   */
+  static fromDurations(durations: Duration[]): StatisticalDistribution {
+    if (durations.length === 0) {
+      return StatisticalDistribution.empty();
+    }
+
+    // Sort durations by milliseconds for percentile calculations
+    const sorted = [...durations].sort((a, b) => a.inMilliseconds - b.inMilliseconds);
+
+    // Calculate mean
+    const totalMs = durations.reduce((sum, duration) => sum + duration.inMilliseconds, 0);
+    const mean = new Duration(totalMs / durations.length);
+
+    // Calculate range
+    const min = sorted[0];
+    const max = sorted[sorted.length - 1];
+
+    // Calculate quartiles
+    const getPercentile = (percentile: number): Duration => {
+      const index = (percentile / 100) * (sorted.length - 1);
+      const lower = Math.floor(index);
+      const upper = Math.ceil(index);
+
+      if (lower === upper) {
+        return sorted[lower];
+      }
+
+      // Linear interpolation between the two closest values
+      const weight = index - lower;
+      const lowerMs = sorted[lower].inMilliseconds;
+      const upperMs = sorted[upper].inMilliseconds;
+      const interpolatedMs = lowerMs + weight * (upperMs - lowerMs);
+
+      return new Duration(interpolatedMs);
+    };
+
+    const q1 = getPercentile(25);
+    const median = getPercentile(50);
+    const q3 = getPercentile(75);
+
+    return new StatisticalDistribution(
+      median,
+      mean,
+      { min, max },
+      { q1, q2: median, q3 },
+    );
+  }
+
+  /**
    * Creates an empty distribution with all values set to zero
    */
   static empty(): StatisticalDistribution {

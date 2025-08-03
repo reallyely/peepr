@@ -1,7 +1,6 @@
 
 import { getSession } from "@auth/solid-start";
 import { Cycle } from "@peepr/core";
-import { GitHubService, IntegrationService } from "@peepr/integration";
 import { query } from "@solidjs/router";
 import { getWebRequest } from "vinxi/http";
 import { authOpts } from "~/config/auth";
@@ -33,7 +32,9 @@ export const getCycleStatistics = query(async ({ cycleNumber, repoFullName }) =>
       throw new Error("No GitHub access token found. Please sign in again.");
     }
 
+    // This will be taken care of by the IOC Container
     const githubService = new GitHubService(session?.tokens?.github.accessToken, owner, repo);
+
     const integrationService = new IntegrationService(githubService);
 
     if (!cycleNumber) {

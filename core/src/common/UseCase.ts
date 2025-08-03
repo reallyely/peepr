@@ -3,12 +3,7 @@ export abstract class UseCase<TRequest, TResponse> {
 
   protected validateRequest(request: TRequest): void {
     if (!request) {
-      throw new Error('Request cannot be null or undefined');
+      throw new Error("Request cannot be null or undefined");
     }
-  }
-
-  protected async executeWithValidation(request: TRequest): Promise<TResponse> {
-    this.validateRequest(request);
-    return this.execute(request);
   }
 }

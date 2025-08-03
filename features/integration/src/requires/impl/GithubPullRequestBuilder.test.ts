@@ -1,9 +1,9 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { GithubIntegrationEventBuilder } from "./GithubIntegrationEventBuilder.ts";
+import { GithubPullRequestBuilder } from "./GithubPullRequestBuilder.ts";
 
 // Mock pull request data
-type PullRequestParameter = Parameters<InstanceType<typeof GithubIntegrationEventBuilder>["setPullRequest"]>[0];
+type PullRequestParameter = Parameters<InstanceType<typeof GithubPullRequestBuilder>["setPullRequest"]>[0];
 const mockPullRequest: PullRequestParameter = {
   id: 123,
   number: 5319,
@@ -36,7 +36,7 @@ const mockUsage = {
 
 describe("GithubIntegrationEventBuilder", () => {
   it("builds a basic IntegrationEvent from PR data", () => {
-    const integration = new GithubIntegrationEventBuilder().setPullRequest(mockPullRequest).build();
+    const integration = new GithubPullRequestBuilder().setPullRequest(mockPullRequest).build();
 
     assert.strictEqual(integration.id.toString(), "123");
     assert.strictEqual(integration.prNumber, 5319);
@@ -47,7 +47,7 @@ describe("GithubIntegrationEventBuilder", () => {
   });
 
   it("tracks Pull Request Checks workflow runs", () => {
-    const integration = new GithubIntegrationEventBuilder()
+    const integration = new GithubPullRequestBuilder()
       .setPullRequest(mockPullRequest)
       .setWorkflowRun(mockWorkflowRun)
       .setWorkflowRun({ ...mockWorkflowRun, id: 457 })
@@ -57,7 +57,7 @@ describe("GithubIntegrationEventBuilder", () => {
   });
 
   it("calculates total workflow duration", () => {
-    const integration = new GithubIntegrationEventBuilder()
+    const integration = new GithubPullRequestBuilder()
       .setPullRequest(mockPullRequest)
       .setWorkflowUsage(mockUsage)
       .setWorkflowUsage({ ...mockUsage })
@@ -79,7 +79,7 @@ describe("GithubIntegrationEventBuilder", () => {
       },
     };
 
-    const integration = new GithubIntegrationEventBuilder().setPullRequest(closedPR).build();
+    const integration = new GithubPullRequestBuilder().setPullRequest(closedPR).build();
 
     // Should be 2 days (172800000 ms)
     assert.strictEqual(integration.timeOpen.inMilliseconds, 172800000);
@@ -92,7 +92,7 @@ describe("GithubIntegrationEventBuilder", () => {
       closed_at: "2024-01-03T00:00:00Z",
     };
 
-    const integration = new GithubIntegrationEventBuilder().setPullRequest(abandonedPR).build();
+    const integration = new GithubPullRequestBuilder().setPullRequest(abandonedPR).build();
 
     assert.strictEqual(integration.timeOpen.inMilliseconds, 172800000);
     assert.strictEqual(integration.isAbandoned(), true);
@@ -102,7 +102,7 @@ describe("GithubIntegrationEventBuilder", () => {
     assert.throws(
       () => {
         // @ts-expect-error - Testing invalid type
-        new GithubIntegrationEventBuilder().setPullRequest({}).build();
+        new GithubPullRequestBuilder().setPullRequest({}).build();
       },
       {
         message: "Cannot build IntegrationEvent: missing pull request information",
@@ -111,7 +111,7 @@ describe("GithubIntegrationEventBuilder", () => {
   });
 
   it("generates correct summary for in-progress PR", () => {
-    const integration = new GithubIntegrationEventBuilder().setPullRequest(mockPullRequest).build();
+    const integration = new GithubPullRequestBuilder().setPullRequest(mockPullRequest).build();
 
     assert.ok(integration.getSummary().includes("has been open for"));
   });
@@ -129,7 +129,7 @@ describe("GithubIntegrationEventBuilder", () => {
       },
     };
 
-    const integration = new GithubIntegrationEventBuilder()
+    const integration = new GithubPullRequestBuilder()
       .setPullRequest(mergedPR)
       .setWorkflowRun(mockWorkflowRun)
       .build();

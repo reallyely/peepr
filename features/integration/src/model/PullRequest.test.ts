@@ -14,16 +14,16 @@ test("PullRequest - create with required fields", () => {
     totalDuration: "3h 45m",
   });
 
-  assert.strictEqual(pr.prNumber, 123);
-  assert.strictEqual(pr.title, "Test PR");
-  assert.strictEqual(pr.createdAt.toISOString(), "2023-01-01T00:00:00.000Z");
-  assert.strictEqual(pr.updatedAt.toISOString(), "2023-01-02T00:00:00.000Z");
-  assert.strictEqual(pr.mergedAt, null);
-  assert.strictEqual(pr.closedAt, null);
-  assert.ok(pr.timeOpen instanceof Duration);
-  assert.strictEqual(pr.timeOpen.toHumanReadable(), "2h 30m");
-  assert.strictEqual(pr.checkRuns, 5);
-  assert.strictEqual(pr.totalDuration.toHumanReadable(), "3h 45m");
+  assert.strictEqual(pr.data.prNumber, 123);
+  assert.strictEqual(pr.data.title, "Test PR");
+  assert.strictEqual(pr.data.createdAt.toISOString(), "2023-01-01T00:00:00.000Z");
+  assert.strictEqual(pr.data.updatedAt.toISOString(), "2023-01-02T00:00:00.000Z");
+  assert.strictEqual(pr.data.mergedAt, null);
+  assert.strictEqual(pr.data.closedAt, null);
+  assert.ok(pr.data.timeOpen instanceof Duration);
+  assert.strictEqual(pr.data.timeOpen.toHumanReadable(), "2h 30m");
+  assert.strictEqual(pr.data.checkRuns, 5);
+  assert.strictEqual(pr.data.totalDuration.toHumanReadable(), "3h 45m");
 });
 
 test("PullRequest - create with all fields", () => {
@@ -41,8 +41,8 @@ test("PullRequest - create with all fields", () => {
   });
 
   assert.strictEqual(pr.id.toString(), "456");
-  assert.strictEqual(pr.mergedAt?.toISOString(), "2023-01-03T00:00:00.000Z");
-  assert.strictEqual(pr.closedAt?.toISOString(), "2023-01-03T00:00:00.000Z");
+  assert.strictEqual(pr.data.mergedAt?.toISOString(), "2023-01-03T00:00:00.000Z");
+  assert.strictEqual(pr.data.closedAt?.toISOString(), "2023-01-03T00:00:00.000Z");
 });
 
 test("PullRequest - create with Date objects", () => {
@@ -61,9 +61,9 @@ test("PullRequest - create with Date objects", () => {
     totalDuration: new Duration(13500000), // 3.75 hours in ms
   });
 
-  assert.strictEqual(pr.createdAt, createdAt);
-  assert.strictEqual(pr.updatedAt, updatedAt);
-  assert.strictEqual(pr.mergedAt, mergedAt);
+  assert.strictEqual(pr.data.createdAt, createdAt);
+  assert.strictEqual(pr.data.updatedAt, updatedAt);
+  assert.strictEqual(pr.data.mergedAt, mergedAt);
 });
 
 test("PullRequest - validation errors", () => {

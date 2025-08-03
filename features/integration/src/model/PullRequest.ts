@@ -1,53 +1,34 @@
-import { Duration, ID } from "@peepr/core";
+import { Duration, Entity, type EntityConstructorParams, ID } from "@peepr/core";
 
-export class PullRequest {
-  readonly id: ID;
-  readonly prNumber: number;
-  readonly title: string;
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
-  readonly mergedAt: Date | null;
-  readonly closedAt: Date | null;
-  readonly timeOpen: Duration;
-  readonly checkRuns: number;
-  readonly totalDuration: Duration;
+interface PullRequestCreate {
+  id?: string | number;
+  prNumber: number | string;
+  title: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  mergedAt?: Date | string | null;
+  closedAt?: Date | string | null;
+  timeOpen: Duration | string;
+  checkRuns: number;
+  totalDuration: Duration | string | number;
+}
 
-  private constructor(
-    id: ID,
-    prNumber: number,
-    title: string,
-    createdAt: Date,
-    updatedAt: Date,
-    mergedAt: Date | null,
-    closedAt: Date | null,
-    timeOpen: Duration,
-    checkRuns: number,
-    totalDuration: Duration,
-  ) {
-    this.id = id;
-    this.prNumber = prNumber;
-    this.title = title;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-    this.mergedAt = mergedAt;
-    this.closedAt = closedAt;
-    this.timeOpen = timeOpen;
-    this.checkRuns = checkRuns;
-    this.totalDuration = totalDuration;
-  }
+interface PullRequestData {
+  id: number | string;
+  prNumber: number;
+  title: string;
+  createdAt: Date;
+  updatedAt: Date;
+  mergedAt: Date | null;
+  closedAt: Date | null;
+  timeOpen: Duration;
+  checkRuns: number;
+  totalDuration: Duration;
+}
 
-  static create(data: {
-    id?: string | number;
-    prNumber: number;
-    title: string;
-    createdAt: string | Date;
-    updatedAt: string | Date;
-    mergedAt?: string | Date | null;
-    closedAt?: string | Date | null;
-    timeOpen: Duration | string;
-    checkRuns: number;
-    totalDuration: Duration | string;
-  }): PullRequest {
+export class PullRequest extends Entity<PullRequestData> {
+
+  static create(data: PullRequestCreate): PullRequest {
     try {
       // Validate required fields
       if (!data.prNumber || typeof data.prNumber !== "number") {
@@ -85,18 +66,21 @@ export class PullRequest {
               : 0,
           );
 
-      return new PullRequest(
-        ID.create(data.id),
-        data.prNumber,
-        data.title,
-        createdAt,
-        updatedAt,
-        mergedAt,
-        closedAt,
-        prTimeOpen,
-        data.checkRuns,
-        totalDuration,
-      );
+      return new PullRequest({
+        id: ID.create(data.id),
+        data: {
+          id: data.id,
+          prNumber: data.prNumber,
+          title: data.title,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+          mergedAt: mergedAt,
+          closedAt: closedAt,
+          timeOpen: prTimeOpen,
+          checkRuns: data.checkRuns,
+          totalDuration: totalDuration,
+        }
+      });
     } catch (error) {
       throw error instanceof Error ? error : new Error(String(error));
     }
@@ -106,21 +90,21 @@ export class PullRequest {
    * Checks if the work item integration is complete (merged)
    */
   isComplete(): boolean {
-    return this.mergedAt !== null;
+    return this.data.mergedAt !== null;
   }
 
   /**
    * Checks if the work item integration was abandoned (closed without merging)
    */
   isAbandoned(): boolean {
-    return this.closedAt !== null && this.mergedAt === null;
+    return this.data.closedAt !== null && this.data.mergedAt === null;
   }
 
   /**
    * Checks if the work item integration is still in progress
    */
   isInProgress(): boolean {
-    return this.closedAt === null && this.mergedAt === null;
+    return this.data.closedAt === null && this.data.mergedAt === null;
   }
 
   /**
@@ -128,37 +112,26 @@ export class PullRequest {
    */
   getSummary(): string {
     if (this.isComplete()) {
-      return `PR #${this.prNumber} "${this.title}" was merged after ${this.timeOpen.toHumanReadable()} with ${this.checkRuns} check runs.`;
+      return `PR #${this.data.prNumber} "${this.data.title}" was merged after ${this.data.timeOpen.toHumanReadable()} with ${this.data.checkRuns} check runs.`;
     }
     if (this.isAbandoned()) {
-      return `PR #${this.prNumber} "${this.title}" was closed without merging after ${this.timeOpen.toHumanReadable()}.`;
+      return `PR #${this.data.prNumber} "${this.data.title}" was closed without merging after ${this.data.timeOpen.toHumanReadable()}.`;
     }
-    return `PR #${this.prNumber} "${this.title}" has been open for ${this.timeOpen.toHumanReadable()}.`;
+    return `PR #${this.data.prNumber} "${this.data.title}" has been open for ${this.data.timeOpen.toHumanReadable()}.`;
   }
 
-  public toJSON(): {
-    id: string;
-    prNumber: number;
-    title: string;
-    createdAt: string;
-    updatedAt: string;
-    mergedAt: string | null;
-    closedAt: string | null;
-    timeOpen: string;
-    checkRuns: number;
-    totalDuration: string;
-  } {
-    return {
+  public toJSON() {
+    return JSON.stringify({
       id: this.id.toString(),
-      prNumber: this.prNumber,
-      title: this.title,
-      createdAt: this.createdAt.toISOString(),
-      updatedAt: this.updatedAt.toISOString(),
-      mergedAt: this.mergedAt ? this.mergedAt.toISOString() : null,
-      closedAt: this.closedAt ? this.closedAt.toISOString() : null,
-      timeOpen: this.timeOpen.toHumanReadable(),
-      checkRuns: this.checkRuns,
-      totalDuration: this.totalDuration.toHumanReadable(),
-    };
+      prNumber: this.data.prNumber,
+      title: this.data.title,
+      createdAt: this.data.createdAt.toISOString(),
+      updatedAt: this.data.updatedAt.toISOString(),
+      mergedAt: this.data.mergedAt ? this.data.mergedAt.toISOString() : null,
+      closedAt: this.data.closedAt ? this.data.closedAt.toISOString() : null,
+      timeOpen: this.data.timeOpen.toHumanReadable(),
+      checkRuns: this.data.checkRuns,
+      totalDuration: this.data.totalDuration.toHumanReadable(),
+    });
   }
 }

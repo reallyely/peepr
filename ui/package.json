@@ -17,6 +17,7 @@
     "@solidjs/router": "^0.15.0",
     "@solidjs/start": "^1.1.0",
     "@tanstack/solid-table": "^8.21.2",
+    "awilix": "^12.0.5",
     "chart.js": "^4.4.8",
     "ioredis": "^5.5.0",
     "popover": "link:@kobalte/core/popover",

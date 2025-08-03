@@ -8,7 +8,7 @@ import { PullRequest } from "#src/model/PullRequest.ts"
  * WorkItemIntegrationBuilder takes GitHub API data and builds a WorkItemIntegration object
  * that represents a pull request's statistics and metadata
  */
-export class GithubIntegrationEventBuilder {
+export class GithubPullRequestBuilder {
   private prId = 0;
   private prNumber = 0;
   private prTitle = "";
@@ -26,7 +26,7 @@ export class GithubIntegrationEventBuilder {
       RestEndpointMethodTypes["search"]["issuesAndPullRequests"]["response"]["data"]["items"][number],
       "closed_at" | "created_at" | "id" | "number" | "title" | "updated_at" | "pull_request"
     >,
-  ): GithubIntegrationEventBuilder {
+  ): GithubPullRequestBuilder {
     this.prId = pullRequest.id;
     this.prNumber = pullRequest.number;
     this.prTitle = pullRequest.title;
@@ -54,7 +54,7 @@ export class GithubIntegrationEventBuilder {
       components["schemas"]["workflow-run"],
       "name" | "id" | "run_started_at" | "conclusion" | "workflow_id"
     >,
-  ): GithubIntegrationEventBuilder {
+  ): GithubPullRequestBuilder {
     if (workflowRun.name === "Pull Request Checks") {
       this.pullRequestCheckRuns++;
     }
@@ -62,7 +62,7 @@ export class GithubIntegrationEventBuilder {
   }
 
   // Adds workflow usage data to calculate total duration
-  setWorkflowUsage(usage: Partial<components["schemas"]["workflow-run-usage"]>): GithubIntegrationEventBuilder {
+  setWorkflowUsage(usage: Partial<components["schemas"]["workflow-run-usage"]>): GithubPullRequestBuilder {
     if (usage.run_duration_ms) {
       this.totalDuration = new Duration(usage.run_duration_ms).add(this.totalDuration);
     }

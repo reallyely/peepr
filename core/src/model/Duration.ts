@@ -1,5 +1,24 @@
 export class Duration {
   /**
+   * Creates a Duration from various input types:
+   * - string: parses human-readable format (e.g. "1d 2h 3m 4s")
+   * - number: treats as milliseconds
+   * - Duration: returns a copy of the input Duration
+   */
+  static create(input: string | number | Duration): Duration {
+    if (typeof input === 'string') {
+      return Duration.fromHumanReadable(input);
+    }
+    if (typeof input === 'number') {
+      return Duration.fromMilliseconds(input);
+    }
+    if (input instanceof Duration) {
+      return new Duration(input.inMilliseconds);
+    }
+    throw new Error('Invalid input type for Duration.create()');
+  }
+
+  /**
    * Creates a Duration from a human-readable string (e.g. "1d 2h 3m 4s")
    */
   static fromHumanReadable(humanReadable: string): Duration {
